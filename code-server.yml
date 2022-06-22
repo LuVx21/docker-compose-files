@@ -8,11 +8,11 @@ services:
       - "8080:8080"
     volumes:
       - $HOME/code-server:/home/coder/project
-      # - $PWD/.config:/home/coder/.config
-      # - $PWD/code-server:/home/coder/.local/share/code-server
+      # - $HOME/.config:/home/coder/.config
+      # - $HOME/code-server:/home/coder/.local/share/code-server
       # - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       PASSWORD: <pw>
-      # - "DOCKER_USER=${USER}"
+      # DOCKER_USER: ${USER}
     restart: always
-    user: ${UID_GID}
+    # user: ${UID_GID}
