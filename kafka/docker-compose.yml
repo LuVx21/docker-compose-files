@@ -8,7 +8,6 @@ services:
     image: wurstmeister/kafka:2.13-2.6.0
     ports:
       - "9092:9092"
-      - "9094:9094"
     depends_on:
       - zookeeper
     environment:
