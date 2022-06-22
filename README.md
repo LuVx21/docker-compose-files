@@ -26,6 +26,24 @@ docker-compose --version
 ```
 
 
+### 配置
+
+如果要在其他容器里直接使用kafka容器, 可以将它们加入同一个network
+
+```bash
+docker network create nginx-proxy
+```
+
+在各自容器的docker-compose.yml加入network配置, 如下
+
+```yml
+networks:
+  default:
+    external:
+      name: nginx-proxy
+```
+
+
 ##
 
 ```bash

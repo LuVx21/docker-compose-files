@@ -12,9 +12,9 @@ services:
     restart: always
   kafka1:
     image: wurstmeister/kafka
+    container_name: kafka1
     depends_on:
       - zookeeper
-    container_name: kafka1
     ports:
       - 9092:9092
     environment:
@@ -30,9 +30,9 @@ services:
     restart: unless-stopped
   kafka2:
     image: wurstmeister/kafka
+    container_name: kafka2
     depends_on:
       - zookeeper
-    container_name: kafka2
     ports:
       - 9093:9093
     environment:
@@ -47,9 +47,9 @@ services:
     restart: unless-stopped
   kafka3:
     image: wurstmeister/kafka
+    container_name: kafka3
     depends_on:
       - zookeeper
-    container_name: kafka3
     ports:
       - 9094:9094
     environment:

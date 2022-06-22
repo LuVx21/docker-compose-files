@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  code-server:
+    image: codercom/code-server
+    container_name: code-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - $HOME/code:/home/coder/project
+      # - $HOME/.config:/home/coder/.config
+      # - $HOME/code-server:/home/coder/.local/share/code-server
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PASSWORD: <pwd>
+      # DOCKER_USER: ${USER}
+    restart: always
+    user: "0"
