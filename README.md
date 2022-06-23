@@ -81,6 +81,7 @@ oaooa/pichome
 ```bash
 docker run -itd --name jupyter-notebook \
 -p 58081:8888 \
+-u "$(id -u):$(id -g)" \
 # -v $HOME/docker/jupyter:/home/jovyan/work \
 jupyter/base-notebook
 # start-notebook.sh \
