@@ -76,3 +76,21 @@ docker run -itd --name pichome \
 oaooa/pichome
 
 ```
+
+
+```bash
+docker run -itd --name jupyter-notebook \
+-p 58081:8888 \
+# -v $HOME/docker/jupyter:/home/jovyan/work \
+jupyter/base-notebook
+# start-notebook.sh \
+# --NotebookApp.password='sha1:874c990621e5:e47fda27460f59ca2930a4866bcd580aceb1bb44'
+
+docker run -itd --name jupyter-notebook \
+-p 58081:8888 \
+-e GRANT_SUDO=yes \
+-e RESTARTABLE=yes \
+--user root \
+--mount source=jupyter-workspace,destination=/home/jovyan/work \
+jupyter/scipy-notebook
+```
