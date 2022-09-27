@@ -1,6 +1,12 @@
 <details>
 <summary>点击展开目录</summary>
 <!-- TOC -->
+
+    - [docker-compose](#docker-compose)
+        - [配置](#配置)
+- [](#)
+    - [rockermq](#rockermq)
+
 <!-- /TOC -->
 </details>
 
@@ -94,4 +100,24 @@ docker run -itd --name jupyter-notebook \
 --user root \
 --mount source=jupyter-workspace,destination=/home/jovyan/work \
 jupyter/scipy-notebook
+```
+
+
+## rockermq
+
+```bash
+docker volume create rocketmq_data
+
+docker run -itd --name rocketmq \
+ --hostname rocketmq \
+ --restart=always \
+ -p 18080:8080 \
+ -p 59876:9876 \
+ -p 50909:10909 \
+ -p 50911:10911 \
+ -p 50912:10912 \
+ -v rocketmq_data:/home/app/data \
+ -v /etc/localtime:/etc/localtime \
+ -v /var/run/docker.sock:/var/run/docker.sock \
+ xuchengen/rocketmq:latest
 ```
