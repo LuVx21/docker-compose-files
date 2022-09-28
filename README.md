@@ -102,6 +102,15 @@ docker run -itd --name jupyter-notebook \
 jupyter/scipy-notebook
 ```
 
+## appsmith
+
+```bash
+docker run -d --name appsmith \
+-p 50080:80 \
+-v "~/docker/appsmith:/appsmith-stacks" \
+--pull always appsmith/appsmith-ce
+```
+
 
 ## rockermq
 
