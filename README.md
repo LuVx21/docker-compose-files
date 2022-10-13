@@ -130,3 +130,27 @@ docker run -itd --name rocketmq \
  -v /var/run/docker.sock:/var/run/docker.sock \
  xuchengen/rocketmq:latest
 ```
+
+## nacos
+
+```bash
+mkdir -p ~/docker/nacos/init.d ~/docker/nacos/logs
+echo 'management.endpoints.web.exposure.include=*' > ~/docker/nacos/init.d/custom.properties
+
+# mysql: create database nacos_config;
+
+docker run -d -p 8848:8848  \
+-e MODE=standalone \
+-e PREFER_HOST_MODE=hostname \
+-e SPRING_DATASOURCE_PLATFORM=mysql \
+-e MYSQL_SERVICE_HOST=127.0.0.1 \
+-e MYSQL_SERVICE_PORT=53306 \
+-e MYSQL_SERVICE_DB_NAME=nacos_config \
+-e MYSQL_SERVICE_USER=root \
+-e MYSQL_SERVICE_PASSWORD=**** \
+-e MYSQL_SERVICE_DB_PARAM="characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&serverTimezone=UTC" \
+-e MYSQL_DATABASE_NUM=1 \
+-v ~/docker/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
+-v ~/docker/nacos/logs:/home/nacos/logs \
+--restart always --name nacos nacos/nacos-server
+```
