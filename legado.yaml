@@ -15,8 +15,8 @@ services:
     networks:
       - share_net
     volumes:
-      - /root//docker/legado/logs:/logs #log映射目录 /home/reader/logs 映射目录可自行修改
-      - /root//docker/legado/storage:/storage #数据映射目录 /home/reader/storage 映射目录可自行修改
+      - /root/docker/legado/logs:/logs #log映射目录 /home/reader/logs 映射目录可自行修改
+      - /root/docker/legado/storage:/storage #数据映射目录 /home/reader/storage 映射目录可自行修改
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - READER_APP_USERLIMIT=50 #用户上限,默认50
