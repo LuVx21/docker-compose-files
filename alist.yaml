@@ -3,7 +3,7 @@ services:
     alist:
         restart: always
         volumes:
-            - '/root/docker/alist:/opt/alist/data'
+            - $HOME/docker/alist:/opt/alist/data
         ports:
             - '55244:5244'
         environment:
