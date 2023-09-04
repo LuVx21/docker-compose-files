@@ -37,18 +37,18 @@ services:
     networks:
       - share_net
 # 自动更新docker镜像
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    # restart: always
-    # 环境变量,设置为上海时区
-    environment:
-        - TZ=Asia/Shanghai
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: reader watchtower --cleanup --schedule "0 0 4 * * *"
-    networks:
-      - share_net
+#  watchtower:
+#    image: containrrr/watchtower
+#    container_name: watchtower
+#    # restart: always
+#    # 环境变量,设置为上海时区
+#    environment:
+#        - TZ=Asia/Shanghai
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#    command: reader watchtower --cleanup --schedule "0 0 4 * * *"
+#    networks:
+#      - share_net
     # 仅更新reader与watchtower容器,如需其他自行添加 '容器名' ,如:reader watchtower nginx
     # --cleanup 更新后清理旧版本镜像
     # --schedule 自动检测更新 crontab定时(限定6位crontab) 此处代表凌晨4点整
