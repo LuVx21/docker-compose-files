@@ -154,3 +154,21 @@ docker run -d -p 8848:8848  \
 -v ~/docker/nacos/logs:/home/nacos/logs \
 --restart always --name nacos nacos/nacos-server
 ```
+
+## MySQL
+
+```bash
+mkdir -p ~/docker/mysql/{conf,logs,data}
+touch ~/docker/mysql/my.cnf
+```
+
+```bash
+docker run -d --name mysql \
+-p 53306:3306 \
+--restart=always --privileged=true  \
+-v $HOME/docker/mysql/data/:/var/lib/mysql \
+-v $HOME/docker/mysql/logs/:/var/log/mysql \
+-v $HOME/docker/mysql/conf/:/etc/mysql \
+-e MYSQL_ROOT_PASSWORD=1121 \
+mysql:5.7
+```
