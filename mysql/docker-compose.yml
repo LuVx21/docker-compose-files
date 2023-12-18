@@ -4,14 +4,20 @@ services:
     platform: linux/amd64
     image: mysql:5.7
     container_name: mysql
+    privileged: true
     restart: always
+    user: 501:20
     volumes:
       - $HOME/docker/mysql/data/:/var/lib/mysql
       - $HOME/docker/mysql/logs/:/var/log/mysql
       - $HOME/docker/mysql/conf/:/etc/mysql
       - $HOME/docker/mysql/my.cnf:/etc/my.cnf
       # 数据库还原目录 可将需要还原的sql文件放在这里
-      # - /apps/mysql/source:/docker-entrypoint-initdb.d
+      - $HOME/docker/mysql/init/:/docker-entrypoint-initdb.d
+    # command:
+    #   --character-set-server=utf8mb4
+    #   --collation-server=utf8mb4_unicode_ci
+    #   --lower-case-table-names=1
     environment:
       MYSQL_ROOT_PASSWORD: xxx
       MYSQL_USER: xxx

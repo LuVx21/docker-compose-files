@@ -1,0 +1,17 @@
+# mkdir -p $HOME/docker/redis/{data,logs}
+# touch $HOME/docker/redis/redis.conf
+
+version: '3.9'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    volumes:
+      - $HOME/docker/redis/redis.conf:/etc/redis/redis.conf:ro
+      - $HOME/docker/redis/data:/data
+      - $HOME/docker/redis/logs:/logs
+    command: redis-server /etc/redis/redis.conf
+    ports:
+      - 6379:6379

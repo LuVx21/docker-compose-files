@@ -76,11 +76,15 @@ docker run -itd --name centos \
 --privileged=true --restart=always \
 centos:centos7
 
-docker run -itd --name pichome \
--p 80:80 \
---privileged=true --restart=always -v ~/docker/pichome:/var/www/html \
-oaooa/pichome
+```
 
+```bash
+docker run -itd --name pichome \
+-p 8080:80 \
+--privileged=true --restart=always \
+-v ~/docker/pichome:/var/www/html \
+--platform linux/amd64 \
+oaooa/pichome
 ```
 
 
@@ -165,6 +169,7 @@ touch ~/docker/mysql/my.cnf
 ```bash
 docker run -d --name mysql \
 -p 53306:3306 \
+--platform=linux/amd64 \
 --restart=always --privileged=true  \
 -v $HOME/docker/mysql/data/:/var/lib/mysql \
 -v $HOME/docker/mysql/logs/:/var/log/mysql \
