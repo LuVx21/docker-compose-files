@@ -1,6 +1,8 @@
-version: '2'
+version: '3.9'
+
 services:
   zookeeper:
+    platform: linux/amd64
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports:
@@ -8,6 +10,7 @@ services:
 
   kafka:
     image: wurstmeister/kafka:2.13-2.6.0
+    # image: bitnami/kafka:3.5.2
     container_name: kafka
     ports:
       - "9092:9092"
@@ -18,11 +21,22 @@ services:
       KAFKA_BROKER_ID: 0
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       # KAFKA_LISTENERS: INSIDE://:9094,OUTSIDE://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://luvx:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       # KAFKA_ADVERTISED_LISTENERS: INSIDE://:9094,OUTSIDE://localhost:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "foobar:1:1"
+      KAFKA_CREATE_TOPICS: "foobar:16:1"
       # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       # KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+#  kafka-console-ui:
+#    platform: linux/amd64
+#    image: wdkang/kafka-console-ui
+#    container_name: kafka-console-ui
+#    ports:
+#      - 7766:7766
+#    volumes:
+#      - $HOME/docker/kafka-console-ui/data:/app/data
+#      - $HOME/docker/kafka-console-ui/log:/app/log
+#    privileged: true
