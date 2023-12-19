@@ -2,13 +2,14 @@ version: '3.7'
 
 services:
   mongo:
-    image: mongo
+    image: mongo:4
     container_name: mongo
+    restart: always
     ports:
       - 27017:27017
-    restart: always
-    volumes: 
-      - /etc/localtime:/etc/localtime:ro
+    volumes:
+      - $HOME/docker/mongo/etc/localtime:/etc/localtime:ro
+      - $HOME/docker/mongo/db:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root123
@@ -20,9 +21,9 @@ services:
     restart: always
     ports:
       - 8081:8081
-    volumes: 
-      - /etc/localtime:/etc/localtime:ro
-      - /home/mongo/db:/data/db
+    volumes:
+      - $HOME/docker/mongo/express/etc/localtime:/etc/localtime:ro
+      - $HOME/docker/mongo/express/data/db:/data/db
     environment:
       # ME_CONFIG_BASICAUTH_USERNAME: admin
       # ME_CONFIG_BASICAUTH_PASSWORD: admin

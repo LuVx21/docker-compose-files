@@ -1,3 +1,6 @@
+# mkdir -p ~/docker/mysqsl
+# cp ./my.cnf ~/docker/mysql
+
 version: '3'
 services:
   mysql:

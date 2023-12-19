@@ -1,0 +1,14 @@
+# mkdir -p $HOME/docker/nginx/{conf,html,logs}
+
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:1.22
+    container_name: nginx
+    volumes:
+      - $HOME/docker/nginx/conf:/etc/nginx # 配置文件目录挂载
+      - $HOME/docker/nginx/html:/usr/share/nginx/html # 静态资源根目录挂载
+      - $HOME/docker/nginx/logs:/var/log/nginx # 日志文件挂载
+    ports:
+      - 80:80

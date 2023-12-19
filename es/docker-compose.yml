@@ -1,36 +1,88 @@
-version: '2'
+version: "3.9"
+
 services:
-  elasticsearch:
-    image: elasticsearch:2.2.0
-    container_name: elasticsearch
-    restart: always
-    network_mode: "bridge"
-    ports:
-      - "9200:9200"
-      - "9300:9300"
+  es01:
+    image: elasticsearch:${STACK_VERSION}
     volumes:
-       - ./data:/usr/share/elasticsearch/data
+      - es01_data:/usr/share/elasticsearch/data
+    ports:
+      - ${ES_PORT}:9200
+    environment:
+      - node.name=es01
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=es01,es02 #,es03
+      - discovery.seed_hosts=es02 #,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  es02:
+    depends_on:
+      - es01
+    image: elasticsearch:${STACK_VERSION}
+    volumes:
+      - es02_data:/usr/share/elasticsearch/data
+    environment:
+      - node.name=es02
+      - cluster.name=${CLUSTER_NAME}
+      - cluster.initial_master_nodes=es01,es02 #,es03
+      - discovery.seed_hosts=es01 #,es03
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  # es03:
+  #   depends_on:
+  #     - es02
+  #   image: elasticsearch:${STACK_VERSION}
+  #   volumes:
+  #     - es03_data:/usr/share/elasticsearch/data
+  #   environment:
+  #     - node.name=es03
+  #     - cluster.name=${CLUSTER_NAME}
+  #     - cluster.initial_master_nodes=es01,es02,es03
+  #     - discovery.seed_hosts=es01,es02
+  #     - bootstrap.memory_lock=true
+  #     - xpack.security.enabled=false
+  #     - xpack.security.http.ssl.enabled=false
+  #     - xpack.security.transport.ssl.enabled=false
+  #   mem_limit: ${MEM_LIMIT}
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+
   kibana:
-    image: kibana:4.4.0
-    container_name: kibana
-    restart: always
-    network_mode: "bridge"
-    ports:
-      - "5601:5601"
-    external_links:
-      - elasticsearch:elasticsearch
-  logstash:
-    image: logstash:2.2.0-1
-    container_name: logstash
-    restart: always
-    network_mode: "bridge"
-    ports:
-      - "5044:5044"
-      - "4560:4560"
-      - "8080:8080"
+    image: kibana:${STACK_VERSION}
     volumes:
-      - ./conf:/config-dir
-      - ./patterns:/opt/logstash/patterns
-    external_links:
-      - elasticsearch:elasticsearch
-    command: logstash -f /config-dir
+      - kibana_data:/usr/share/kibana/data
+    ports:
+      - ${KIBANA_PORT}:5601
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+    mem_limit: ${MEM_LIMIT}
+
+volumes:
+  es01_data:
+    driver: local
+  es02_data:
+    driver: local
+  es03_data:
+    driver: local
+  kibana_data:
+    driver: local
