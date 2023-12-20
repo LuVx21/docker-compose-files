@@ -7,7 +7,7 @@ services:
     network_mode: net_kafka
     user: root
     ports:
-      - 9192:9092
+      - 19092:9092
     environment:
       # KRaft
       - KAFKA_CFG_NODE_ID=0
@@ -23,7 +23,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M # 设置broker最大内存, 和初始内存
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false # 不允许自动创建主题
       ### broker配置
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_0:9092 # 定义外网访问地址（宿主机ip地址和端口）
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_0:9092 # mini.rx:19092 # 定义外网访问地址（宿主机ip地址和端口）
       - KAFKA_BROKER_ID=0 # broker.id, 必须唯一
       # KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       # Clustering
@@ -39,7 +39,7 @@ services:
     network_mode: net_kafka
     user: root
     ports:
-      - 9292:9092
+      - 29092:9092
     environment:
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
@@ -54,7 +54,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
 
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_1:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_1:9092 # mini.rx:29092
       - KAFKA_BROKER_ID=1
     volumes:
       - $HOME/docker/kafka_v3/kafka_1/kafka/kraft:/bitnami/kafka
@@ -65,7 +65,7 @@ services:
     network_mode: net_kafka
     user: root
     ports:
-      - 9392:9092
+      - 39092:9092
     environment:
       - KAFKA_CFG_NODE_ID=2
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
@@ -80,7 +80,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
 
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_2:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_2:9092 # mini.rx:39092
       - KAFKA_BROKER_ID=2
     volumes:
       - $HOME/docker/kafka_v3/kafka_2/kafka/kraft:/bitnami/kafka
@@ -109,3 +109,13 @@ services:
       - $HOME/docker/kafka-console-ui/data:/app/data
       - $HOME/docker/kafka-console-ui/log:/app/log
     privileged: true
+
+  kafdrop:
+    platform: linux/amd64
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    network_mode: net_kafka
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka_0:9092,kafka_1:9092,kafka_2:9092"
