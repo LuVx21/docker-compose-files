@@ -9,4 +9,4 @@ services:
       - $HOME/docker/zk/data:/data
       - $HOME/docker/zk/datalog:/datalog
       - $HOME/docker/zk/logs:/logs
-    restart: always
+    # restart: always

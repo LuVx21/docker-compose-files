@@ -7,7 +7,7 @@ services:
   redis:
     image: redis:latest
     container_name: redis
-    restart: always
+    # restart: always
     volumes:
       - $HOME/docker/redis/redis.conf:/etc/redis/redis.conf:ro
       - $HOME/docker/redis/data:/data

@@ -6,7 +6,7 @@ services:
         # * comment out marked lines, then use this image instead: diygod/rsshub:chromium-bundled
         # * (consumes more disk space and memory) leave everything unchanged
         image: diygod/rsshub
-        restart: always
+        # restart: always
         ports:
             - '1200:1200'
         environment:
@@ -21,7 +21,7 @@ services:
 
     browserless:  # marked
         image: browserless/chrome  # marked
-        restart: always  # marked
+        # restart: always  # marked
         ulimits:  # marked
           core:  # marked
             hard: 0  # marked
@@ -29,14 +29,14 @@ services:
 
     redis:
         image: redis:alpine
-        restart: always
+        # restart: always
         volumes:
             - redis-data:/data
 
     warp-socks:
         image: monius/docker-warp-socks:latest
         privileged: true
-        restart: always
+        # restart: always
         volumes:
             - /lib/modules:/lib/modules
         cap_add:

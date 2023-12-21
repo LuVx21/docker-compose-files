@@ -14,5 +14,5 @@ services:
     environment:
       PASSWORD: <pwd>
       # DOCKER_USER: ${USER}
-    restart: always
+    # restart: always
     user: "0"

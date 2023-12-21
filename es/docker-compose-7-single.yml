@@ -8,7 +8,7 @@ services:
   elasticsearch:
     image: elasticsearch:${STACK_VERSION}
     container_name: es7
-    restart: always
+    # restart: always
     network_mode: "bridge"
     ports:
       - 9200:9200
@@ -33,7 +33,7 @@ services:
   kibana:
     image: kibana:${STACK_VERSION}
     container_name: kibana7
-    restart: always
+    # restart: always
     network_mode: "bridge"
     ports:
       - 5601:5601
@@ -47,7 +47,7 @@ services:
   logstash:
     image: logstash:${STACK_VERSION}
     container_name: logstash7
-    restart: always
+    # restart: always
     network_mode: "bridge"
     ports:
       - 4560:4560

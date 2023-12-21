@@ -89,7 +89,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     network_mode: net_kafka
-    restart: always
+    # restart: always
     ports:
       - 8080:8080
     volumes:
