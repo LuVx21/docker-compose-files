@@ -3,6 +3,7 @@ version: "3.9"
 services:
   es01:
     image: elasticsearch:${STACK_VERSION}
+    container_name: es-cluster-es-1
     volumes:
       - es01_data:/usr/share/elasticsearch/data
     ports:
@@ -26,6 +27,7 @@ services:
     depends_on:
       - es01
     image: elasticsearch:${STACK_VERSION}
+    container_name: es-cluster-es-2
     volumes:
       - es02_data:/usr/share/elasticsearch/data
     environment:
@@ -47,6 +49,7 @@ services:
   #   depends_on:
   #     - es02
   #   image: elasticsearch:${STACK_VERSION}
+  #   container_name: es-cluster-es-3
   #   volumes:
   #     - es03_data:/usr/share/elasticsearch/data
   #   environment:
@@ -66,6 +69,7 @@ services:
 
   kibana:
     image: kibana:${STACK_VERSION}
+    container_name: es-cluster-kibana-1
     volumes:
       - kibana_data:/usr/share/kibana/data
     ports:

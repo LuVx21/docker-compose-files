@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  redis_master:
+    image: redis:${REDIS_VERSION}
+    container_name: redis_master
+    network_mode: net_common
+    ports:
+      - 6379:6379
+    volumes:
+      - 'replicaset_data:/data'
+    command: redis-server --requirepass ${PASSWORD}
+
+  redis_slave_1:
+    image: redis:${REDIS_VERSION}
+    container_name: redis_slave_1
+    network_mode: net_common
+    depends_on:
+      - redis_master
+    ports:
+      - 16379:6379
+    command: redis-server --slaveof redis_master 6379 --requirepass ${PASSWORD} --masterauth ${PASSWORD}
+
+  redis_slave_2:
+    image: redis:${REDIS_VERSION}
+    container_name: redis_slave_2
+    network_mode: net_common
+    depends_on:
+      - redis_master
+    ports:
+      - 26379:6379
+    command: redis-server --slaveof redis_master 6379 --requirepass ${PASSWORD} --masterauth ${PASSWORD}
+
+volumes:
+  replicaset_data:
+    driver: local

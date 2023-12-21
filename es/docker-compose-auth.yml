@@ -70,6 +70,7 @@ services:
       setup:
         condition: service_healthy
     image: elasticsearch:${STACK_VERSION}
+    container_name: es-cluster-es-1
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - es01_data:/usr/share/elasticsearch/data
@@ -113,6 +114,7 @@ services:
     depends_on:
       - es01
     image: elasticsearch:${STACK_VERSION}
+    container_name: es-cluster-es-2
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - es02_data:/usr/share/elasticsearch/data
@@ -153,6 +155,7 @@ services:
     depends_on:
       - es02
     image: elasticsearch:${STACK_VERSION}
+    container_name: es-cluster-es-3
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - es03_data:/usr/share/elasticsearch/data
@@ -198,6 +201,7 @@ services:
       es03:
         condition: service_healthy
     image: kibana:${STACK_VERSION}
+    container_name: es-cluster-kibana-1
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibana_data:/usr/share/kibana/data

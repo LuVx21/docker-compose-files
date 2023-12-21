@@ -1,0 +1,74 @@
+version: '3.9'
+
+services:
+  redisCluster0:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-0
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_0/data:/data
+      - $HOME/docker/redis_cluster/cluster_0/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_0/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisCluster1:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-1
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_1/data:/data
+      - $HOME/docker/redis_cluster/cluster_1/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_1/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisCluster2:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-2
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_2/data:/data
+      - $HOME/docker/redis_cluster/cluster_2/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_2/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisCluster3:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-3
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_3/data:/data
+      - $HOME/docker/redis_cluster/cluster_3/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_3/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisCluster4:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-4
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_4/data:/data
+      - $HOME/docker/redis_cluster/cluster_4/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_4/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisCluster5:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-cluster-5
+    network_mode: "host"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - $HOME/docker/redis_cluster/cluster_5/data:/data
+      - $HOME/docker/redis_cluster/cluster_5/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_cluster/cluster_5/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"

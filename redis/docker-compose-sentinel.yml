@@ -1,0 +1,102 @@
+version: '3.9'
+
+services:
+  redisMaster:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-master
+    network_mode: net_common
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - 16379:16379
+    volumes:
+      - $HOME/docker/redis_sentinel/redis_0/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_sentinel/redis_0/data:/data
+      - $HOME/docker/redis_sentinel/redis_0/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisSlave1:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-slave-1
+    network_mode: net_common
+    command: redis-server /usr/local/etc/redis/redis.conf
+    depends_on:
+      - redisMaster
+    ports:
+      - 16380:16380
+    volumes:
+      - $HOME/docker/redis_sentinel/redis_1/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_sentinel/redis_1/data:/data
+      - $HOME/docker/redis_sentinel/redis_1/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  redisSlave2:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-slave-2
+    network_mode: net_common
+    command: redis-server /usr/local/etc/redis/redis.conf
+    depends_on:
+      - redisMaster
+    ports:
+      - 16381:16381
+    volumes:
+      - $HOME/docker/redis_sentinel/redis_2/conf:/usr/local/etc/redis
+      - $HOME/docker/redis_sentinel/redis_2/data:/data
+      - $HOME/docker/redis_sentinel/redis_2/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  sentinel0:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-sentinel-0
+    network_mode: net_common
+    ports:
+      - 16382:16382
+    command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
+    depends_on:
+      - redisMaster
+      - redisSlave1
+      - redisSlave2
+    volumes:
+      - $HOME/docker/redis_sentinel/sentinel_0/conf:/opt/redis/sentinel
+      - $HOME/docker/redis_sentinel/sentinel_0/data:/data
+      - $HOME/docker/redis_sentinel/sentinel_0/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  sentinel1:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-sentinel-1
+    network_mode: net_common
+    ports:
+      - 16383:16383
+    command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
+    depends_on:
+      - redisMaster
+      - redisSlave1
+      - redisSlave2
+    volumes:
+      - $HOME/docker/redis_sentinel/sentinel_1/conf:/opt/redis/sentinel
+      - $HOME/docker/redis_sentinel/sentinel_1/data:/data
+      - $HOME/docker/redis_sentinel/sentinel_1/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+  sentinel2:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-sentinel-2
+    network_mode: net_common
+    ports:
+      - 16384:16384
+    command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
+    depends_on:
+      - redisMaster
+      - redisSlave1
+      - redisSlave2
+    volumes:
+      - $HOME/docker/redis_sentinel/sentinel_2/conf:/opt/redis/sentinel
+      - $HOME/docker/redis_sentinel/sentinel_2/data:/data
+      - $HOME/docker/redis_sentinel/sentinel_2/logs:/logs
+      - "/etc/localtime:/etc/localtime"
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
