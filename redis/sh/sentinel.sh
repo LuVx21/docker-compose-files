@@ -23,6 +23,7 @@ appendfsync everysec
 auto-aof-rewrite-min-size 10M
 auto-aof-rewrite-percentage 100
 requirepass "1121"
+logfile /logs/nodes.log
 
 ${replicaof}
 masterauth "1121"
@@ -53,7 +54,8 @@ for id in `seq 0 2`; do \
 port ${port}
 daemonize no
 pidfile /var/run/redis-sentinel-${id}.pid
-dir /tmp
+dir "/data"
+logfile "/logs/nodes.log"
 sentinel resolve-hostnames yes
 sentinel monitor mymaster redis-master 16379 2
 sentinel auth-pass mymaster "1121"
