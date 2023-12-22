@@ -1,6 +1,6 @@
 # grant select,replication slave,replication client on *.* to 'slave'@'%' identified by "1121";flush privileges;
-# change master to master_host='mysql-master-2',master_port=3306,master_user='slave',master_password='1121',master_log_file='mysql-bin.000001', master_log_pos=0,master_connect_retry=30;start slave;
-# change master to master_host='mysql-master-1',master_port=3306,master_user='slave',master_password='1121',master_log_file='mysql-bin.000001', master_log_pos=0,master_connect_retry=30;start slave;
+# change master to master_host='mysql-master-2',master_port=3306,master_user='slave',master_password='1121',master_auto_position=1,master_connect_retry=30;start slave;
+# change master to master_host='mysql-master-1',master_port=3306,master_user='slave',master_password='1121',master_auto_position=1,master_connect_retry=30;start slave;
 
 version: '3.9'
 services:
@@ -17,14 +17,16 @@ services:
       - 53306:3306
     environment:
       MYSQL_ROOT_PASSWORD: 1121
-      MYSQL_DATABASE: boot
+      # MYSQL_DATABASE: boot
     command: [
+      '--gtid_mode=on',
+      '--enforce-gtid-consistency=on',
       '--server-id=1',
       '--log-slave-updates=true',
       '--auto_increment_offset=1',
       '--auto_increment_increment=2',
       '--log-bin=mysql-bin',
-      '--binlog-ignore-db=mysql',
+      '--binlog-ignore-db=mysql,information_schema',
       '--sync_binlog=1',
       '--slave-skip-errors=all'
     ]
@@ -43,12 +45,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1121
     command: [
+      '--gtid_mode=on',
+      '--enforce-gtid-consistency=on',
       '--server-id=2',
       '--log-slave-updates=true',
       '--auto_increment_offset=2',
       '--auto_increment_increment=2',
       '--log-bin=mysql-bin',
-      '--binlog-ignore-db=mysql',
+      '--binlog-ignore-db=mysql,information_schema',
       '--sync_binlog=1',
       '--slave-skip-errors=all'
     ]

@@ -22,8 +22,8 @@ services:
     # ]
     environment:
       MYSQL_ROOT_PASSWORD: xxx
-      MYSQL_USER: xxx
-      MYSQL_PASSWORD: xxx
+      # MYSQL_USER: xxx
+      # MYSQL_PASSWORD: xxx
       MYSQL_DATABASE: xxx
       TZ: Asia/Shanghai
     ports:
@@ -46,8 +46,8 @@ services:
       - $HOME/docker/mysql/mysql_1/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: xxx
-      MYSQL_USER: xxx
-      MYSQL_PASSWORD: xxx
+      # MYSQL_USER: xxx
+      # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
     ports:
       - 53307:3306
@@ -69,8 +69,8 @@ services:
       - $HOME/docker/mysql/mysql_2/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: xxx
-      MYSQL_USER: xxx
-      MYSQL_PASSWORD: xxx
+      # MYSQL_USER: xxx
+      # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
     ports:
       - 53308:3306
