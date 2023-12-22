@@ -1,0 +1,54 @@
+# grant select,replication slave,replication client on *.* to 'slave'@'%' identified by "1121";flush privileges;
+# change master to master_host='mysql-master-2',master_port=3306,master_user='slave',master_password='1121',master_log_file='mysql-bin.000001', master_log_pos=0,master_connect_retry=30;start slave;
+# change master to master_host='mysql-master-1',master_port=3306,master_user='slave',master_password='1121',master_log_file='mysql-bin.000001', master_log_pos=0,master_connect_retry=30;start slave;
+
+version: '3.9'
+services:
+  mysql-master-1:
+    platform: linux/amd64
+    image: mysql:5.7
+    container_name: mysql-master-1
+    network_mode: net_common
+    privileged: true
+    user: 501:20
+    # volumes:
+    #   - $HOME/docker/mysql/mysql_master_0/my.cnf:/etc/my.cnf
+    ports:
+      - 53306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1121
+      MYSQL_DATABASE: boot
+    command: [
+      '--server-id=1',
+      '--log-slave-updates=true',
+      '--auto_increment_offset=1',
+      '--auto_increment_increment=2',
+      '--log-bin=mysql-bin',
+      '--binlog-ignore-db=mysql',
+      '--sync_binlog=1',
+      '--slave-skip-errors=all'
+    ]
+
+  mysql-master-2:
+    platform: linux/amd64
+    image: mysql:5.7
+    container_name: mysql-master-2
+    network_mode: net_common
+    privileged: true
+    user: 501:20
+    # volumes:
+    #   - $HOME/docker/mysql/mysql_master_1/my.cnf:/etc/my.cnf
+    ports:
+      - 53307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1121
+    command: [
+      '--server-id=2',
+      '--log-slave-updates=true',
+      '--auto_increment_offset=2',
+      '--auto_increment_increment=2',
+      '--log-bin=mysql-bin',
+      '--binlog-ignore-db=mysql',
+      '--sync_binlog=1',
+      '--slave-skip-errors=all'
+    ]
