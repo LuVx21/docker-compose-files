@@ -1,0 +1,145 @@
+version: '3.9'
+
+# docker run -it -p 6650:6650  -p 8080:8080 --mount source=pulsardata,target=/pulsar/data --mount source=pulsarconf,target=/pulsar/conf apachepulsar/pulsar:3.1.1 bin/pulsar standalone
+
+services:
+  zookeeper:
+    image: apachepulsar/pulsar:${PULSAR_VERSION}
+    container_name: zookeeper
+    restart: on-failure
+    networks:
+      - pulsar
+    volumes:
+      - $HOME/docker/pulsar/data/zookeeper:/pulsar/data/zookeeper
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - PULSAR_MEM=-Xms256m -Xmx256m -XX:MaxDirectMemorySize=256m
+    command: >
+      bash -c "bin/apply-config-from-env.py conf/zookeeper.conf && \
+             bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
+             exec bin/pulsar zookeeper"
+    healthcheck:
+      test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  pulsar-init:
+    image: apachepulsar/pulsar:${PULSAR_VERSION}
+    container_name: pulsar-init
+    hostname: pulsar-init
+    networks:
+      - pulsar
+    command: >
+      bin/pulsar initialize-cluster-metadata \
+               --cluster cluster-a \
+               --zookeeper zookeeper:2181 \
+               --configuration-store zookeeper:2181 \
+               --web-service-url http://broker:8080 \
+               --broker-service-url pulsar://broker:6650
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+  bookie:
+    image: apachepulsar/pulsar:${PULSAR_VERSION}
+    container_name: bookie
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - clusterName=cluster-a
+      - zkServers=zookeeper:2181
+      - metadataServiceUri=metadata-store:zk:zookeeper:2181
+      # otherwise every time we run docker compose uo or down we fail to start due to Cookie
+      - advertisedAddress=bookie
+      - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      pulsar-init:
+        condition: service_completed_successfully
+    volumes:
+      - $HOME/docker/pulsar/data/bookkeeper:/pulsar/data/bookkeeper
+    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
+
+  broker-1:
+    image: apachepulsar/pulsar:${PULSAR_VERSION}
+    container_name: broker-1
+    hostname: broker-1
+    restart: on-failure
+    networks:
+      - pulsar
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-a
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - internalListenerName=internal
+      - advertisedAddress=broker-1
+      - advertisedListeners=internal:pulsar://127.0.0.1:6650
+      - PULSAR_MEM=-Xms128m -Xmx2096m -XX:MaxDirectMemorySize=256m
+      - brokerServicePort=6650
+      - webServicePort=8080
+      # Load Manager. Here uses the extensible load balancer, sets the unloading strategy to TransferShedder, and enables debug mode.
+      # - loadManagerClassName=org.apache.pulsar.broker.loadbalance.extensions.ExtensibleLoadManagerImpl
+      # - loadBalancerLoadSheddingStrategy=org.apache.pulsar.broker.loadbalance.extensions.scheduler.TransferShedder
+      # - PULSAR_PREFIX_loadBalancerDebugModeEnabled=true
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      bookie:
+        condition: service_started
+    ports:
+      - 6650:6650
+      - 8080:8080
+    command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+
+  # broker-2:
+  #   image: apachepulsar/pulsar:${PULSAR_VERSION}
+  #   container_name: broker-2
+  #   hostname: broker-2
+  #   restart: on-failure
+  #   networks:
+  #     - pulsar
+  #   environment:
+  #     - metadataStoreUrl=zk:zookeeper:2181
+  #     - zookeeperServers=zookeeper:2181
+  #     - clusterName=cluster-a
+  #     - managedLedgerDefaultEnsembleSize=1
+  #     - managedLedgerDefaultWriteQuorum=1
+  #     - managedLedgerDefaultAckQuorum=1
+  #     - internalListenerName=internal
+  #     - advertisedAddress=broker-2
+  #     - advertisedListeners=internal:pulsar://127.0.0.1:6650
+  #     - PULSAR_MEM=-Xms128m -Xmx2096m -XX:MaxDirectMemorySize=256m
+  #     - brokerServicePort=6650
+  #     - webServicePort=8080
+  #     # Load Manager. Here uses the extensible load balancer, sets the unloading strategy to TransferShedder, and enables debug mode.
+  #     # - loadManagerClassName=org.apache.pulsar.broker.loadbalance.extensions.ExtensibleLoadManagerImpl
+  #     # - loadBalancerLoadSheddingStrategy=org.apache.pulsar.broker.loadbalance.extensions.scheduler.TransferShedder
+  #     # - PULSAR_PREFIX_loadBalancerDebugModeEnabled=true
+  #   depends_on:
+  #     zookeeper:
+  #       condition: service_healthy
+  #     bookie:
+  #       condition: service_started
+  #   command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+
+  pulsar-manager:
+    platform: linux/amd64
+    image: apachepulsar/pulsar-manager:latest
+    container_name: pulsar-manager
+    networks:
+      - pulsar
+    ports:
+      - 9527:9527
+      - 7750:7750
+    environment:
+      - SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties
+
+networks:
+  pulsar:
+    driver: bridge
