@@ -4,7 +4,7 @@ services:
   kafka_0:
     image: bitnami/kafka:${KAFKA_VERSION}
     container_name: kafka_0
-    network_mode: net_kafka
+    network_mode: net_common
     user: root
     ports:
       - 19092:9092
@@ -36,7 +36,7 @@ services:
   kafka_1:
     image: bitnami/kafka:${KAFKA_VERSION}
     container_name: kafka_1
-    network_mode: net_kafka
+    network_mode: net_common
     user: root
     ports:
       - 29092:9092
@@ -62,7 +62,7 @@ services:
   kafka_2:
     image: bitnami/kafka:${KAFKA_VERSION}
     container_name: kafka_2
-    network_mode: net_kafka
+    network_mode: net_common
     user: root
     ports:
       - 39092:9092
@@ -88,7 +88,7 @@ services:
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
-    network_mode: net_kafka
+    network_mode: net_common
     # restart: always
     ports:
       - 8080:8080
@@ -102,7 +102,7 @@ services:
     platform: linux/amd64
     image: wdkang/kafka-console-ui
     container_name: kafka-console-ui
-    network_mode: net_kafka
+    network_mode: net_common
     ports:
       - 7766:7766
     volumes:
@@ -114,7 +114,7 @@ services:
     platform: linux/amd64
     image: obsidiandynamics/kafdrop
     container_name: kafdrop
-    network_mode: net_kafka
+    network_mode: net_common
     ports:
       - "9000:9000"
     environment:

@@ -9,6 +9,8 @@ services:
     platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: rmqnamesrv
+    networks:
+      - net_common
     ports:
       - 9876:9876
     volumes:
@@ -19,6 +21,8 @@ services:
     platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: broker_0
+    networks:
+      - net_common
     links:
       - namesrv
     ports:
@@ -37,6 +41,8 @@ services:
     platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: broker_1
+    networks:
+      - net_common
     links:
       - namesrv
     ports:
@@ -55,9 +61,15 @@ services:
     platform: linux/amd64
     image: apacherocketmq/rocketmq-dashboard:latest
     container_name: rocketmq-dashboard
+    networks:
+      - net_common
     links:
       - namesrv
     ports:
       - 8080:8080
     environment:
       - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
+
+networks:
+  net_common:
+    external: true

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  # zk:
+  #   image: zookeeper
+  #   container_name: zk
+  #   networks:
+  #     - net_common
+  #   ports:
+  #     - 2181:2181
+  dubbo-admin:
+    platform: linux/amd64
+    image: apache/dubbo-admin:0.6.0
+    container_name: dubbo-admin
+    networks:
+      - net_common
+    # depends_on:
+    #   - zk
+    ports:
+      - 38080:38080
+    environment:
+      - admin.registry.address=nacos://nacos1:8848
+      - admin.config-center=nacos://nacos1:8848
+      - admin.metadata-report.address=nacos://nacos1:8848
+      - admin.root.user.name=root
+      - admin.root.user.password=root
+
+networks:
+  net_common:
+    external: true
