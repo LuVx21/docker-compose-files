@@ -20,6 +20,14 @@
   ]
 }
 ```
+## 命令
+
+```bash
+# 查看某个网络中使用的容器name列表
+docker network inspect net_common --format='{{ range $key, $value := .Containers }}{{ $value.Name }} {{ end }}'
+docker network inspect net_common | jq '.[0].Containers.[]' | jq '.IPv4Address+":"+.Name'
+```
+
 
 ## docker-compose
 
