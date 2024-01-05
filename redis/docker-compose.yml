@@ -4,14 +4,15 @@
 version: '3.9'
 
 services:
-  redis:
-    image: redis:${REDIS_VERSION}
-    container_name: redis
+  redis-stack-server:
+    image: redis/redis-stack-server:latest
+    container_name: redis-stack-server
     # restart: always
     volumes:
       - $HOME/docker/redis/redis.conf:/etc/redis/redis.conf:ro
       - $HOME/docker/redis/data:/data
       - $HOME/docker/redis/logs:/logs
-    command: redis-server /etc/redis/redis.conf
+    # command: redis-server /etc/redis/redis.conf
     ports:
       - 6379:6379
+      - 8001:8001

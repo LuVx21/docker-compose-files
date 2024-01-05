@@ -14,12 +14,23 @@
 ```json
 {
   "registry-mirrors": [
-    "https://wfe8hnnf.mirror.aliyuncs.com",
     "https://mirror.baidubce.com",
-    "https://hub-mirror.c.163.com"
+    "https://dockerproxy.com",
+    "https://docker.m.daocloud.io",
+    "https://docker.nju.edu.cn",
+    "https://mirror.iscas.ac.cn",
+    "https://docker.mirrors.sjtug.sjtu.edu.cn"
   ]
 }
 ```
+
+> https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
+
+## 镜像
+
+eclipse-temurin:21-jdk
+eclipse-temurin:21-jre
+
 ## 命令
 
 ```bash
@@ -62,7 +73,6 @@ networks:
 
 ```bash
 docker run -itd --name showdoc --user=root --privileged=true -p 80:80 -v ~/showdoc_data/html:/var/www/html/ star7th/showdoc
-docker run -itd --name neo4j --publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data neo4j
 
 docker run -itd --name code-server \
   -p 8080:8080 \

@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  neo4j:
+    image: neo4j
+    container_name: neo4j
+    user: 501:20
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - $HOME/docker/neo4j/data:/data
+    environment:
+      - NEO4J_dbms_security_auth__minimum__password__length=4
+      - NEO4J_AUTH=neo4j/1121
