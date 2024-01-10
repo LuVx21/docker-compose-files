@@ -2,30 +2,38 @@ version: '3.7'
 
 services:
   mongo:
-    image: mongo:4
+    image: mongo:7
     container_name: mongo
-    # restart: always
+    networks:
+      - net_common
     ports:
       - 27017:27017
     volumes:
-      - $HOME/docker/mongo/etc/localtime:/etc/localtime:ro
-      - $HOME/docker/mongo/db:/data/db
+      # - $HOME/docker/mongo/mongo/etc/localtime:/etc/localtime:ro
+      - $HOME/docker/mongo/mongo/data/db:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root123
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1121
+
   mongo-express:
-    links:
-      - mongo
-    image: mongo-express
+    image: mongo-express:1
     container_name: mongo-express
-    # restart: always
+    networks:
+      - net_common
     ports:
       - 8081:8081
     volumes:
-      - $HOME/docker/mongo/express/etc/localtime:/etc/localtime:ro
-      - $HOME/docker/mongo/express/data/db:/data/db
+      # - $HOME/docker/mongo/mongo-express/etc/localtime:/etc/localtime:ro
+      - $HOME/docker/mongo/mongo-express/data/db:/data/db
+    depends_on:
+      - mongo
     environment:
-      # ME_CONFIG_BASICAUTH_USERNAME: admin
-      # ME_CONFIG_BASICAUTH_PASSWORD: admin
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: root123
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 1121
+
+networks:
+  net_common:
+    external: true
