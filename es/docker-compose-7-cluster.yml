@@ -1,12 +1,14 @@
+# 来源: https://github.com/elastic/elasticsearch/blob/v${STACK_VERSION_V7}/docs/reference/setup/install/docker-compose.yml
+
 version: '3.9'
 
 services:
   es01:
-    image: elasticsearch:7.17.16
+    image: elasticsearch:${STACK_VERSION_V7}
     container_name: es01
     environment:
       - node.name=es01
-      - cluster.name=es-docker-cluster
+      - cluster.name=${CLUSTER_NAME}
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
@@ -20,14 +22,14 @@ services:
     ports:
       - 9200:9200
     networks:
-      - elastic
+      - net_common
 
   es02:
-    image: elasticsearch:7.17.16
+    image: elasticsearch:${STACK_VERSION_V7}
     container_name: es02
     environment:
       - node.name=es02
-      - cluster.name=es-docker-cluster
+      - cluster.name=${CLUSTER_NAME}
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
@@ -39,14 +41,14 @@ services:
     volumes:
       - data02:/usr/share/elasticsearch/data
     networks:
-      - elastic
+      - net_common
 
   es03:
-    image: elasticsearch:7.17.16
+    image: elasticsearch:${STACK_VERSION_V7}
     container_name: es03
     environment:
       - node.name=es03
-      - cluster.name=es-docker-cluster
+      - cluster.name=${CLUSTER_NAME}
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
@@ -58,7 +60,7 @@ services:
     volumes:
       - data03:/usr/share/elasticsearch/data
     networks:
-      - elastic
+      - net_common
 
 
 volumes:
@@ -70,5 +72,5 @@ volumes:
     driver: local
 
 networks:
-  elastic:
-    driver: bridge
+  net_common:
+    external: true

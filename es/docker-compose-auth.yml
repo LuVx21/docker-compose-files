@@ -237,3 +237,7 @@ volumes:
     driver: local
   kibana_data:
     driver: local
+
+networks:
+  net_common:
+    external: true

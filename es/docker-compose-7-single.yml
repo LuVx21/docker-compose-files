@@ -6,10 +6,11 @@ version: '3'
 
 services:
   elasticsearch:
-    image: elasticsearch:${STACK_VERSION}
+    image: elasticsearch:${STACK_VERSION_V7}
     container_name: es7
     # restart: always
-    network_mode: "bridge"
+    networks:
+      - net_common
     ports:
       - 9200:9200
       - 9300:9300
@@ -18,7 +19,7 @@ services:
       - $HOME/docker/es7/plugins:/usr/share/elasticsearch/plugins # 插件文件挂载
       - $HOME/docker/es7/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - cluster.name=docker-cluster
+      - cluster.name=${CLUSTER_NAME}
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx1024m" # 设置使用jvm内存大小
       - discovery.type=single-node # 以单一节点模式启动
@@ -31,10 +32,11 @@ services:
         hard: 65536
 
   kibana:
-    image: kibana:${STACK_VERSION}
+    image: kibana:${STACK_VERSION_V7}
     container_name: kibana7
     # restart: always
-    network_mode: "bridge"
+    networks:
+      - net_common
     ports:
       - 5601:5601
     volumes:
@@ -45,10 +47,11 @@ services:
       - elasticsearch:es # 可以用es这个域名访问elasticsearch服务
 
   logstash:
-    image: logstash:${STACK_VERSION}
+    image: logstash:${STACK_VERSION_V7}
     container_name: logstash7
     # restart: always
-    network_mode: "bridge"
+    networks:
+      - net_common
     ports:
       - 4560:4560
       - 5044:5044
@@ -64,3 +67,8 @@ services:
       - elasticsearch:es # 可以用es这个域名访问elasticsearch服务
     environment:
       - TZ=Asia/Shanghai
+
+
+networks:
+  net_common:
+    external: true
