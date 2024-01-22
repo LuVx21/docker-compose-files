@@ -4,9 +4,17 @@ services:
   postgresql-master:
     image: postgres:latest
     container_name: postgresql-master
-    # volumes:
-    #   - $HOME/docker/postgresql/logs:/logs
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/postgresql/data:/var/lib/postgresql/data
     environment:
+      POSTGRES_DB: xxx
+      POSTGRES_USER: xxx
       POSTGRES_PASSWORD: xxx
     ports:
       - 5432:5432
+
+networks:
+  net_common:
+    external: true

@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  freshrss-app:
+    image: freshrss/freshrss:latest
+    container_name: freshrss-app
+    hostname: freshrss-app
+    # restart: always
+    ports:
+      - "39954:80"                   # 映射端口
+    volumes:
+      - $HOME/docker/freshrss/data:/var/www/FreshRSS/data
+      - $HOME/docker/freshrss/extensions:/var/www/FreshRSS/extensions
+    environment:
+      CRON_MIN: '*/45'             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
+      TZ: Asia/Shanghai            # 时区
