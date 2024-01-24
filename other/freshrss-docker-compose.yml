@@ -12,5 +12,5 @@ services:
       - $HOME/docker/freshrss/data:/var/www/FreshRSS/data
       - $HOME/docker/freshrss/extensions:/var/www/FreshRSS/extensions
     environment:
-      CRON_MIN: '*/45'             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
+      CRON_MIN: '*/20'             # RSS 刷新周期，单位为分钟，*/45 表示每 45 分钟刷新一次
       TZ: Asia/Shanghai            # 时区
