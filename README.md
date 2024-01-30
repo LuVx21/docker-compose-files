@@ -195,3 +195,11 @@ docker run -d --name mysql \
 -e MYSQL_ROOT_PASSWORD=1121 \
 mysql:5.7
 ```
+
+```bash
+docker run -itd --name opensumi \
+-p 8080:8000 \
+ghcr.io/opensumi/opensumi-web:latest
+```
+
+
