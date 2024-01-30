@@ -2,9 +2,10 @@ version: '3.9'
 
 services:
   redisMaster:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-master
-    network_mode: net_common
+    networks:
+      - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - 16379:16379
@@ -16,9 +17,10 @@ services:
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
 
   redisSlave1:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-slave-1
-    network_mode: net_common
+    networks:
+      - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
     depends_on:
       - redisMaster
@@ -32,9 +34,10 @@ services:
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
 
   redisSlave2:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-slave-2
-    network_mode: net_common
+    networks:
+      - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
     depends_on:
       - redisMaster
@@ -48,9 +51,10 @@ services:
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
 
   sentinel0:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-sentinel-0
-    network_mode: net_common
+    networks:
+      - net_common
     ports:
       - 16382:16382
     command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
@@ -66,9 +70,10 @@ services:
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
 
   sentinel1:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-sentinel-1
-    network_mode: net_common
+    networks:
+      - net_common
     ports:
       - 16383:16383
     command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
@@ -84,9 +89,10 @@ services:
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
 
   sentinel2:
-    image: redis:${REDIS_VERSION}
+    image: ${IMAGE}:${REDIS_VERSION}
     container_name: redis-sentinel-2
-    network_mode: net_common
+    networks:
+      - net_common
     ports:
       - 16384:16384
     command: redis-sentinel /opt/redis/sentinel/sentinel.conf --sentinel
@@ -100,3 +106,7 @@ services:
       - $HOME/docker/redis_sentinel/sentinel_2/logs:/logs
       - "/etc/localtime:/etc/localtime"
       - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"
+
+networks:
+  net_common:
+    external: true

@@ -4,7 +4,8 @@ services:
   redis-master:
     image: redis:${REDIS_VERSION}
     container_name: redis-master
-    network_mode: net_common
+    networks:
+      - net_common
     ports:
       - 6379:6379
     volumes:
@@ -14,7 +15,8 @@ services:
   redis-slave-1:
     image: redis:${REDIS_VERSION}
     container_name: redis-slave-1
-    network_mode: net_common
+    networks:
+      - net_common
     depends_on:
       - redis-master
     ports:
@@ -24,7 +26,8 @@ services:
   redis-slave-2:
     image: redis:${REDIS_VERSION}
     container_name: redis-slave-2
-    network_mode: net_common
+    networks:
+      - net_common
     depends_on:
       - redis-master
     ports:
@@ -34,3 +37,7 @@ services:
 volumes:
   replicaset_data:
     driver: local
+
+networks:
+  net_common:
+    external: true

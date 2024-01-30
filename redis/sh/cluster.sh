@@ -25,23 +25,28 @@ appendonly yes
 dir /data
 # 日志文件, 默认输出到控制台
 logfile /logs/nodes.log
+
 #启动集群模式
 cluster-enabled yes
 # 集群配置信息文件名, 记录了每个节点的地址、角色(master/slave)、slot等信息, 由redis自己生成, 位于数据目录下
 cluster-config-file nodes.conf
 cluster-node-timeout 15000
-cluster-announce-ip mini.rx
+# 设置network_mode: "host"时使用
+# cluster-announce-ip mini.rx
 cluster-announce-port ${port}
 # docker所在的宿主机总线映射端口
 cluster-announce-bus-port ${bus_port}
 bind 0.0.0.0
 
+slave-read-only yes
+
 EOF
 done
 
-docker compose -p redis-cluster -f ../docker-compose-cluster.yml up -d && \
-docker exec -it redis-cluster-0 redis-cli --cluster create mini.rx:16379 mini.rx:16380 mini.rx:16381 mini.rx:16382 mini.rx:16383 mini.rx:16384 --cluster-replicas 1 -a "1121"
+docker compose -p redis-cluster -f ../docker-compose-cluster.yml up -d
 
-# docker exec -it redis-cluster-0 redis-cli -h mini.rx -p 16379 -a 1121 cluster info
-# docker exec -it redis-cluster-0 redis-cli -h mini.rx -p 16379 -a 1121 cluster nodes
-# docker exec -it redis-cluster-0 redis-cli -h mini.rx -p 16379 -a 1121 --cluster check mini.rx:16384
+# docker exec -it redis-cluster-0 redis-cli --cluster create redis-cluster-0:16379 redis-cluster-1:16380 redis-cluster-2:16381 redis-cluster-3:16382 redis-cluster-4:16383 redis-cluster-5:16384 --cluster-replicas 1 -a "1121" --cluster-yes
+
+# docker exec -it redis-cluster-0 redis-cli -h redis-cluster-0 -p 16379 -a 1121 cluster info
+# docker exec -it redis-cluster-0 redis-cli -h redis-cluster-0 -p 16379 -a 1121 cluster nodes
+# docker exec -it redis-cluster-0 redis-cli -h redis-cluster-0 -p 16379 -a 1121 --cluster check redis-cluster-5:16384

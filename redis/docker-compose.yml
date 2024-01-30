@@ -23,10 +23,10 @@ services:
     platform: linux/amd64
     image: luvx/redisinsight:latest
     container_name: RedisInsight
-    networks:
-      - net_common
     ports:
       - 8001:8001
+    networks:
+      - net_common
     volumes:
       - $HOME/docker/RedisInsigh:/data
 
