@@ -12,7 +12,7 @@ for id in `seq 0 2`; do \
   let port=16379+$((id))
 
   if [ "$id" -gt "0" ]; then
-    replicaof='replicaof redis-master 16379'
+    replicaof='replicaof redis-sentinel-master 16379'
   fi
 
   cat > $REDIS/conf/redis.conf <<- EOF
@@ -57,7 +57,7 @@ pidfile /var/run/redis-sentinel-${id}.pid
 dir "/data"
 logfile "/logs/nodes.log"
 sentinel resolve-hostnames yes
-sentinel monitor mymaster redis-master 16379 2
+sentinel monitor mymaster redis-sentinel-master 16379 2
 sentinel auth-pass mymaster "1121"
 # 指定多少毫秒之后 主节点没有应答哨兵sentinel 此时 哨兵主观上认为主节点下线 默认30秒
 sentinel down-after-milliseconds mymaster 30000
@@ -80,5 +80,5 @@ done
 # ==========================================
 
 docker compose -p redis-sentinel -f ../docker-compose-sentinel.yml up -d && \
-docker exec -it redis-master redis-cli -p 16379 -a "1121" info Replication && \
+docker exec -it redis-sentinel-master redis-cli -p 16379 -a "1121" info Replication && \
 docker exec -it redis-sentinel-0 redis-cli -p 16382 info Sentinel

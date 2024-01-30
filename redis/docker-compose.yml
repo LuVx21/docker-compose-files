@@ -5,8 +5,10 @@ version: '3.9'
 
 services:
   redis-stack-server:
-    image: redis/redis-stack-server:latest
+    image: ${STACK_IMAGE}:${REDIS_STACK_VERSION}
     container_name: redis-stack-server
+    ports:
+      - 6379:6379
     networks:
       - net_common
     # restart: always
@@ -15,9 +17,6 @@ services:
       - $HOME/docker/redis/data:/data
       - $HOME/docker/redis/logs:/logs
     # command: redis-server /etc/redis/redis.conf
-    ports:
-      - 6379:6379
-      - 8001:8001
 
   RedisInsight:
     platform: linux/amd64
@@ -29,6 +28,8 @@ services:
       - net_common
     volumes:
       - $HOME/docker/RedisInsigh:/data
+    # environment:
+    #   RI_CLIENTS_MAX_RETRIES_PER_REQUEST: 1
 
 networks:
   net_common:

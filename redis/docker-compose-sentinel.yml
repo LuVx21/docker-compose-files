@@ -3,7 +3,7 @@ version: '3.9'
 services:
   redisMaster:
     image: ${IMAGE}:${REDIS_VERSION}
-    container_name: redis-master
+    container_name: redis-sentinel-master
     networks:
       - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -18,7 +18,7 @@ services:
 
   redisSlave1:
     image: ${IMAGE}:${REDIS_VERSION}
-    container_name: redis-slave-1
+    container_name: redis-sentinel-slave-1
     networks:
       - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -35,7 +35,7 @@ services:
 
   redisSlave2:
     image: ${IMAGE}:${REDIS_VERSION}
-    container_name: redis-slave-2
+    container_name: redis-sentinel-slave-2
     networks:
       - net_common
     command: redis-server /usr/local/etc/redis/redis.conf
