@@ -4,7 +4,8 @@ services:
   nacos1:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos1
-    network_mode: net_common
+    networks:
+      - net_common
     hostname: nacos1
     ports:
       - "7848:7848"
@@ -17,7 +18,8 @@ services:
   nacos2:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos2
-    network_mode: net_common
+    networks:
+      - net_common
     hostname: nacos2
     ports:
       - "17848:7848"
@@ -30,7 +32,8 @@ services:
   nacos3:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos3
-    network_mode: net_common
+    networks:
+      - net_common
     hostname: nacos3
     ports:
       - "27848:7848"
@@ -39,3 +42,7 @@ services:
       - "29849:9849"
     env_file:
       - ./env/nacos.env
+
+networks:
+  net_common:
+    external: true

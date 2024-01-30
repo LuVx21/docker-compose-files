@@ -4,7 +4,8 @@ services:
     platform: linux/amd64
     image: mysql:5.7
     container_name: mysql-master
-    network_mode: net_common
+    networks:
+      - net_common
     privileged: true
     user: 501:20
     volumes:
@@ -35,7 +36,8 @@ services:
     container_name: mysql-slave-1
     depends_on:
       - mysql-master
-    network_mode: net_common
+    networks:
+      - net_common
     privileged: true
     user: 501:20
     volumes:
@@ -58,7 +60,8 @@ services:
     container_name: mysql-slave-2
     depends_on:
       - mysql-slave-1
-    network_mode: net_common
+    networks:
+      - net_common
     privileged: true
     user: 501:20
     volumes:
@@ -74,3 +77,7 @@ services:
       TZ: Asia/Shanghai
     ports:
       - 53308:3306
+
+networks:
+  net_common:
+    external: true
