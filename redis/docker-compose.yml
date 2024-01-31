@@ -19,11 +19,10 @@ services:
     # command: redis-server /etc/redis/redis.conf
 
   RedisInsight:
-    platform: linux/amd64
-    image: luvx/redisinsight:latest
+    image: redis/redisinsight:latest
     container_name: RedisInsight
     ports:
-      - 8001:8001
+      - 5540:5540
     networks:
       - net_common
     volumes:
