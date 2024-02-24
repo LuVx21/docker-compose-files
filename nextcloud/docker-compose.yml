@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    # ports:
+    #   - 8000:80
+    networks:
+      - net_common
+    # volumes:
+    #   - /data/nextcloud:/var/www/html
+
+networks:
+  net_common:
+    external: true
