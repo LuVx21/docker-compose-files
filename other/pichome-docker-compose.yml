@@ -8,4 +8,4 @@ services:
     ports:
       - 80:80
     volumes:
-      - "$HOME/docker/pichome/library:/var/www/html/library"
+      - "$HOME/docker/pichome:/var/www/html"
