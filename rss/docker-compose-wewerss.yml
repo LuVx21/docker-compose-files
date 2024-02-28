@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  wewe-rss-server:
+    image: cooderl/wewe-rss-server:latest
+    container_name: wewe-rss-server
+    ports:
+      - 4000:4000
+    networks:
+      - net_common
+    environment:
+      - DATABASE_URL=mysql://root:123456@db:3306/wewe-rss?schema=public&connect_timeout=30&pool_timeout=30&socket_timeout=30
+      - AUTH_CODE=123567 # 服务接口请求授权码
+      - FEED_MODE=fulltext # 自动提取全文内容
+      - MAX_REQUEST_PER_MINUTE=60 # 服务接口请求限制，每分钟请求次数
+      - SERVER_ORIGIN_URL=http://localhost:4000 # 外网访问时，需设置为服务器的公网 IP 或者域名地址
+
+  wewe-rss-web:
+    image: cooderl/wewe-rss-web:latest
+    container_name: wewe-rss-web
+    ports:
+      - 3000:3000
+    networks:
+      - net_common
+    environment:
+      - NEXT_PUBLIC_SERVER_ORIGIN_URL=http://localhost:4000 # 同 SERVER_ORIGIN_URL
+      # - BASE_PATH='' # 路由前缀，在配置nginx路由时可以使用
+
+networks:
+  net_common:
+    external: true
