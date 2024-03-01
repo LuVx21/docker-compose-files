@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+  mongo_1:
+    image: mongo:7
+    container_name: mongo_1
+    ports:
+      - 37017:27017
+    networks:
+      - net_common
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1121
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $HOME/docker/mongo/mongo_1/data:/data/db
+      - $HOME/docker/mongo/mongodb.key:/data/mongodb.key
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /data/mongodb.key
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+
+  mongo_2:
+    image: mongo:7
+    container_name: mongo_2
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $HOME/docker/mongo/mongo_2/data:/data/db
+      - $HOME/docker/mongo/mongodb.key:/data/mongodb.key
+    ports:
+      - 37018:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1121
+    networks:
+      - net_common
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /data/mongodb.key
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+
+  mongo_3:
+    image: mongo:7
+    container_name: mongo_3
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - $HOME/docker/mongo/mongo_3/data:/data/db
+      - $HOME/docker/mongo/mongodb.key:/data/mongodb.key
+    ports:
+      - 37019:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: 1121
+    networks:
+      - net_common
+    command: mongod --replSet rs0 --keyFile /data/mongodb.key
+    entrypoint:
+      - bash
+      - -c
+      - |
+        chmod 400 /data/mongodb.key
+        chown 999:999 /data/mongodb.key
+        exec docker-entrypoint.sh $$@
+
+networks:
+  net_common:
+    external: true
