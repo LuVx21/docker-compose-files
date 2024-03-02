@@ -44,9 +44,9 @@ services:
       #   ipv4_address: 192.168.31.214
     command: ["mongod", "--shardsvr", "--replSet", "RS1", "--dbpath", "/data/db", "--bind_ip_all"]
 
-  shard_mongos:
+  shard_router:
     image: mongo:7
-    container_name: shard_mongos
+    container_name: shard_router
     ports:
       - 27017:27017
     command: ["mongos", "--configdb", "configRS/shard_config:27019", "--bind_ip_all"]
