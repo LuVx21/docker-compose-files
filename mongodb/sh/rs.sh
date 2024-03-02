@@ -7,7 +7,7 @@ chmod 400 mongodb.key
 # mv mongodb.key $HOME/docker/mongo/mongo_{1,2,3}
 mv mongodb.key $HOME/docker/mongo
 
-docker exec -it mongo_1 mongosh "mongodb://admin:1121@localhost:27017/admin"
+docker exec -it rs_mongo_1 mongosh "mongodb://admin:1121@localhost:27017/admin"
 
 # rs.initiate({
 #     _id: "rs0",

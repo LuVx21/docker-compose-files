@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  mongo_1:
+  rs_mongo_1:
     image: mongo:7
-    container_name: mongo_1
+    container_name: rs_mongo_1
     ports:
       - 37017:27017
     networks:
@@ -24,9 +24,9 @@ services:
         chown 999:999 /data/mongodb.key
         exec docker-entrypoint.sh $$@
 
-  mongo_2:
+  rs_mongo_2:
     image: mongo:7
-    container_name: mongo_2
+    container_name: rs_mongo_2
     volumes:
       - /etc/localtime:/etc/localtime
       - $HOME/docker/mongo/mongo_2/data:/data/db
@@ -47,9 +47,9 @@ services:
         chown 999:999 /data/mongodb.key
         exec docker-entrypoint.sh $$@
 
-  mongo_3:
+  rs_mongo_3:
     image: mongo:7
-    container_name: mongo_3
+    container_name: rs_mongo_3
     volumes:
       - /etc/localtime:/etc/localtime
       - $HOME/docker/mongo/mongo_3/data:/data/db
