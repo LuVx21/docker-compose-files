@@ -1,61 +1,71 @@
 version: "3.9"
 
 services:
-  shard_config:
+  shard_config_1:
     image: mongo:7
-    container_name: shard_config
+    container_name: shard_config_1
     command: ["mongod", "--configsvr", "--replSet", "configRS", "--dbpath", "/data/configdb", "--bind_ip_all"]
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.201
-
-  shard_rs00:
+  shard_config_2:
     image: mongo:7
-    container_name: shard_rs00
+    container_name: shard_config_2
+    command: ["mongod", "--configsvr", "--replSet", "configRS", "--dbpath", "/data/configdb", "--bind_ip_all"]
+    networks:
+      - net_common
+      # shard_cluster:
+      #   ipv4_address: 192.168.31.202
+
+
+  shard_00_00:
+    image: mongo:7
+    container_name: shard_00_00
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.211
-    command: ["mongod", "--shardsvr", "--replSet", "RS0", "--dbpath", "/data/db", "--bind_ip_all"]
-  shard_rs01:
+    command: ["mongod", "--shardsvr", "--replSet", "shard_00", "--dbpath", "/data/db", "--bind_ip_all"]
+  shard_00_01:
     image: mongo:7
-    container_name: shard_rs01
+    container_name: shard_00_01
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.212
-    command: ["mongod", "--shardsvr", "--replSet", "RS0", "--dbpath", "/data/db", "--bind_ip_all"]
+    command: ["mongod", "--shardsvr", "--replSet", "shard_00", "--dbpath", "/data/db", "--bind_ip_all"]
 
-  shard_rs10:
+  shard_01_00:
     image: mongo:7
-    container_name: shard_rs10
+    container_name: shard_01_00
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.213
-    command: ["mongod", "--shardsvr", "--replSet", "RS1", "--dbpath", "/data/db", "--bind_ip_all"]
-  shard_rs11:
+    command: ["mongod", "--shardsvr", "--replSet", "shard_01", "--dbpath", "/data/db", "--bind_ip_all"]
+  shard_01_01:
     image: mongo:7
-    container_name: shard_rs11
+    container_name: shard_01_01
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.214
-    command: ["mongod", "--shardsvr", "--replSet", "RS1", "--dbpath", "/data/db", "--bind_ip_all"]
+    command: ["mongod", "--shardsvr", "--replSet", "shard_01", "--dbpath", "/data/db", "--bind_ip_all"]
 
   shard_router:
     image: mongo:7
     container_name: shard_router
     ports:
       - 27017:27017
-    command: ["mongos", "--configdb", "configRS/shard_config:27019", "--bind_ip_all"]
+    command: ["mongos", "--configdb", "configRS/shard_config_1:27019,shard_config_2:27019", "--bind_ip_all"]
     networks:
       - net_common
       # shard_cluster:
       #   ipv4_address: 192.168.31.221
     depends_on:
-      - shard_config
+      - shard_config_1
+      - shard_config_2
 
 # networks:
 #   shard_cluster:
