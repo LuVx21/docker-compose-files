@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  debezium-connect:
+    image: quay.io/debezium/connect:${DEBEZIUM_VERSION}
+    container_name: debezium-connect
+    ports:
+      - "8083:8083"
+    networks:
+      - net_common
+    environment:
+      - BOOTSTRAP_SERVERS=kafka_0:9092,kafka_1:9092,kafka_2:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - ENABLE_DEBEZIUM_KC_REST_EXTENSION=true
+      - ENABLE_DEBEZIUM_SCRIPTING=true
+      - CONNECT_REST_EXTENSION_CLASSES=io.debezium.kcrestextension.DebeziumConnectRestExtension
+
+  debezium-ui:
+    platform: linux/amd64
+    container_name: debezium-ui
+    image: quay.io/debezium/debezium-ui:${DEBEZIUM_VERSION}
+    ports:
+      - "8090:8080"
+    networks:
+      - net_common
+    environment:
+      - KAFKA_CONNECT_URIS=http://debezium-connect:8083
+    depends_on:
+      - debezium-connect
+
+  # each instance of Debezium Server runs exactly one connector
+  debezium-server-mysql:
+    image: quay.io/debezium/server:${DEBEZIUM_VERSION}
+    container_name: debezium-server-mysql
+    # ports:
+    #   - "8080:8080"
+    networks:
+      - net_common
+    volumes:
+      - ./config-mysql:/debezium/conf
+
+networks:
+  net_common:
+    external: true

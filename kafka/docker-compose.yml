@@ -24,7 +24,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M # 设置broker最大内存, 和初始内存
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false # 不允许自动创建主题
       ### broker配置
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_0:9092 # mini.rx:19092 # 定义外网访问地址（宿主机ip地址和端口）
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://mini.rx:19092 # mini.rx:19092 # 定义外网访问地址（宿主机ip地址和端口）
       - KAFKA_BROKER_ID=0 # broker.id, 必须唯一
       # KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       # Clustering
@@ -56,7 +56,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
 
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_1:9092 # mini.rx:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://mini.rx:29092 # mini.rx:29092
       - KAFKA_BROKER_ID=1
     volumes:
       - $HOME/docker/kafka_v3/kafka_1/kafka/kraft:/bitnami/kafka
@@ -83,7 +83,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
 
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_2:9092 # mini.rx:39092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://mini.rx:39092 # mini.rx:39092
       - KAFKA_BROKER_ID=2
     volumes:
       - $HOME/docker/kafka_v3/kafka_2/kafka/kraft:/bitnami/kafka
