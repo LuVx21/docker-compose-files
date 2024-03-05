@@ -1,0 +1,59 @@
+version: '3'
+services:
+  canal-server:
+    image: canal/canal-server:latest
+    container_name: canal-server
+    ports:
+      - 11111:11111
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+      - canal.auto.scan=true
+      - canal.admin.manager=canal-admin:8089
+      - canal.admin.port=11110
+      - canal.admin.user=admin
+      - canal.admin.passwd=6BB4837EB74329105EE4568DDA7DC67ED2CA2AD9
+      # - canal.admin.register.cluster=cluster_01
+      # - canal.admin.register.auto = true
+      # 实例相关,推荐在admin中配置
+      - canal.destinations=default_instance
+      # - canal.instance.connectionCharset=UTF-8
+      - canal.instance.mysql.slaveId=222
+      - canal.instance.master.address=localhost:3306
+      - canal.instance.dbUsername=canal
+      - canal.instance.dbPassword=canal
+      # 监听的正则表达式过滤,多个用英文逗号隔开",",例如:dbname.tablename1,dbname.tablename2
+      # 全库: .*\\..*; 指定库下的所有表: canal\\..*; 指定库下的指定表:canal\\.canal,test\\.test
+      - canal.instance.filter.regex=boot.user
+      # - canal.instance.gtidon=false
+      # - canal.instance.parser.parallelThreadSize=16
+      - canal.instance.tsdb.enable=true
+      # MQ
+      # - canal.mq.topic=canal_topic_boot_user
+    volumes:
+      - $HOME/docker/canal/server/conf:/home/admin/canal-server/conf
+      - $HOME/docker/canal/server/logs:/home/admin/canal-server/logs
+    depends_on:
+      - canal-admin
+
+  canal-admin:
+    image: canal/canal-admin:latest
+    container_name: canal-admin
+    ports:
+      - 8089:8089
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+      # - server.port=8089
+      # - spring.datasource.address=172.30.67.98:3306
+      # - spring.datasource.database=canal_manager
+      # - spring.datasource.username=canal
+      # - spring.datasource.password=canal
+      - canal.adminUser=admin
+      - canal.adminPasswd=123456
+
+networks:
+  net_common:
+    external: true
