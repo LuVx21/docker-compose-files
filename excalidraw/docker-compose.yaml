@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:latest
+    container_name: excalidraw
+    ports:
+      - '48080:80'
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - $HOME/docker/excalidraw/data/web:/app/web
+
+networks:
+  net_common:
+    external: true
