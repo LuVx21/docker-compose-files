@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  minio:
+    image: bitnami/minio:2024
+    container_name: minio
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - net_common
+    environment:
+      TZ: Asia/Shanghai
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: xxxxxxxx
+      MINIO_DEFAULT_BUCKETS: bucket-00:public,bucket-01
+    volumes:
+      - $HOME/docker/minio/data:/bitnami/minio/data
+
+networks:
+  net_common:
+    external: true
