@@ -1,0 +1,33 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+    - /usr/share/filebeat/logs/*.log
+    fields:
+      log_source: filebeat
+    multiline.pattern: ^\[
+    multiline.negate: true
+    multiline.match: after
+
+# filebeat.config.modules:
+#   path: ${path.config}/modules.d/*.yml
+#   reload.enabled: false
+
+# setup.template.settings:
+#   index.number_of_shards: 1
+
+# setup.dashboards.enabled: false
+
+setup.kibana:
+  host: "single-kibana:5601"
+
+setup.template:
+  name: "foobar-%{[agent.version]}"
+  pattern: "foobar-%{[agent.version]}"
+
+# 直接传输至ES
+output.elasticsearch:
+  hosts: ["single-es:9200"]
+  index: "foobar-%{[agent.version]}"
+#   logstash:
+#     hosts: ["single-logstash:5044"]

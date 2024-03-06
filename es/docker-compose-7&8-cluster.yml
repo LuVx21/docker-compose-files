@@ -1,0 +1,129 @@
+# 参考: https://github.com/elastic/elasticsearch/blob/${STACK_VERSION_V7}/docs/reference/setup/install/docker-compose.yml
+# 也可以部署V8版本
+
+version: '3.9'
+
+services:
+  es01:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: ${MEM_LIMIT}
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - net_common
+
+  es02:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: ${MEM_LIMIT}
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    networks:
+      - net_common
+    depends_on:
+      - es01
+
+  es03:
+    image: elasticsearch:${STACK_VERSION}
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    mem_limit: ${MEM_LIMIT}
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    networks:
+      - net_common
+    depends_on:
+      - es02
+
+  kibana:
+    image: kibana:${STACK_VERSION}
+    container_name: es-cluster-kibana-1
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    ports:
+      - 5601:5601
+    networks:
+      - net_common
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+    mem_limit: ${MEM_LIMIT}
+
+  filebeat:
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: filebeat
+    user: root
+    networks:
+      - net_common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+
+      - $HOME/docker/filebeat/conf/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - $HOME/docker/filebeat/data:/usr/share/filebeat/data
+      - $HOME/docker/filebeat/logs:/usr/share/filebeat/logs
+      - /usr/local/nginx/logs:/var/log/nginx # 测试用
+    environment:
+      - strict.perms=false
+      - output.elasticsearch.hosts=["es01:9200"]
+      - setup.kibana.host=kibana:5601
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+  kibana_data:
+    driver: local
+
+networks:
+  net_common:
+    external: true

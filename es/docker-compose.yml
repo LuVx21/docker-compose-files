@@ -1,93 +1,99 @@
-version: "3.9"
+version: '3'
 
 services:
-  es01:
+  elasticsearch:
     image: elasticsearch:${STACK_VERSION}
-    container_name: es-cluster-es-1
-    volumes:
-      - es01_data:/usr/share/elasticsearch/data
+    container_name: single-es
+    networks:
+      - net_common
     ports:
-      - ${ES_PORT}:9200
+      - 9200:9200
+      - 9300:9300
+    # volumes:
+      # - $HOME/docker/single-es/data:/usr/share/elasticsearch/data # 数据文件挂载
+      # - $HOME/docker/single-es/plugins:/usr/share/elasticsearch/plugins # 插件文件挂载
+      # - $HOME/docker/single-es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - node.name=es01
+      - TZ=Asia/Shanghai
+      - /etc/localtime:/etc/localtime
+      - node.name=single-es
       - cluster.name=${CLUSTER_NAME}
-      - cluster.initial_master_nodes=es01,es02 #,es03
-      - discovery.seed_hosts=es02 #,es03
       - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx1024m" # 设置使用jvm内存大小
+      - discovery.type=single-node # 以单一节点模式启动
       - xpack.security.enabled=false
       - xpack.security.http.ssl.enabled=false
       - xpack.security.transport.ssl.enabled=false
-    mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
         soft: -1
         hard: -1
-
-  es02:
-    depends_on:
-      - es01
-    image: elasticsearch:${STACK_VERSION}
-    container_name: es-cluster-es-2
-    volumes:
-      - es02_data:/usr/share/elasticsearch/data
-    environment:
-      - node.name=es02
-      - cluster.name=${CLUSTER_NAME}
-      - cluster.initial_master_nodes=es01,es02 #,es03
-      - discovery.seed_hosts=es01 #,es03
-      - bootstrap.memory_lock=true
-      - xpack.security.enabled=false
-      - xpack.security.http.ssl.enabled=false
-      - xpack.security.transport.ssl.enabled=false
-    mem_limit: ${MEM_LIMIT}
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-
-  # es03:
-  #   depends_on:
-  #     - es02
-  #   image: elasticsearch:${STACK_VERSION}
-  #   container_name: es-cluster-es-3
-  #   volumes:
-  #     - es03_data:/usr/share/elasticsearch/data
-  #   environment:
-  #     - node.name=es03
-  #     - cluster.name=${CLUSTER_NAME}
-  #     - cluster.initial_master_nodes=es01,es02,es03
-  #     - discovery.seed_hosts=es01,es02
-  #     - bootstrap.memory_lock=true
-  #     - xpack.security.enabled=false
-  #     - xpack.security.http.ssl.enabled=false
-  #     - xpack.security.transport.ssl.enabled=false
-  #   mem_limit: ${MEM_LIMIT}
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
 
   kibana:
     image: kibana:${STACK_VERSION}
-    container_name: es-cluster-kibana-1
-    volumes:
-      - kibana_data:/usr/share/kibana/data
+    container_name: single-kibana
+    networks:
+      - net_common
     ports:
-      - ${KIBANA_PORT}:5601
+      - 5601:5601
+    # volumes:
+    #   - kibana_data:/usr/share/kibana/data
     environment:
       - SERVERNAME=kibana
-      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_HOSTS=http://single-es:9200
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
     mem_limit: ${MEM_LIMIT}
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: logstash:${STACK_VERSION}
+    container_name: single-logstash
+    networks:
+      - net_common
+    ports:
+      - 4560:4560
+      - 5044:5044
+      # - 8080:8080
+    volumes:
+      - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      # - $HOME/docker/single-logstash/conf:/config-dir
+      # - $HOME/docker/single-logstash/patterns:/opt/logstash/patterns
+      # - $HOME/docker/single-logstash/logstash.yml:/usr/share/logstash/config/logstash.yml # 挂载logstash的配置文件
+      # - $HOME/docker/single-logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - TZ=Asia/Shanghai
+      - /etc/localtime:/etc/localtime
+      - xpack.monitoring.enabled=false
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: elastic/filebeat:${STACK_VERSION}
+    container_name: single-filebeat
+    user: root
+    networks:
+      - net_common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # - /var/lib/docker/containers:/var/lib/docker/containers:ro
+
+      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # - $HOME/docker/filebeat/data:/usr/share/filebeat/data
+      # - $HOME/docker/filebeat/logs:/usr/share/filebeat/logs
+      # - /usr/local/nginx/logs:/var/log/nginx # 测试用
+    environment:
+      - TZ=Asia/Shanghai
+      - /etc/localtime:/etc/localtime
+      - strict.perms=false
+    depends_on:
+      - logstash
 
 volumes:
-  es01_data:
-    driver: local
-  es02_data:
-    driver: local
-  es03_data:
-    driver: local
   kibana_data:
     driver: local
 

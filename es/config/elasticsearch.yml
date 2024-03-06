@@ -1,1 +1,34 @@
 http.host: 0.0.0.0
+http.cors.enabled: true        # 是否支持跨域
+http.cors.allow-origin: "*"    # 表示支持所有域名
+
+
+cluster.name: elastic # 集群名称
+node.name: node-3 # 当前该节点的名称
+node.master: true # 是不是有资格竞选主节点
+node.data: true # 是否存储数据
+node.max_local_storage_nodes: 3 # 最大集群节点数
+#给当前节点自定义属性（可以省略）
+#node.attr.rack: r1
+#数据存档位置
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/log # 日志存放位置
+#是否开启时锁定内存（默认为是）
+#bootstrap.memory_lock: true
+#设置网关地址，我是被这个坑死了，这个地址我原先填写了自己的实际物理IP地址，
+#然后启动一直报无效的IP地址，无法注入9300端口，这里只需要填写0.0.0.0
+network.host: 0.0.0.0
+http.port: 9200 # 设置映射端口
+transport.tcp.port: 9300 # 内部节点之间沟通端口
+#集群发现默认值为127.0.0.1:9300,如果要在其他主机上形成包含节点的群集,如果搭建集群则需要填写
+#es7.x 之后新增的配置，写入候选主节点的设备地址，在开启服务后可以被选为主节点，也就是说把所有的节点都写上
+discovery.seed_hosts: ["node-1","node-2","node-3"]
+#当你在搭建集群的时候，选出合格的节点集群，有些人说的太官方了，
+#其实就是，让你选择比较好的几个节点，在你节点启动时，在这些节点中选一个做领导者，
+#如果你不设置呢，elasticsearch就会自己选举，这里我们把三个节点都写上
+cluster.initial_master_nodes: ["node-1","node-2","node-3"]
+#在群集完全重新启动后阻止初始恢复，直到启动N个节点
+#简单点说在集群启动后，至少复活多少个节点以上，那么这个服务才可以被使用，否则不可以被使用，
+gateway.recover_after_nodes: 2
+#action.destructive_requires_name: true # 删除索引是是否需要显示其名称，默认为显示
+xpack.security.enabled: false # 禁用安全配置，否则查询的时候会提示警告

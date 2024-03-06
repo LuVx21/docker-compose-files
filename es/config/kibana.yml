@@ -4,6 +4,25 @@
 
 # Default Kibana configuration for docker target
 server.host: "0.0.0.0"
+server.name: kibana
+server.port: 5601
 server.shutdownTimeout: "5s"
+
 elasticsearch.hosts: [ "http://es:9200" ]
+elasticsearch.requestTimeout: 60000
+elasticsearch.password: "es_password"
+elasticsearch.username: "es_username"
+
+kibana.index: ".kibana"
 monitoring.ui.container.elasticsearch.enabled: true
+
+xpack.reporting.encryptionKey: "a_random_string"
+xpack.security.encryptionKey: "something_at_least_32_characters"
+
+i18n.locale: zh-CN
+
+
+# logging.dest: stdout # kibana日志文件存储路径
+# logging.silent: false # 此值为true时，禁止所有日志记录输出
+# logging.quiet: false # 此值为true时，禁止除错误消息之外的所有日志记录输出
+# logging.verbose: false # 此值为true时，记录所有事件，包括系统使用信息和所有请求
