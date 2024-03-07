@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  golang:
+    # image: golang:1.22
+    image: bitnami/golang:1.22
+    container_name: golang
+    networks:
+      - net_common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/go/pkg/mod:/go/pkg/mod # GOPATH
+      - $HOME/go/src:/go/src
+    environment:
+      - TZ=Asia/Shanghai
+    tty: true # Enables debugging capabilities when attached to this container.
+    command: ["sleep", "infinity"] # To keep the container running
+
+  rust:
+    image: rust:1.76-slim
+    container_name: rust
+    networks:
+      - net_common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=Asia/Shanghai
+    tty: true
+    command: ["sleep", "infinity"]
+
+  # rust-golang-mix:
+  #   image: luvx/rust-golang-mix:latest
+  #   container_name: rust-golang-mix
+  #   networks:
+  #     - net_common
+  #   build:
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - TZ=Asia/Shanghai
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   tty: true
+  #   command: ["sleep", "infinity"]
+
+networks:
+  net_common:
+    external: true

@@ -1,23 +1,30 @@
+# 来源: https://nightlies.apache.org/flink/flink-docs-release-1.18/docs/deployment/resource-providers/standalone/docker/#application-mode-1
 version: "2.2"
 services:
   jobmanager:
-    image: flink:latest
+    image: flink:1.18-scala_2.12
     ports:
       - "8081:8081"
-    command: jobmanager
+    command: standalone-job --job-classname com.job.ClassName [--job-id <job id>] [--fromSavepoint /path/to/savepoint [--allowNonRestoredState]] [job arguments]
+    volumes:
+      - $HOME/docker/flink/jobmanager/usrlib:/opt/flink/usrlib
     environment:
       - |
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
+        parallelism.default: 2
 
   taskmanager:
-    image: flink:latest
+    image: flink:1.18-scala_2.12
     depends_on:
       - jobmanager
     command: taskmanager
     scale: 1
+    volumes:
+      - $HOME/docker/flink/taskmanager/usrlib:/opt/flink/usrlib
     environment:
       - |
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 2
