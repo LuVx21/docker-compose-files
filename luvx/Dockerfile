@@ -1,0 +1,11 @@
+ARG IMAGE=ubuntu
+ARG GO_VERSION=latest
+
+FROM ${IMAGE}:${GO_VERSION}
+
+WORKDIR /workspace
+
+# ENV
+
+RUN apt update && apt install -y curl wget tree vim git
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
