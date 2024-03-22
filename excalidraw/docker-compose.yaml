@@ -8,6 +8,9 @@ services:
       - '48080:80'
     networks:
       - net_common
+    stdin_open: true
+    healthcheck:
+      disable: true
     environment:
       - TZ=Asia/Shanghai
     volumes:
