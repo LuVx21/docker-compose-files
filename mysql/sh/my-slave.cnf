@@ -1,5 +1,7 @@
 [mysqld]
 server_id=${SERVER_ID}
+default-time-zone=+08:00
+log_timestamps=system
 gtid_mode=on
 enforce-gtid-consistency=on
 

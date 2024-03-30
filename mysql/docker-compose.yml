@@ -22,10 +22,10 @@ services:
     #     '--max_connections=3000'
     # ]
     environment:
-      MYSQL_ROOT_PASSWORD: xxx
+      MYSQL_ROOT_PASSWORD: 1121
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
-      MYSQL_DATABASE: xxx
+      # MYSQL_DATABASE: xxx
       TZ: Asia/Shanghai
     ports:
       - 53306:3306
@@ -44,10 +44,10 @@ services:
       - $HOME/docker/mysql/mysql_1/data/:/var/lib/mysql
       - $HOME/docker/mysql/mysql_1/logs/:/var/log/mysql
       - $HOME/docker/mysql/mysql_1/conf/:/etc/mysql
-      - $HOME/docker/mysql/mysql_1/init/:/docker-entrypoint-initdb.d
+      # - $HOME/docker/mysql/mysql_1/init/:/docker-entrypoint-initdb.d
       - $HOME/docker/mysql/mysql_1/my.cnf:/etc/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: xxx
+      MYSQL_ROOT_PASSWORD: 1121
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
@@ -68,15 +68,54 @@ services:
       - $HOME/docker/mysql/mysql_2/data/:/var/lib/mysql
       - $HOME/docker/mysql/mysql_2/logs/:/var/log/mysql
       - $HOME/docker/mysql/mysql_2/conf/:/etc/mysql
-      - $HOME/docker/mysql/mysql_2/init/:/docker-entrypoint-initdb.d
+      # - $HOME/docker/mysql/mysql_2/init/:/docker-entrypoint-initdb.d
       - $HOME/docker/mysql/mysql_2/my.cnf:/etc/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: xxx
+      MYSQL_ROOT_PASSWORD: 1121
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
     ports:
       - 53308:3306
+
+#  mysql-initer:
+#    image:luvx/mysql-initer:latest
+#    container_name: mysql-initer
+#    build:
+#      dockerfile: Dockerfile
+#    networks:
+#      - net_common
+#    depends_on:
+#      - mysql-master
+#      - mysql-slave-1
+#      - mysql-slave-2
+#    # command: ["sleep", "infinity"]
+#    command: >
+#      bash -c "
+#        function test_func()
+#        {
+#          mysql -h $1 -u root -p1121 -e \"grant select,replication slave,replication client on *.* to 'slave'@'%' identified by '1121';flush privileges;\"
+#          # 'mysql-bin.000001 0'
+#          mysql -h $2 -u root -p1121 -e \"change master to master_host='$1',master_port=3306,master_user='slave',master_password='1121',`mysql -h $1 -u slave -p1121 -e \"show master status;\" | tail -n 1 | awk '{printf \"master_log_file=\\47\"$1\"\\47,master_log_pos=\"$2\"\"}'`,master_connect_retry=30;start slave;\"
+#        }
+#        typeset -f test_func
+#        sleep 20
+#        test_func mysql-master mysql-slave-1
+#        test_func mysql-slave-1 mysql-slave-2
+#        echo `date`: \"主从创建......\"
+#      "
+
+#  databasir:
+#    image: databasir:latest
+#    container_name: databasir
+#    networks:
+#      - net_common
+#    environment:
+#      - DATABASIR_DB_URL=mysql-master:3306
+#      - DATABASIR_DB_USERNAME=root
+#      - DATABASIR_DB_PASSWORD=1121
+#    ports:
+#      - 8080:8080
 
 networks:
   net_common:

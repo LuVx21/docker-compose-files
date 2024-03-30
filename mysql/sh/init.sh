@@ -1,16 +1,17 @@
-#!/bin/bash
+#!/bin/zsh
 
+MAIN_HOME=$HOME/docker/mysql
+# rm -fr $MAIN_HOME
+mkdir -p $MAIN_HOME/{mysql_0,mysql_1,mysql_2}/{conf,data,init,logs}
 
-mkdir -p $HOME/docker/mysql/{mysql_0,mysql_1,mysql_2}/{conf,data,init,logs}
-
-cat ./my.cnf > $HOME/docker/mysql/mysql_0/my.cnf
-
+cat ./my.cnf > $MAIN_HOME/mysql_0/my.cnf
 for id in `seq 1 2`; do \
   let server_id=20001+$((id))
-  SERVER_ID=${server_id} envsubst < my-slave.cnf > $HOME/docker/mysql/mysql_${id}/my.cnf
+  SERVER_ID=${server_id} envsubst < my-slave.cnf > $MAIN_HOME/mysql_${id}/my.cnf
 done
 
-docker compose -f ../docker-compose.yml up -d
+(( ${+commands[docker-compose]} )) && dco='docker-compose' || dco='docker compose'
+$dco -f ../docker-compose.yml up --build -d
 echo `date`: "启动完成!"
 
 sleep 20
@@ -36,10 +37,10 @@ echo `date`: "设置从库只读!"
 # 从库配置只读
 for id in `seq 1 2`; do \
 
-  sed -i "" 's/# super_read_only=1/super_read_only=1/g' $HOME/docker/mysql/mysql_${id}/my.cnf
-  sed -i "" 's/# read_only=1/read_only=1/g' $HOME/docker/mysql/mysql_${id}/my.cnf
+  sed -i "" 's/# super_read_only=1/super_read_only=1/g' $MAIN_HOME/mysql_${id}/my.cnf
+  sed -i "" 's/# read_only=1/read_only=1/g' $MAIN_HOME/mysql_${id}/my.cnf
 
-#   cat >> $HOME/docker/mysql/mysql_${id}/my.cnf <<- EOF
+#   cat >> $MAIN_HOME/mysql_${id}/my.cnf <<- EOF
 
 # super_read_only=1
 # read_only=1
