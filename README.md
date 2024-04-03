@@ -2,14 +2,25 @@
 <summary>点击展开目录</summary>
 <!-- TOC -->
 
-    - [docker-compose](#docker-compose)
-        - [配置](#配置)
+- [镜像](#镜像)
+- [命令](#命令)
+- [docker-compose](#docker-compose)
+  - [配置](#配置)
 - [](#)
-    - [rockermq](#rockermq)
+- [appsmith](#appsmith)
+- [rockermq](#rockermq)
+- [nacos](#nacos)
+- [MySQL](#mysql)
 
 <!-- /TOC -->
 </details>
 
+![Alt](https://repobeats.axiom.co/api/embed/fa032c64baf9522131d3fea5d8feb396bb2b42c9.svg "Repobeats analytics image")
+
+## 镜像
+
+eclipse-temurin:21-jdk
+eclipse-temurin:21-jre
 
 ```json
 {
@@ -25,11 +36,6 @@
 ```
 
 > https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
-
-## 镜像
-
-eclipse-temurin:21-jdk
-eclipse-temurin:21-jre
 
 ## 命令
 
@@ -201,5 +207,3 @@ docker run -itd --name opensumi \
 -p 8080:8000 \
 ghcr.io/opensumi/opensumi-web:latest
 ```
-
-
