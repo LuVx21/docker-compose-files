@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  etcd-workbench:
+    platform: linux/amd64
+    image: tzfun/etcd-workbench:latest
+    container_name: etcd-workbench
+    ports:
+      - 8002:8002
+    networks:
+      - net_common
+    # volumes:
+    #   - ./etcd-workbench.conf:/usr/tzfun/etcd-workbench/etcd-workbench.conf
+
+networks:
+  net_common:
+    external: true
