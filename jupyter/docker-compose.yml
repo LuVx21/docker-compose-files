@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  jupyter:
+    platform: linux/amd64
+    image: luvx/jupyter:latest
+    container_name: jupyter
+    ports:
+      - 8888:8888
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/jupyter:/root/code
+
+networks:
+  net_common:
+    external: true

@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  xxx:
+    build:
+      dockerfile: Dockerfile
+    image: IMAGE_NAME:${IMAGE_VERSION}
+    container_name: xxx
+    ports:
+      - 0000:0000
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/xxx/aaa:/aaa
+    environment:
+      TZ: Asia/Shanghai
+    extra_hosts:
+      - luvx:192.168.1.1
+
+networks:
+  net_common:
+    external: true

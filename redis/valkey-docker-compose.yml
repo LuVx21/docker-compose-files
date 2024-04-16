@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  valkey:
+    image: valkey/valkey:7.2-alpine
+    container_name: valkey
+    ports:
+      - 56379:6379
+    networks:
+      - net_common
+    # volumes:
+    #   - $HOME/docker/valkey/valkey.conf:/etc/valkey/valkey.conf:ro
+    #   - $HOME/docker/valkey/data:/data
+    #   - $HOME/docker/valkey/logs:/logs
+
+networks:
+  net_common:
+    external: true

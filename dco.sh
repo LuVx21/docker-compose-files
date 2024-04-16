@@ -7,6 +7,13 @@ if [ "$1" = "" ];
 then
     echo -e "需指定模块名"
     exit 1
+elif [ "$1" = "update" ];then
+    images=`docker container ls -a | tail +2 | awk '{print $2}' | sort | uniq | grep -v luvx`
+    for image in $images; do
+        echo '更新...'$image
+        docker pull $image
+    done
+    exit 0
 elif [ "$1" = "etcd" ];then
     url='https://raw.githubusercontent.com/bitnami/containers/main/bitnami/etcd/docker-compose-cluster.yml'
     file='etcd-docker-compose-cluster.yml'

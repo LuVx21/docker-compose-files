@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  gopeed:
+    image: liwei2633/gopeed
+    container_name: gopeed
+    ports:
+      - 59999:9999
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/gopeed/download:/app/Downloads
+      - $HOME/docker/gopeed/storage:/app/storage
+    command: -u admin -p 123456
+
+networks:
+  net_common:
+    external: true
