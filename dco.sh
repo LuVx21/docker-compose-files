@@ -8,11 +8,26 @@ then
     echo -e "需指定模块名"
     exit 1
 elif [ "$1" = "update" ];then
-    images=`docker container ls -a | tail +2 | awk '{print $2}' | sort | uniq | grep -v luvx`
+    # docker images | tail +2 | grep -v luvx | awk '{print $1,$2}' | sed 's/ /:/g' | xargs -I F docker pull F
+    images=`docker container ls -a | tail +2 | grep -v luvx | awk '{print $2}' | sort | uniq`
     for image in $images; do
         echo '更新...'$image
         docker pull $image
     done
+    exit 0
+elif [ "$1" = "backup" ];then
+    if [ "$2" = "" ];then
+        echo -e "需指定镜像Id"
+        exit 1
+    fi
+    registry='registry.cn-shanghai.aliyuncs.com'
+    # registry='ccr.ccs.tencentyun.com'
+    image=`docker images | grep $2 | awk '{print $1}' | sed 's/\//_/g'`
+    version=`docker images | grep $2 | awk '{print $2}'`
+    image=$registry/luvx21/$image
+    echo '备份为->'$image:$version
+    docker tag $2 $image:$version
+    docker push $image:$version && docker image rm $image:$version
     exit 0
 elif [ "$1" = "etcd" ];then
     url='https://raw.githubusercontent.com/bitnami/containers/main/bitnami/etcd/docker-compose-cluster.yml'

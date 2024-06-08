@@ -10,6 +10,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
         - TZ=Asia/Shanghai
+        # - WATCHTOWER_CLEANUP=true                 # 更新后移除旧的镜像
+        # - WATCHTOWER_POLL_INTERVAL=30             # 镜像检测时间间隔30秒
         # - WATCHTOWER_NOTIFICATIONS=email
         # - WATCHTOWER_NOTIFICATION_EMAIL_FROM=fromaddress@gmail.com
         # - WATCHTOWER_NOTIFICATION_EMAIL_TO=toaddress@gmail.com
