@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  oceanbase-ce:
+    image: oceanbase/oceanbase-ce
+    container_name: obstandalone
+    ports:
+      - 2881:2881
+    networks:
+      - net_common
+    environment:
+      - MINI_MODE=1
+
+networks:
+  net_common:
+    external: true
