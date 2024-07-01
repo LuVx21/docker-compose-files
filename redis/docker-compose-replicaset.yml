@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   redis-master:
     image: redis:${REDIS_VERSION}
@@ -9,7 +7,7 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - 'replicaset_data:/data'
+      - $HOME/docker/redis_replicaset:/data
     command: redis-server --requirepass ${PASSWORD}
 
   redis-slave-1:
@@ -34,9 +32,16 @@ services:
       - 26379:6379
     command: redis-server --slaveof redis-master 6379 --requirepass ${PASSWORD} --masterauth ${PASSWORD}
 
-volumes:
-  replicaset_data:
-    driver: local
+  redis-slave-3:
+    image: redis:${REDIS_VERSION}
+    container_name: redis-slave-3
+    networks:
+      - net_common
+    depends_on:
+      - redis-slave-2
+    ports:
+      - 36379:6379
+    command: redis-server --slaveof redis-slave-2 6379 --requirepass ${PASSWORD} --masterauth ${PASSWORD}
 
 networks:
   net_common:

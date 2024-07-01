@@ -1,9 +1,7 @@
-version: '3.9'
-
 services:
   jupyter:
     platform: linux/amd64
-    image: luvx/jupyter:latest
+    image: registry.cn-shanghai.aliyuncs.com/luvx21/luvx_jupyter:latest
     container_name: jupyter
     ports:
       - 8888:8888
@@ -11,6 +9,10 @@ services:
       - net_common
     volumes:
       - $HOME/docker/jupyter:/root/code
+      - $HOME/.m2:/root/.m2
+      - $HOME/go/pkg:/go/pkg
+    # environment:
+    #   - PASSWORD=xxxx
 
 networks:
   net_common:
