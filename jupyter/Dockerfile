@@ -10,7 +10,7 @@ FROM python:${PYTHON_VERSION}
 WORKDIR /root
 
 # -------------以下为安装Go-------------
-ENV GOLANG_VERSION=1.22.4
+ENV GOLANG_VERSION=1.22.5
 ENV GOTOOLCHAIN=local
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct
 ENV GOPATH=/go

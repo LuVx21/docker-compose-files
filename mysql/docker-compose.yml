@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   mysql-master:
     platform: linux/amd64
@@ -79,7 +78,7 @@ services:
       - 53308:3306
 
 #  mysql-initer:
-#    image:luvx/mysql-initer:latest
+#    image: luvx/mysql-initer:latest
 #    container_name: mysql-initer
 #    build:
 #      dockerfile: Dockerfile
@@ -116,6 +115,17 @@ services:
 #      - DATABASIR_DB_PASSWORD=1121
 #    ports:
 #      - 8080:8080
+
+#  whodb:
+#    platform: linux/amd64
+#    image: clidey/whodb
+#    container_name: whodb
+#    networks:
+#      - net_common
+#    # ports:
+#    #   - "8080:8080"
+#    volumes:
+#      - $HOME/data/sqlite/main.db:/db/main.db
 
 networks:
   net_common:
