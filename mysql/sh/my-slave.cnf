@@ -6,10 +6,12 @@ gtid_mode=on
 enforce-gtid-consistency=on
 
 log-bin=mysql-bin
+# 8.4废弃警告
 binlog-format=ROW
-binlog-ignore-db=mysql,information_schema
+binlog-ignore-db=mysql,information_schema,performance_schema
 # 如果想实现 主-从（主）-从 这样的链条式结构，需要设置：
 # 只有加上它，从前一台机器上同步过来的数据才能同步到下一台机器。
+# 8.4废弃警告, log_replica_updates
 log-slave-updates=1
 
 general_log=1
@@ -22,6 +24,7 @@ slow_query_log=1
 #expire_logs_days=14
 
 # 跳过所有的错误，继续执行复制操作
+# 8.4废弃警告, replica_skip_errors
 slave-skip-errors=all
 
 # 从库只读

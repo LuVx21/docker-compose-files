@@ -1,19 +1,19 @@
 services:
   mysql-master:
     platform: linux/amd64
-    image: mysql:5.7
-    container_name: mysql-master
+    image: mysql:${VERSION}
+    container_name: mysql${VERSION}-master
     networks:
       - net_common
     privileged: true
     user: 501:20
     volumes:
-      - $HOME/docker/mysql/mysql_0/data/:/var/lib/mysql
-      - $HOME/docker/mysql/mysql_0/logs/:/var/log/mysql
-      - $HOME/docker/mysql/mysql_0/conf/:/etc/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_0/data/:/var/lib/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_0/logs/:/var/log/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_0/conf/:/etc/mysql
       # 数据库还原目录 可将需要还原的sql文件放在这里
-      - $HOME/docker/mysql/mysql_0/init/:/docker-entrypoint-initdb.d
-      - $HOME/docker/mysql/mysql_0/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_0/init/:/docker-entrypoint-initdb.d
+      - $HOME/docker/mysql${VERSION}/mysql_0/my.cnf:/etc/my.cnf
     # command: [
     #     '--character-set-server=utf8mb4',
     #     '--collation-server=utf8mb4_general_ci',
@@ -31,8 +31,8 @@ services:
 
   mysql-slave-1:
     platform: linux/amd64
-    image: mysql:5.7
-    container_name: mysql-slave-1
+    image: mysql:${VERSION}
+    container_name: mysql${VERSION}-slave-1
     depends_on:
       - mysql-master
     networks:
@@ -40,11 +40,11 @@ services:
     privileged: true
     user: 501:20
     volumes:
-      - $HOME/docker/mysql/mysql_1/data/:/var/lib/mysql
-      - $HOME/docker/mysql/mysql_1/logs/:/var/log/mysql
-      - $HOME/docker/mysql/mysql_1/conf/:/etc/mysql
-      # - $HOME/docker/mysql/mysql_1/init/:/docker-entrypoint-initdb.d
-      - $HOME/docker/mysql/mysql_1/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_1/data/:/var/lib/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_1/logs/:/var/log/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_1/conf/:/etc/mysql
+      # - $HOME/docker/mysql${VERSION}/mysql_1/init/:/docker-entrypoint-initdb.d
+      - $HOME/docker/mysql${VERSION}/mysql_1/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: 1121
       # MYSQL_USER: xxx
@@ -55,8 +55,8 @@ services:
 
   mysql-slave-2:
     platform: linux/amd64
-    image: mysql:5.7
-    container_name: mysql-slave-2
+    image: mysql:${VERSION}
+    container_name: mysql${VERSION}-slave-2
     depends_on:
       - mysql-slave-1
     networks:
@@ -64,11 +64,11 @@ services:
     privileged: true
     user: 501:20
     volumes:
-      - $HOME/docker/mysql/mysql_2/data/:/var/lib/mysql
-      - $HOME/docker/mysql/mysql_2/logs/:/var/log/mysql
-      - $HOME/docker/mysql/mysql_2/conf/:/etc/mysql
-      # - $HOME/docker/mysql/mysql_2/init/:/docker-entrypoint-initdb.d
-      - $HOME/docker/mysql/mysql_2/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_2/data/:/var/lib/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_2/logs/:/var/log/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_2/conf/:/etc/mysql
+      # - $HOME/docker/mysql${VERSION}/mysql_2/init/:/docker-entrypoint-initdb.d
+      - $HOME/docker/mysql${VERSION}/mysql_2/my.cnf:/etc/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: 1121
       # MYSQL_USER: xxx

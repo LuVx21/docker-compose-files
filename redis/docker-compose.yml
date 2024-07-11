@@ -1,8 +1,6 @@
 # mkdir -p $HOME/docker/redis/{data,logs}
 # touch $HOME/docker/redis/redis.conf
 
-version: '3.9'
-
 services:
   redis-stack-server:
     image: ${STACK_IMAGE}:${REDIS_STACK_VERSION}

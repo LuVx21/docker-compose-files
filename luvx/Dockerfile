@@ -1,7 +1,7 @@
 ARG IMAGE=ubuntu
-ARG GO_VERSION=latest
+ARG VERSION=latest
 
-FROM ${IMAGE}:${GO_VERSION}
+FROM ${IMAGE}:${VERSION}
 
 WORKDIR /workspace
 
