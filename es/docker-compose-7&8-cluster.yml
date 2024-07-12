@@ -1,7 +1,6 @@
 # 参考: https://github.com/elastic/elasticsearch/blob/${STACK_VERSION_V7}/docs/reference/setup/install/docker-compose.yml
 # 也可以部署V8版本
 
-version: '3.9'
 
 services:
   es01:

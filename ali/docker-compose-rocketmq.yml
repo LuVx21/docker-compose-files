@@ -2,7 +2,6 @@
 # mkdir -p $HOME/docker/rocketmq/{broker_0,broker_1}/{conf,logs,store}
 # echo $HOME/docker/rocketmq/{broker_0,broker_1}/conf | xargs -n 1 cp -v ./broker.conf #修改 brokerName
 
-version: '3.9'
 
 services:
   namesrv:

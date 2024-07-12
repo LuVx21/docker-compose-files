@@ -1,5 +1,4 @@
 # 来源: https://pulsar.apache.org/docs/3.2.x/getting-started-docker-compose/
-version: '3.9'
 
 services:
   zookeeper:

@@ -2,7 +2,6 @@
 # change master to master_host='mysql-master-2',master_port=3306,master_user='slave',master_password='1121',master_auto_position=1,master_connect_retry=30;start slave;
 # change master to master_host='mysql-master-1',master_port=3306,master_user='slave',master_password='1121',master_auto_position=1,master_connect_retry=30;start slave;
 
-version: '3.9'
 services:
   mysql-master-1:
     platform: linux/amd64

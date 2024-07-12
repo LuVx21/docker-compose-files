@@ -1,4 +1,3 @@
-version: '3'
 services:
   canal-server:
     image: canal/canal-server:latest

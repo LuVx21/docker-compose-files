@@ -1,4 +1,3 @@
-version: '3.9'
 
 services:
   wewe-rss-server:

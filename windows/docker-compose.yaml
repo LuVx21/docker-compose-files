@@ -1,6 +1,5 @@
 # 来源: https://github.com/dockur/windows
 
-version: '3.9'
 
 services:
   windows:

@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   oceanbase-ce:
     image: oceanbase/oceanbase-ce
