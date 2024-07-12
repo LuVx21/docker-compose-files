@@ -21,8 +21,9 @@ echo `date`: "主从创建!"
 
 function link()
 {
+    # docker exec $2 sh -c 'export MYSQL_PWD=1121; mysql -h $1 -u slave -e "show master status;"'
     # 最新位置开始
-    # RESULT=`docker exec -it $2 mysql -h $1 -u slave  -p1121 -e "show master status;" | tail -2 | head -1 | awk '{print $2,$4}'`
+    # RESULT=`docker exec -it $2 mysql -h $1 -u slave -p1121 -e "show master status;" | tail -2 | head -1 | awk '{print $2,$4}'`
     LOG_FILE_NAME="mysql-bin.000001" # `echo $RESULT | awk '{print $1}'`
     LOG_FILE_POS=0 # `echo $RESULT | awk '{print $2}'`
     if [ "$VERSION" = "8" ];then
