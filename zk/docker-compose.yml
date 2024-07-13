@@ -1,9 +1,25 @@
 services:
+  # 单节点,除此之外集群
+  zk0:
+    image: zookeeper
+    container_name: zk0
+    ports:
+      - 2181:2181
+    networks:
+      - net_common
+    environment:
+      ZOO_INIT_LIMIT: 5
+      ZOO_TICK_TIME: 2000
+    volumes:
+      - $HOME/docker/zk/zk0/data:/data
+      - $HOME/docker/zk/zk0/datalog:/datalog
+      - $HOME/docker/zk/zk0/logs:/logs
+
   zk1:
     image: zookeeper
     container_name: zk1
     ports:
-      - 2181:2181
+      - 12181:2181
     networks:
       - net_common
     environment:
@@ -18,7 +34,7 @@ services:
     image: zookeeper
     container_name: zk2
     ports:
-      - 12181:2181
+      - 22181:2181
     networks:
       - net_common
     environment:
@@ -33,7 +49,7 @@ services:
     image: zookeeper
     container_name: zk3
     ports:
-      - 12182:2181
+      - 32182:2181
     networks:
       - net_common
     environment:

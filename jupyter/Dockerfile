@@ -36,7 +36,7 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gophernotes(太旧,泛型都不支持)
-    # && env GO111MODULE=on go install github.com/gopherdata/gophernotes@v0.7.5 \
+    # && env GO111MODULE=on go install -ldflags="-w -s" github.com/gopherdata/gophernotes@v0.7.5 \
     # && mkdir -p ~/.local/share/jupyter/kernels/gophernotes \
     # && cp /go/pkg/mod/github.com/gopherdata/gophernotes@v0.7.5/kernel/* ~/.local/share/jupyter/kernels/gophernotes \
     # && cd ~/.local/share/jupyter/kernels/gophernotes \
@@ -44,9 +44,9 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     # && sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
     # Golang 内核: gonb
     && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH" \
-    && go install github.com/janpfeifer/gonb@latest \
-    && go install golang.org/x/tools/cmd/goimports@latest \
-    && go install golang.org/x/tools/gopls@latest \
+    && go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
+    && go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
+    && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
     && gonb --install \
     # 清除
     && pip3 cache purge && go clean -cache && rm -fr ~/.cache \
