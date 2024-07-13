@@ -1,12 +1,49 @@
-version: '3.3'
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
+  zk1:
+    image: zookeeper
+    container_name: zk1
     ports:
       - 2181:2181
+    networks:
+      - net_common
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
     volumes:
-      - $HOME/docker/zk/data:/data
-      - $HOME/docker/zk/datalog:/datalog
-      - $HOME/docker/zk/logs:/logs
-    # restart: always
+      - $HOME/docker/zk/zk1/data:/data
+      - $HOME/docker/zk/zk1/datalog:/datalog
+      - $HOME/docker/zk/zk1/logs:/logs
+
+  zk2:
+    image: zookeeper
+    container_name: zk2
+    ports:
+      - 12181:2181
+    networks:
+      - net_common
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - $HOME/docker/zk/zk2/data:/data
+      - $HOME/docker/zk/zk2/datalog:/datalog
+      - $HOME/docker/zk/zk2/logs:/logs
+
+  zk3:
+    image: zookeeper
+    container_name: zk3
+    ports:
+      - 12182:2181
+    networks:
+      - net_common
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zk1:2888:3888;2181 server.2=zk2:2888:3888;2181 server.3=zk3:2888:3888;2181
+    volumes:
+      - $HOME/docker/zk/zk3/data:/data
+      - $HOME/docker/zk/zk3/datalog:/datalog
+      - $HOME/docker/zk/zk3/logs:/logs
+
+networks:
+  net_common:
+    external: true
