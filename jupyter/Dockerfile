@@ -1,8 +1,8 @@
 # -------------资料-------------
-# golang:1.22-alpine3.20: https://raw.githubusercontent.com/docker-library/golang/master/1.22/alpine3.20/Dockerfile
+# golang:1.23-alpine3.20: https://raw.githubusercontent.com/docker-library/golang/master/1.23/alpine3.20/Dockerfile
 # python:3.12-alpine3.20: https://raw.githubusercontent.com/docker-library/python/master/3.12/alpine3.20/Dockerfile
 ARG OS=bookworm
-ARG GO_VERSION=1.22-${OS}
+ARG GO_VERSION=1.23-${OS}
 ARG PYTHON_VERSION=3.12-${OS}
 
 FROM python:${PYTHON_VERSION}
@@ -10,13 +10,13 @@ FROM python:${PYTHON_VERSION}
 WORKDIR /root
 
 # -------------以下为安装Go-------------
-ENV GOLANG_VERSION=1.22.5
+ENV GOLANG_VERSION=1.23.0
 ENV GOTOOLCHAIN=local
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 
-COPY --from=golang:1.22-bookworm --link /usr/local/go/ /usr/local/go/
+COPY --from=golang:1.23-bookworm --link /usr/local/go/ /usr/local/go/
 
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/install/java
