@@ -19,7 +19,8 @@ services:
         # - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER=fromaddress@gmail.com
         # - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD=app_password
         # - WATCHTOWER_NOTIFICATION_EMAIL_DELAY=2
-    command: aaa bbb --cleanup --schedule "0 0 4 * * *"
+    command: --cleanup --schedule "0 0/2 * * * *"
+    # command: aaa bbb --cleanup --schedule "0 0 4 * * *"
     # --cleanup 更新后清理旧版本镜像
     # --schedule 自动检测更新 crontab定时(限定6位crontab) 此处代表凌晨4点整
 
