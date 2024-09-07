@@ -1,0 +1,22 @@
+services:
+  bind:
+    platform: linux/amd64
+    image: sameersbn/bind:latest
+    container_name: bind
+    restart: always
+    ports:
+      - '10000:10000/tcp'
+      - '53:53/udp'
+      - '53:53/tcp'
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/dns/bind/data:/data
+      - /etc/localtime:/etc/localtime
+    environment:
+      TZ: Asia/Shanghai
+      # ROOT_PASSWORD: password
+
+networks:
+  net_common:
+    external: true
