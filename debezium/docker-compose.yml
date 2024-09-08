@@ -1,7 +1,7 @@
 
 services:
   debezium-connect:
-    image: quay.io/debezium/connect:${DEBEZIUM_VERSION}
+    image: debezium/connect:${DEBEZIUM_VERSION}
     container_name: debezium-connect
     ports:
       - "8083:8083"
@@ -20,7 +20,7 @@ services:
   debezium-ui:
     platform: linux/amd64
     container_name: debezium-ui
-    image: quay.io/debezium/debezium-ui:${DEBEZIUM_VERSION}
+    image: debezium/debezium-ui:${DEBEZIUM_VERSION}
     ports:
       - "8090:8080"
     networks:
@@ -32,7 +32,7 @@ services:
 
   # each instance of Debezium Server runs exactly one connector
   debezium-server-mysql:
-    image: quay.io/debezium/server:${DEBEZIUM_VERSION}
+    image: debezium/server:${DEBEZIUM_VERSION}
     container_name: debezium-server-mysql
     # ports:
     #   - "8080:8080"

@@ -119,7 +119,7 @@ services:
 #      "
 
 #  databasir:
-#    image: databasir:latest
+#    image: vrantt/databasir:latest
 #    container_name: databasir
 #    networks:
 #      - net_common
