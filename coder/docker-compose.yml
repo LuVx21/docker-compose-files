@@ -1,0 +1,42 @@
+services:
+  code-server:
+    image: codercom/code-server:${CODER_VERSION:-latest}
+    container_name: code-server
+    user: $(id -u):$(id -g)
+    networks:
+      - net_common
+    ports:
+      - "8080:8080"
+    volumes:
+      - $HOME/docker/code-server/local:/home/coder/.local
+      - $HOME/docker/code-server/config:/home/coder/.config
+      - $HOME/docker/code-server/project:/home/coder/project
+    environment:
+      PASSWORD: 1121
+      DOCKER_USER: $USER
+
+  coder:
+    image: ghcr.io/coder/coder:${CODER_VERSION:-latest}
+    networks:
+      - net_common
+    ports:
+      - "7080:7080"
+    environment:
+      CODER_PG_CONNECTION_URL: "postgresql://${POSTGRES_USER:-username}:${POSTGRES_PASSWORD:-password}@postgresql-master/${POSTGRES_DB:-boot}?sslmode=disable"
+      CODER_HTTP_ADDRESS: "0.0.0.0:7080"
+      # You'll need to set CODER_ACCESS_URL to an IP or domain
+      # that workspaces can reach. This cannot be localhost
+      # or 127.0.0.1 for non-Docker templates!
+      CODER_ACCESS_URL: "https://coder.example.com"
+    # If the coder user does not have write permissions on
+    # the docker socket, you can uncomment the following
+    # lines and set the group ID to one that has write
+    # permissions on the docker socket.
+    #group_add:
+    #  - "998" # docker group on host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  net_common:
+    external: true

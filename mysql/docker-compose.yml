@@ -152,6 +152,12 @@ services:
       - $HOME/docker/chat2db:/root/.chat2db
 #      - $HOME/.chat2db:/root/.chat2db
 
+  chartdb:
+    image: luvx/chartdb:latest
+    container_name: chartdb
+    networks:
+      - net_common
+
 networks:
   net_common:
     external: true

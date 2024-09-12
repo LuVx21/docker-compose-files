@@ -8,9 +8,9 @@ services:
     volumes:
       - $HOME/docker/postgresql/data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: xxx
-      POSTGRES_USER: xxx
-      POSTGRES_PASSWORD: xxx
+      POSTGRES_DB: ${POSTGRES_DB:-boot}
+      POSTGRES_USER: ${POSTGRES_USER:-username}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
       - 5432:5432
 

@@ -32,7 +32,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && pip3 install --no-cache-dir jupyter kotlin-jupyter-kernel \
     # Java 内核
-    && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
+    && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-x64_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gophernotes(太旧,泛型都不支持)
