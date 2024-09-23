@@ -12,6 +12,23 @@ services:
       - $HOME/docker/nginx/html:/usr/share/nginx/html # 静态资源根目录挂载
       - $HOME/docker/nginx/logs:/var/log/nginx # 日志文件挂载
 
+  nginx-ui:
+    image: uozi/nginx-ui:latest
+    container_name: nginx-ui
+    ports:
+      - 8080:80
+      - 8443:443
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/nginx-ui/nginx:/etc/nginx
+      - $HOME/docker/nginx-ui/nginx-ui:/etc/nginx-ui
+      - /var/www:/var/www
+    environment:
+      - TZ=Asia/Shanghai
+    stdin_open: true
+    tty: true
+
 networks:
   net_common:
     external: true

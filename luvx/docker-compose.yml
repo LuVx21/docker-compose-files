@@ -1,8 +1,8 @@
 
 services:
   golang:
-    # image: golang:1.22
-    image: bitnami/golang:1.22
+    # image: golang:1.23
+    image: bitnami/golang:1.23
     container_name: golang
     networks:
       - net_common
@@ -17,7 +17,7 @@ services:
     # command: ["tail", "-f", "/dev/null"] # To keep the container running
 
   rust:
-    image: rust:1.76-slim
+    image: rust:1-slim
     container_name: rust
     networks:
       - net_common

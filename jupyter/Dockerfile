@@ -3,14 +3,15 @@
 # python:3.12-alpine3.20: https://raw.githubusercontent.com/docker-library/python/master/3.12/alpine3.20/Dockerfile
 ARG OS=bookworm
 ARG GO_VERSION=1.23-${OS}
-ARG PYTHON_VERSION=3.12-${OS}
+# ARG PYTHON_VERSION=3-slim-${OS}
+ARG PYTHON_VERSION=3-${OS}
 
 FROM python:${PYTHON_VERSION}
 
 WORKDIR /root
 
 # -------------以下为安装Go-------------
-ENV GOLANG_VERSION=1.23.0
+# ENV GOLANG_VERSION=1.23.2
 ENV GOTOOLCHAIN=local
 ENV GO111MODULE=on GOPROXY=https://goproxy.cn,direct
 ENV GOPATH=/go

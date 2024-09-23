@@ -1,0 +1,20 @@
+
+services:
+  docker:
+    # platform: linux/arm64
+    image: docker:latest
+    container_name: docker
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - $HOME/docker/docker/certs-ca:/certs/ca
+      - $HOME/docker/docker/certs-client:/certs/client
+      # - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+
+networks:
+  net_common:
+    external: true
