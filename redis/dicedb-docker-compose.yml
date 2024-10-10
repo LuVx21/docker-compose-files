@@ -1,0 +1,15 @@
+services:
+  dicedb:
+    platform: linux/amd64
+    image: dicedb/dicedb:latest
+    container_name: dicedb
+    ports:
+      - 7379:7379
+    networks:
+      - net_common
+    # volumes:
+    #   - $HOME/docker/dicedb/data:/data
+
+networks:
+  net_common:
+    external: true

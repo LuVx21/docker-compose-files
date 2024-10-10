@@ -28,6 +28,18 @@ services:
     tty: true
     command: ["sleep", "infinity"]
 
+  node:
+    image: node:latest
+    container_name: node
+    networks:
+      - net_common
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - TZ=Asia/Shanghai
+    tty: true
+    command: ["sleep", "infinity"]
+
   # rust-golang-mix:
   #   image: luvx/rust-golang-mix:latest
   #   container_name: rust-golang-mix

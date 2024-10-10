@@ -1,0 +1,14 @@
+services:
+  myspeed:
+    image: germannewsmaker/myspeed:latest
+    container_name: myspeed
+    ports:
+      - 55216:5216
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/myspeed/data:/myspeed/data
+
+networks:
+  net_common:
+    external: true

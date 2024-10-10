@@ -3,6 +3,8 @@ services:
   postgresql-master:
     image: postgres:latest
     container_name: postgresql-master
+    ports:
+      - 5432:5432
     networks:
       - net_common
     volumes:
@@ -11,8 +13,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-boot}
       POSTGRES_USER: ${POSTGRES_USER:-username}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-    ports:
-      - 5432:5432
+      POSTGRES_INITDB_ARGS: '--data-checksums'
 
   opengauss:
     image: opengauss:2.0.0
