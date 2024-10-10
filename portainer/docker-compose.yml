@@ -35,6 +35,23 @@ services:
       # Tell Dockge where is your stacks directory
       - DOCKGE_STACKS_DIR=/opt/stacks
 
+  dpanel:
+    image: dpanel/dpanel:latest
+    container_name: dpanel
+    networks:
+      - net_common
+    ports:
+      # - 80:80
+      # - 443:443
+      - 58807:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/docker/dpanel:/dpanel
+    environment:
+      - APP_NAME=dpanel
+      - INSTALL_USERNAME=admin
+      - INSTALL_PASSWORD=admin
+
 networks:
   net_common:
     external: true
