@@ -52,6 +52,19 @@ services:
       - INSTALL_USERNAME=admin
       - INSTALL_PASSWORD=admin
 
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    networks:
+      - net_common
+    ports:
+      - 48090:8090
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $HOME/docker/beszel:/beszel_data
+
+# https://komo.do/
+
 networks:
   net_common:
     external: true

@@ -1,7 +1,7 @@
 
 services:
   postgresql-master:
-    image: postgres:latest
+    image: postgres:16
     container_name: postgresql-master
     ports:
       - 5432:5432
@@ -14,6 +14,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-username}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_INITDB_ARGS: '--data-checksums'
+    # healthcheck:
+    #   test:
+    #     ["CMD", "pg_isready", "-U", "username", "-d", "postgres"]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 5
 
   opengauss:
     image: opengauss:2.0.0

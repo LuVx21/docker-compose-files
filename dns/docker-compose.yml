@@ -38,7 +38,6 @@ services:
     environment:
       - DNS_SERVER_DOMAIN=dns-server #The primary domain name used by this DNS Server to identify itself.
     volumes:
-      - config:/etc/dns
       - $HOME/docker/dns/dns-server/config:/etc/dns
 #     restart: unless-stopped
     sysctls:
