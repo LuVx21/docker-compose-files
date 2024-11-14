@@ -6,7 +6,15 @@ ARG GO_VERSION=1.23-${OS}
 # ARG PYTHON_VERSION=3-slim-${OS}
 ARG PYTHON_VERSION=3-${OS}
 
-FROM python:${PYTHON_VERSION}
+FROM python:${PYTHON_VERSION} AS base
+
+FROM base AS base-amd64
+ARG ARCH=x64
+
+FROM base AS base-arm64
+ARG ARCH=aarch64
+
+FROM base-$TARGETARCH
 
 WORKDIR /root
 
@@ -33,7 +41,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && pip3 install --no-cache-dir jupyter kotlin-jupyter-kernel \
     # Java 内核
-    && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-x64_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
+    && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gophernotes(太旧,泛型都不支持)
@@ -54,5 +62,9 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     # 其他
     && mkdir -p $HOME/code
 
+# Rust
+ENV PATH=/root/.cargo/bin:$PATH
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && cargo install evcxr_jupyter && evcxr_jupyter --install
+
 EXPOSE 8888
-CMD [ "jupyter", "notebook", "--no-browser", "--allow-root", "--ip=0.0.0.0"]
+CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0"]

@@ -1,7 +1,6 @@
 services:
   jupyter:
-    platform: linux/amd64
-    image: registry.cn-shanghai.aliyuncs.com/luvx21/luvx_jupyter:latest_amd64
+    image: luvx/jupyter:latest
     container_name: jupyter
     ports:
       - 8888:8888

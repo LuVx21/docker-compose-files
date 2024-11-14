@@ -9,6 +9,7 @@ services:
       - net_common
     # volumes:
     #   - $HOME/docker/dicedb/data:/data
+    # command: --enable-multithreading --enable-watch
 
 networks:
   net_common:

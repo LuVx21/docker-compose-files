@@ -60,8 +60,17 @@ services:
     ports:
       - 48090:8090
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - $HOME/docker/beszel:/beszel_data
+
+  beszel-agent:
+    image: ccr.ccs.tencentyun.com/luvx21/henrygd_beszel-agent
+    container_name: beszel-agent
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PORT: 45876
+      KEY: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFVbKM97Lz3dcBFVajwLq3qNhVlLEpP0dLg5YuXY2Ke3"
 
 # https://komo.do/
 
