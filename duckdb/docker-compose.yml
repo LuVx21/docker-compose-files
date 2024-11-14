@@ -1,0 +1,16 @@
+services:
+  duckdb:
+    image: luvx/duckdb:latest
+    container_name: duckdb
+    build:
+      dockerfile: Dockerfile
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/duckdb:/data
+    environment:
+      - TZ=Asia/Shanghai
+
+networks:
+  net_common:
+    external: true
