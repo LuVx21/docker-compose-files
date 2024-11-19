@@ -27,7 +27,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ env.REGISTRY_USER }}
-          password: ${{ enc.REGISTRY_PASSWORD }}
+          password: ${{ env.REGISTRY_PASSWORD }}
       - name: aa
         run: |
           echo "磁盘信息"
