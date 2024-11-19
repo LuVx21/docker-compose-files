@@ -18,7 +18,7 @@ env:
 
 jobs:
   build:
-    name: Pull
+    name: 构建镜像
     runs-on: ubuntu-latest
     steps:
       - name: 代码检出
@@ -30,7 +30,7 @@ jobs:
         with:
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
-      - name: aa
+      - name: 磁盘信息
         run: |
           echo "磁盘信息"
           echo "=============================================================================="
@@ -39,9 +39,7 @@ jobs:
       - name: 构建
         run: |
           module=${{ inputs.dockerhub_image }}
-          if [ "$module" = "" ];then
-            exit 1
-          elif [ "$module" = "chartdb" ];then
+          if [ "$module" = "chartdb" ];then
             image='luvx/chartdb' version='v1.2.0' url=https://github.com/chartdb/chartdb.git#${{ inputs.tag }}
           elif [ "$module" = "dicedb" ];then
             image='luvx/dicedb' version='0.0.5' url=https://github.com/DiceDB/dice.git#${{ inputs.tag }}
