@@ -21,6 +21,8 @@ jobs:
     name: Pull
     runs-on: ubuntu-latest
     steps:
+      - name: 代码检出
+        uses: actions/checkout@v4
       - name: 登录到Docker Hub
         uses: docker/login-action@v3
         with:
