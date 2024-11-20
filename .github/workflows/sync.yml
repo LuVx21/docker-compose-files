@@ -9,8 +9,10 @@ on:
         default: 'linux/arm64'
         type: choice
         options:
+        - linux/386
         - linux/arm64
         - linux/amd64
+        - linux/ppc64le
       dockerhub_images:
         description: '要拉取的 DockerHub 镜像,如foo/bar:v1,bar/foo:v2'
         required: true
@@ -20,6 +22,12 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: 参数信息
+        run: |
+          echo "=============================================================================="
+          echo ${{ inputs.dockerhub_images }}
+          echo ${{ inputs.platform }}
+          echo "=============================================================================="
       - name: 登录阿里云容器
         uses: docker/login-action@v3
         with:
@@ -35,6 +43,7 @@ jobs:
       - name: 从DockerHub拉取Docker镜像
         run: |
           images=${{ inputs.dockerhub_images }}
+          platform=${{ inputs.platform }}
           array=(${images//,/ })
           for image in ${array[@]}
           do
@@ -44,7 +53,7 @@ jobs:
             image_tag=$(echo "$image_name_tag" | awk -F':' '{if (NF==2) print $2; else print "latest"}')
             echo 解构后信息: $namespace $image_name $image_tag
             echo "拉取镜像 $image"
-            docker pull --platform=${{ inputs.platform }} $image
+            docker pull --platform=$platform $image
 
             rsn=$(echo "$image" | awk -F':' '{print $1}')
             new_rsn=`echo $rsn | sed 's/\//_/g'`
