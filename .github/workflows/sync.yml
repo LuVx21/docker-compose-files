@@ -16,28 +16,22 @@ on:
         required: true
         default: 'alpine:latest'
 
-env:
-  TOKENS: "${{ secrets.TOKENS }}"
-
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: 解析获取token
-        run: |
-          echo ${{ env.TOKENS }} | grep -Ev '^#|^$' >> $GITHUB_ENV
       - name: 登录阿里云容器
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.ALIYUN_REGISTRY }}
-          username: ${{ env.ALIYUN_REGISTRY_USER }}
-          password: ${{ env.ALIYUN_REGISTRY_PASSWORD }}
+          registry: ${{ vars.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_REGISTRY_USER }}
+          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
       - name: 登录腾讯云容器
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.TXYUN_REGISTRY }}
-          username: ${{ env.TXYUN_REGISTRY_USER }}
-          password: ${{ env.TXYUN_REGISTRY_PASSWORD }}
+          registry: ${{ vars.TXYUN_REGISTRY }}
+          username: ${{ secrets.TXYUN_REGISTRY_USER }}
+          password: ${{ secrets.TXYUN_REGISTRY_PASSWORD }}
       - name: 从DockerHub拉取Docker镜像
         run: |
           array=(${inputs.dockerhub_images//,/ })
@@ -58,7 +52,7 @@ jobs:
             fi
             echo "$rsn:$image_tag -> $new_rsn:$new_tag"
 
-            for registry in ${{ env.ALIYUN }} ${{ env.TXYUN }}; do
+            for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }}; do
               array=(${registry//,/ })
               new_image=${array[0]}/${array[1]}/$new_rsn:$new_tag
               echo "同步镜像 $image -> $new_image"
