@@ -34,7 +34,8 @@ jobs:
           password: ${{ secrets.TXYUN_REGISTRY_PASSWORD }}
       - name: 从DockerHub拉取Docker镜像
         run: |
-          array=(${inputs.dockerhub_images//,/ })
+          images=${{ inputs.dockerhub_images }}
+          array=(${images//,/ })
           for image in ${array[@]}
           do
             image_name_tag=$(echo "$image" | awk -F'/' '{print $NF}')
