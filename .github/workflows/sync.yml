@@ -48,10 +48,11 @@ jobs:
 
             rsn=$(echo "$image" | awk -F':' '{print $1}')
             new_rsn=`echo $rsn | sed 's/\//_/g'`
+            new_tag=${image_tag}
             if [[ ! "$platform" =~ "arm" ]];then
-              new_tag="${image_tag}_${platform//\//_}"
+              new_tag="${new_tag}_${platform//\//_}"
             fi
-            echo "$rsn:$image_tag -> $new_rsn:$new_tag"
+            echo "新标签: $rsn:$image_tag -> $new_rsn:$new_tag"
 
             for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }}; do
               array=(${registry//,/ })
