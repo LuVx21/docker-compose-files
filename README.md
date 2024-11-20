@@ -4,13 +4,10 @@
 
 - [镜像](#镜像)
 - [命令](#命令)
-- [docker-compose](#docker-compose)
-  - [配置](#配置)
 - [](#)
 - [appsmith](#appsmith)
 - [rockermq](#rockermq)
 - [nacos](#nacos)
-- [MySQL](#mysql)
 
 <!-- /TOC -->
 </details>
@@ -18,9 +15,6 @@
 ![Alt](https://repobeats.axiom.co/api/embed/fa032c64baf9522131d3fea5d8feb396bb2b42c9.svg "Repobeats analytics image")
 
 ## 镜像
-
-eclipse-temurin:21-jdk
-eclipse-temurin:21-jre
 
 ```json
 {
@@ -43,35 +37,6 @@ eclipse-temurin:21-jre
 # 查看某个网络中使用的容器name列表
 docker network inspect net_common --format='{{ range $key, $value := .Containers }}{{ $value.Name }} {{ end }}'
 docker network inspect net_common | jq '.[0].Containers.[]' | jq '.IPv4Address+":"+.Name'
-```
-
-
-## docker-compose
-
-```bash
-# sudo curl -L "https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo curl -L "https://get.daocloud.io/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m`" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-docker-compose --version
-```
-
-
-### 配置
-
-如果要在其他容器里直接使用kafka容器, 可以将它们加入同一个network
-
-```bash
-docker network create nginx-proxy
-```
-
-在各自容器的docker-compose.yml加入network配置, 如下
-
-```yml
-networks:
-  default:
-    external:
-      name: nginx-proxy
 ```
 
 
@@ -181,29 +146,4 @@ docker run -d -p 8848:8848  \
 -v ~/docker/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties \
 -v ~/docker/nacos/logs:/home/nacos/logs \
 --restart always --name nacos nacos/nacos-server
-```
-
-## MySQL
-
-```bash
-mkdir -p ~/docker/mysql/{conf,logs,data}
-touch ~/docker/mysql/my.cnf
-```
-
-```bash
-docker run -d --name mysql \
--p 53306:3306 \
---platform=linux/amd64 \
---restart=always --privileged=true  \
--v $HOME/docker/mysql/data/:/var/lib/mysql \
--v $HOME/docker/mysql/logs/:/var/log/mysql \
--v $HOME/docker/mysql/conf/:/etc/mysql \
--e MYSQL_ROOT_PASSWORD=1121 \
-mysql:5.7
-```
-
-```bash
-docker run -itd --name opensumi \
--p 8080:8000 \
-ghcr.io/opensumi/opensumi-web:latest
 ```

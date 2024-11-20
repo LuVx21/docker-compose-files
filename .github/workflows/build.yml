@@ -21,6 +21,12 @@ jobs:
     name: 构建镜像
     runs-on: ubuntu-latest
     steps:
+      - name: 参数信息
+        run: |
+          echo "=============================================================================="
+          echo ${{ inputs.dockerhub_image }}
+          echo ${{ inputs.tag }}
+          echo "=============================================================================="
       - name: 代码检出
         uses: actions/checkout@v4
       - name: Docker Setup Buildx
@@ -63,3 +69,12 @@ jobs:
           fi
           echo "构建镜像: ${image}:${{ inputs.tag }} 上下文: ${url}"
           docker buildx build -t "$image":latest -t "$image":${{ inputs.tag }} --platform linux/amd64,linux/arm64 --push "$url"
+      - name: 磁盘信息
+        run: |
+          echo "磁盘信息"
+          echo "=============================================================================="
+          df -hT
+          docker system df
+          echo "=============================================================================="
+      - name: 清理磁盘
+        run: docker system prune

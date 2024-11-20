@@ -37,6 +37,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  rustpad:
+    image: ekzhang/rustpad:latest
+    container_name: rustpad
+    networks:
+      - net_common
+    ports:
+      - 53030:3030
+
 networks:
   net_common:
     external: true

@@ -12,6 +12,9 @@ services:
       - "8848:8848"
       - "9848:9848"
       - "9849:9849"
+    # volumes:
+    #   - $HOME/docker/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
+    #   - $HOME/docker/nacos/logs:/home/nacos/logs
     env_file:
       - ./env/nacos.env
 

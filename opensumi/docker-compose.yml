@@ -1,0 +1,15 @@
+
+services:
+  opensumi:
+    image: ghcr.io/opensumi/opensumi-web:latest
+    container_name: opensumi
+    ports:
+      - 58000:8000
+    networks:
+      - net_common
+    environment:
+      TZ: Asia/Shanghai
+
+networks:
+  net_common:
+    external: true
