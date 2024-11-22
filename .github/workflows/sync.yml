@@ -86,7 +86,7 @@ jobs:
             fi
             echo "新标签: $rsn:$image_tag -> $new_rsn:$new_tag"
 
-            for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ github.actor }}; do
+            for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
               array=(${registry//,/ })
               new_image=${array[0]}/${array[1]}/$new_rsn:$new_tag
               echo "同步镜像 $image -> $new_image"
