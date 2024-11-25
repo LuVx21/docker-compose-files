@@ -22,6 +22,9 @@ jobs:
   sync:
     name: 同步镜像
     runs-on: ubuntu-latest
+    # permissions:
+    #   contents: read
+    #   packages: write
     steps:
       - name: 参数信息
         run: |

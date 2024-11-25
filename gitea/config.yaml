@@ -1,0 +1,43 @@
+# You don't have to copy this file to your instance,
+# just run `./act_runner generate-config > config.yaml` to generate a config file.
+log:
+  level: info
+
+runner:
+  file: .runner
+  capacity: 2 # 并发
+  envs:
+    RUNNER_TOOL_CACHE: /toolcache
+    # 设置代理
+    #HTTP_PROXY: http://192.168.2.4:7890/
+    #HTTPS_PROXY: http://192.168.2.4:7890/
+    #NO_PROXY: 127.0.0.1,localhost,172.17.0.1,registry.npmmirror.com,cdn.npmmirror.com,cn-hangzhou.aliyuncs.com,registry.cn-hangzhou.aliyuncs.com
+  env_file: .env
+  timeout: 3h
+  insecure: true
+  fetch_timeout: 5s
+  fetch_interval: 2s
+  labels:
+    # 替换官方基础镜像，只是默认装了pnpm加快ci执行
+    # 也可改造你自己的基础镜像，预装你所需环境
+    # 具体可查看 https://github.com/seepine/docker-ubuntu/blob/main/Dockerfile.act
+    - "ubuntu-latest:docker://seepine/ubuntu:act-latest"
+    - "ubuntu-22.04:docker://seepine/ubuntu:act-22.04"
+    - "ubuntu-20.04:docker://seepine/ubuntu:act-20.04"
+cache:
+  enabled: true
+  dir: ""
+  host: "172.17.0.1"
+  port: 18088
+  external_server: ""
+container:
+  network: ""
+  privileged: false
+  options:
+  workdir_parent:
+  valid_volumes: []
+  docker_host: ""
+  force_pull: false
+  force_rebuild: false
+host:
+  workdir_parent:
