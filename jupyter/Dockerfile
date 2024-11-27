@@ -32,14 +32,9 @@ ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 # -------------以下为安装内核-------------
 
-# RUN set -x \
-#     && apk update \
-#     && apk --no-cache --arch=x86_64 add \
-#     ca-certificates g++ gcc git libffi-dev pkgconfig mercurial mesa-dev musl-dev su-exec zeromq-dev
-
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
-    && pip3 install --no-cache-dir jupyter kotlin-jupyter-kernel \
+    && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel \
     # Java 内核
     && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \

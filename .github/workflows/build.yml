@@ -64,8 +64,10 @@ jobs:
             curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
             cd sentinel-dashboard && sed -i "" 's/1.8.6/1.8.8/g' Dockerfile && sed -i "" 's/amd64\///g' Dockerfile
           else
-            echo -e "无指定模块名"
-            exit 1
+            echo "自定义构建镜像: ${module}"
+            docker buildx build $module
+            # echo -e "无指定模块名"
+            exit 0
           fi
           echo "构建镜像: ${image}:${{ inputs.tag }} 上下文: ${url}"
           docker buildx build -t "$image":latest -t "$image":${{ inputs.tag }} --platform linux/amd64,linux/arm64 --push "$url"
