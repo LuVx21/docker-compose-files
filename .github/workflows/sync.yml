@@ -14,9 +14,9 @@ on:
         - linux/amd64
         - linux/ppc64le
       dockerhub_images:
-        description: '要拉取的 DockerHub 镜像,如foo/bar:v1,bar/foo:v2'
-        required: true
-        default: 'alpine:latest'
+        description: '要拉取的镜像,如foo/bar:v1,bar/foo:v2(空则读取images.txt)'
+        required: false
+        default: ''
 
 jobs:
   sync:
@@ -68,33 +68,70 @@ jobs:
           password: ${{ secrets.TXYUN_REGISTRY_PASSWORD }}
       - name: 从DockerHub拉取Docker镜像
         run: |
-          images=${{ inputs.dockerhub_images }}
-          platform=${{ inputs.platform }}
-          array=(${images//,/ })
-          for image in ${array[@]}
-          do
-            image_name_tag=$(echo "$image" | awk -F'/' '{print $NF}')
-            namespace=$(echo "$image" | awk -F'/' '{if (NF==3) print $2; else if (NF==2) print $1; else print ""}')
-            image_name=$(echo "$image_name_tag" | awk -F':' '{print $1}')
-            image_tag=$(echo "$image_name_tag" | awk -F':' '{if (NF==2) print $2; else print "latest"}')
-            echo 解构后信息: $namespace $image_name $image_tag
-            echo "拉取镜像 $image"
-            docker pull --platform=$platform $image
+          input_images=${{ inputs.dockerhub_images }}
+          input_platform=${{ inputs.platform }}
+          function pullAndSync() {
+            platform=$1
+            input_arr=($@)
+            images=( "${input_arr[@]:1}" )
+            echo "平台: $platform, 镜像: ${images[@]}"
 
-            rsn=$(echo "$image" | awk -F':' '{print $1}')
-            new_rsn=`echo $rsn | sed 's/\//_/g'`
-            new_tag=${image_tag}
-            if [[ ! "$platform" =~ "arm" ]];then
-              new_tag="${new_tag}_${platform//\//_}"
-            fi
-            echo "新标签: $rsn:$image_tag -> $new_rsn:$new_tag"
+            array=(${images//,/ })
+            for image in ${array[@]}; do
+              image_name_tag=$(echo "$image" | awk -F'/' '{print $NF}')
+              namespace=$(echo "$image" | awk -F'/' '{if (NF==3) print $2; else if (NF==2) print $1; else print ""}')
+              image_name=$(echo "$image_name_tag" | awk -F':' '{print $1}')
+              image_tag=$(echo "$image_name_tag" | awk -F':' '{if (NF==2) print $2; else print "latest"}')
+              echo 解构后信息: $namespace $image_name $image_tag
+              echo "拉取镜像 $image"
+              docker pull --platform=$platform $image
 
-            for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
-              array=(${registry//,/ })
-              new_image=${array[0]}/${array[1]}/$new_rsn:$new_tag
-              echo "同步镜像 $image -> $new_image"
-              docker tag $image $new_image
-              docker push $new_image && docker image rm $new_image
+              rsn=$(echo "$image" | awk -F':' '{print $1}')
+              new_rsn=`echo $rsn | sed 's/\//_/g'`
+              new_tag=${image_tag}
+              if [[ ! "$platform" =~ "arm" ]];then
+                new_tag="${new_tag}_${platform//\//_}"
+              fi
+              echo "新标签: $rsn:$image_tag -> $new_rsn:$new_tag"
+
+              for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
+                arr=(${registry//,/ })
+                new_image=${arr[0]}/${arr[1]}/$new_rsn:$new_tag
+                echo "同步镜像 $image -> $new_image"
+                docker tag $image $new_image
+                docker push $new_image && docker image rm $new_image
+              done
+              docker image rm $image
             done
-            docker image rm $image
+          }
+
+          if [ ! -z $input_images ]; then
+            pullAndSync $platform $input_images
+            exit 0
+          fi
+
+          # 文件
+          declare -A map
+          # cur_platform="linux/arm64"
+          while IFS= read -r line || [ -n "$line" ]; do
+            [[ -z "$line" ]] && continue
+            if echo "$line" | grep -q '^\s*#'; then
+                continue
+            fi
+
+            platform=$(echo "$line" | awk -F'platform[ =]' '{if (NF>1) print $2}' | awk '{print $1}')
+            if [ -z "$platform" ]; then
+                image=$(echo "$line" | awk '{print $NF}')
+                platforms=( ${cur_platform//,/ } )
+                for p in ${platforms[@]}; do
+                    [[ -z ${map[$p]} ]] && prefix="" || prefix=","
+                    map[$p]=${map[$p]}$prefix$image
+                done
+            else
+                cur_platform=$platform
+            fi
+          done < images.txt
+
+          for key in ${!map[*]};do
+            pullAndSync $key ${map[$key]}
           done
