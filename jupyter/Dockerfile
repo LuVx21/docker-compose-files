@@ -6,16 +6,14 @@ ARG GO_VERSION=1.23-${OS}
 # ARG PYTHON_VERSION=3-slim-${OS}
 ARG PYTHON_VERSION=3-${OS}
 
-FROM python:${PYTHON_VERSION} AS base
+FROM python:${PYTHON_VERSION} AS base0
 
-FROM base AS base-amd64
+FROM base0 AS base-amd64
 ARG ARCH=x64
-
-FROM base AS base-arm64
+FROM base0 AS base-arm64
 ARG ARCH=aarch64
 
-FROM base-$TARGETARCH
-
+FROM base-$TARGETARCH AS base
 WORKDIR /root
 
 # -------------以下为安装Go-------------
@@ -30,13 +28,14 @@ COPY --from=golang:1.23-bookworm --link /usr/local/go/ /usr/local/go/
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
+COPY --from=luvx/oracle_jdk:latest --link $JAVA_HOME $JAVA_HOME
 # -------------以下为安装内核-------------
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel \
     # Java 内核
-    && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
+    # && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gophernotes(太旧,泛型都不支持)

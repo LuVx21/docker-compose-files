@@ -40,20 +40,6 @@ services:
     tty: true
     command: ["sleep", "infinity"]
 
-  # rust-golang-mix:
-  #   image: luvx/rust-golang-mix:latest
-  #   container_name: rust-golang-mix
-  #   networks:
-  #     - net_common
-  #   build:
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - TZ=Asia/Shanghai
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   tty: true
-  #   command: ["sleep", "infinity"]
-
 networks:
   net_common:
     external: true

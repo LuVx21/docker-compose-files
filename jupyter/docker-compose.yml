@@ -10,6 +10,7 @@ services:
       - $HOME/docker/jupyter:/root/code
       - $HOME/.m2:/root/.m2
       - $HOME/go/pkg:/go/pkg
+      - $HOME/data:/root/data
     # environment:
     #   - PASSWORD=xxxx
 

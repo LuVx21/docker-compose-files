@@ -51,12 +51,12 @@ jobs:
             image='luvx/dicedb' version='0.0.5' url=https://github.com/DiceDB/dice.git#${{ inputs.tag }}
           elif [ "$module" = "duckdb" ];then
             image='luvx/duckdb' version='v1.1.3' url=https://github.com/LuVx21/docker-compose-files.git#master:duckdb
-            # url='../duckdb'
+            url='./duckdb'
           elif [ "$module" = "json4u" ];then
             image='luvx/json4u' version='v3.0.0' url=https://github.com/loggerhead/json4u.git#${{ inputs.tag }}
           elif [ "$module" = "jupyter" ];then
             image='luvx/jupyter' version='0' url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
-            # url='../jupyter'
+            url='./jupyter'
           elif [ "$module" = "pichome" ];then
             image='luvx/pichome' version='2.0' url=https://github.com/zyx0814/Pichome-docker.git
           elif [ "$module" = "sentinel" ];then
