@@ -9,6 +9,7 @@ on:
         default: 'linux/arm64,linux/amd64'
         type: choice
         options:
+        - linux/arm64,linux/amd64
         - linux/arm64
         - linux/amd64
       dockerhub_images:
@@ -92,7 +93,6 @@ jobs:
               ps=''
               for platform in ${platform_array[@]}; do
                 tag_with_p="${image_tag}_${platform//\//_}"
-                echo "新标签: $rsn:$image_tag -> $new_image_name:$tag_with_p"
 
                 docker pull --platform=$platform $image
                 new_image=$new_rsn:$tag_with_p
@@ -102,15 +102,16 @@ jobs:
               done
 
               if [[ $platform_count -ge 2 ]]; then
-                  docker manifest create $new_rsn:$image_tag $ps && docker manifest push $new_rsn:$image_tag && docker manifest rm $new_rsn:$image_tag
-                  ps+="$new_rsn:$image_tag "
+                echo "多平台: $ps -> $new_rsn:$image_tag"
+                docker manifest create $new_rsn:$image_tag $ps && docker manifest push $new_rsn:$image_tag && docker manifest rm $new_rsn:$image_tag
+                ps+="$new_rsn:$image_tag "
               fi
-              ps+="$image "
               for i in ${ps}; do
-                  docker image rm $i
+                docker image rm $i
               done
-              docker image prune -f
             done
+            docker image prune -af
+            # docker image rm $image
           }
 
           if [[ -n $input_images ]]; then
