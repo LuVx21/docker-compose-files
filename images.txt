@@ -153,7 +153,6 @@ zookeeper:latest
 
 gcr.io/cadvisor/cadvisor:latest
 ghcr.io/coder/coder:latest
-quay.io/debezium/debezium-ui:latest
 
 
 
@@ -169,3 +168,4 @@ platform=linux/amd64
 dicedb/dicedb:latest
 mysql:5.7
 sameersbn/bind:latest
+quay.io/debezium/debezium-ui:latest

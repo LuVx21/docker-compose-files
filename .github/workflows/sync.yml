@@ -51,7 +51,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_REGISTRY_PASSWORD }}
       - name: 小写GitHub用户名(namespace)
         run: echo "ACTOR_LOWER=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: 登录阿里云容器
@@ -81,7 +81,7 @@ jobs:
               namespace=$(echo "$image" | awk -F'/' '{if (NF==3) print $2; else if (NF==2) print $1; else print ""}')
               image_name=$(echo "$image_name_tag" | awk -F':' '{print $1}')
               image_tag=$(echo "$image_name_tag" | awk -F':' '{if (NF==2) print $2; else print "latest"}')
-              echo 解构后信息: $namespace $image_name $image_tag
+              echo "解构后信息-> 空间:$namespace 镜像:$image_name 标签:$image_tag"
               echo "拉取镜像 $image"
               docker pull --platform=$platform $image
 
@@ -104,7 +104,7 @@ jobs:
             done
           }
 
-          if [ ! -z $input_images ]; then
+          if [[ ! -z $input_images ]]; then
             pullAndSync $input_platform $input_images
             exit 0
           fi
