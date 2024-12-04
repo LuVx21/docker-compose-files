@@ -104,7 +104,6 @@ jobs:
               if [[ $platform_count -ge 2 ]]; then
                 echo "多平台: $ps -> $new_rsn:$image_tag"
                 docker manifest create $new_rsn:$image_tag $ps && docker manifest push $new_rsn:$image_tag && docker manifest rm $new_rsn:$image_tag
-                ps+="$new_rsn:$image_tag "
               fi
               for i in ${ps}; do
                 docker image rm $i
