@@ -33,7 +33,7 @@ COPY --from=luvx/oracle_jdk:latest --link $JAVA_HOME $JAVA_HOME
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
-    && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel \
+    && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
     # Java 内核
     # && mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/23/latest/jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1 \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
@@ -61,4 +61,4 @@ ENV PATH=/root/.cargo/bin:$PATH
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && cargo install evcxr_jupyter && evcxr_jupyter --install
 
 EXPOSE 8888
-CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0"]
+CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'"]

@@ -3,14 +3,25 @@ name: 构建docker镜像
 on:
   workflow_dispatch:
     inputs:
-      dockerhub_image:
+      image:
         description: '要构建的镜像模块'
         required: true
-        default: ''
       tag:
         description: '要构建的镜像版本'
         required: true
+      buildArg:
+        description: 'Dockerfile的构建参数, arg1=foo arg2=bar'
+        required: false
         default: ''
+      platform:
+        description: '架构'
+        required: true
+        default: 'linux/arm64,linux/amd64'
+        type: choice
+        options:
+        - linux/arm64,linux/amd64
+        - linux/arm64
+        - linux/amd64
 
 env:
   REGISTRY_USER: "${{ secrets.REGISTRY_USER }}"
@@ -24,7 +35,7 @@ jobs:
       - name: 参数信息
         run: |
           echo "=============================================================================="
-          echo ${{ inputs.dockerhub_image }}
+          echo ${{ inputs.image }}
           echo ${{ inputs.tag }}
           echo "=============================================================================="
       - name: 代码检出
@@ -44,33 +55,47 @@ jobs:
           echo "=============================================================================="
       - name: 构建
         run: |
-          module=${{ inputs.dockerhub_image }}
+          module=${{ inputs.image }}
+          tag=${{ inputs.tag }}
+          buildArg=${{ inputs.buildArg }}
+          platform=${{ inputs.platform }}
+          if [[ -n $buildArg ]]; then
+            for arg in $buildArg; do
+              temp+="--build-arg $arg "
+            done
+            buildArg=$temp
+          fi
+          echo "参数-> 镜像:${module}:${tag} 架构: ${platform} 构建参数: ${buildArg}"
+
           if [ "$module" = "chartdb" ];then
-            image='luvx/chartdb' version='v1.2.0' url=https://github.com/chartdb/chartdb.git#${{ inputs.tag }}
+            image='luvx/chartdb' url=https://github.com/chartdb/chartdb.git#$tag
           elif [ "$module" = "dicedb" ];then
-            image='luvx/dicedb' version='0.0.5' url=https://github.com/DiceDB/dice.git#${{ inputs.tag }}
-          elif [ "$module" = "duckdb" ];then
-            image='luvx/duckdb' version='v1.1.3' url=https://github.com/LuVx21/docker-compose-files.git#master:duckdb
-            url='./duckdb'
+            image='luvx/dicedb' url=https://github.com/DiceDB/dice.git#$tag
           elif [ "$module" = "json4u" ];then
-            image='luvx/json4u' version='v3.0.0' url=https://github.com/loggerhead/json4u.git#${{ inputs.tag }}
+            image='luvx/json4u' url=https://github.com/loggerhead/json4u.git#$tag
+          elif [ "$module" = "duckdb" ];then
+            image='luvx/duckdb' url=https://github.com/LuVx21/docker-compose-files.git#master:duckdb
+            url='./duckdb'
           elif [ "$module" = "jupyter" ];then
-            image='luvx/jupyter' version='0' url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
+            image='luvx/jupyter' url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
             url='./jupyter'
+          elif [ "$module" = "rocketmq-dashboard" ];then
+            image='luvx/rocketmq-dashboard' url=https://github.com/LuVx21/docker-compose-files.git#master:ali
+            url='./ali'
           elif [ "$module" = "pichome" ];then
-            image='luvx/pichome' version='2.0' url=https://github.com/zyx0814/Pichome-docker.git
+            image='luvx/pichome' url=https://github.com/zyx0814/Pichome-docker.git
           elif [ "$module" = "sentinel" ];then
-            image='luvx/sentinel-dashboard' version='1.8.8'
+            image='luvx/sentinel-dashboard'
             curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
             cd sentinel-dashboard && sed -i "" 's/1.8.6/1.8.8/g' Dockerfile && sed -i "" 's/amd64\///g' Dockerfile
           else
             echo "自定义构建镜像: ${module}"
-            docker buildx build $module
+            docker buildx build --platform "$platform" "$buildArg" $module --push
             # echo -e "无指定模块名"
             exit 0
           fi
-          echo "构建镜像: ${image}:${{ inputs.tag }} 上下文: ${url}"
-          docker buildx build -t "$image":latest -t "$image":${{ inputs.tag }} --platform linux/amd64,linux/arm64 --push "$url"
+          echo "构建镜像: ${image}:${tag} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url}"
+          docker buildx build "$args" -t "$image":latest -t "$image":"$tag" --platform "$platform" "$buildArg" --push "$url"
       - name: 磁盘信息
         run: |
           echo "磁盘信息"
@@ -79,4 +104,4 @@ jobs:
           docker system df
           echo "=============================================================================="
       - name: 清理磁盘
-        run: docker system prune
+        run: docker system prune -f

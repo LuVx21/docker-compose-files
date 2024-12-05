@@ -40,6 +40,26 @@ services:
     tty: true
     command: ["sleep", "infinity"]
 
+  vscode:
+    image: luvx/vscode:latest
+    build:
+      dockerfile: Dockerfile
+    container_name: vscode
+    ports:
+      - 8000:8000
+    networks:
+      - net_common
+    volumes:
+      - $HOME/OneDrive/Code:/workspace
+      - vscode_ext:/root/.vscode-server/extensions
+    environment:
+      - TZ=Asia/Shanghai
+    tty: true
+    command: code serve-web --host=0.0.0.0 --port=8000 --connection-token=xxxx
+
+volumes:
+  vscode_ext:
+
 networks:
   net_common:
     external: true

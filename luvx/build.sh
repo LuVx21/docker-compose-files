@@ -16,6 +16,9 @@ elif [ "$1" = "json4u" ];then
 elif [ "$1" = "jupyter" ];then
     image='luvx/jupyter' version='0' url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
     # url='../jupyter'
+elif [ "$module" = "rocketmq-dashboard" ];then
+    image='luvx/rocketmq-dashboard' url=https://github.com/LuVx21/docker-compose-files.git#master:ali
+    # url='./ali'
 elif [ "$1" = "pichome" ];then
     image='luvx/pichome' version='2.0' url=https://github.com/zyx0814/Pichome-docker.git
 elif [ "$1" = "sentinel" ];then
