@@ -31,3 +31,15 @@ ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 RUN mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/graalvm/23/latest/graalvm-jdk-23_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ARG JDK_VERSION=23
+FROM eclipse-temurin:${JDK_VERSION} AS mvnd
+
+ARG MVND_VERSION='1.0.2' PLATFORM=linux ARCH=amd64
+ENV MVND_HOME=/opt/install/mvnd
+ENV PATH=$MVND_HOME/bin:$MVND_HOME/mvn/bin:$PATH
+
+RUN curl -fSL -o maven-mvnd.tar.gz https://github.com/apache/maven-mvnd/releases/download/${MVND_VERSION}/maven-mvnd-${MVND_VERSION}-${PLATFORM}-${ARCH}.tar.gz \
+    && mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $MVND_HOME \
+    && rm -rf maven-mvnd.tar.gz

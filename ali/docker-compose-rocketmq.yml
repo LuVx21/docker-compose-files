@@ -57,8 +57,7 @@ services:
     command: sh mqbroker -c /opt/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
 
   rocketmq-dashboard:
-    platform: linux/amd64
-    image: apacherocketmq/rocketmq-dashboard:latest
+    image: luvx/rocketmq-dashboard:latest
     container_name: rocketmq-dashboard
     networks:
       - net_common
