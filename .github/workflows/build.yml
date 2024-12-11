@@ -90,7 +90,8 @@ jobs:
             cd sentinel-dashboard && sed -i "" 's/1.8.6/1.8.8/g' Dockerfile && sed -i "" 's/amd64\///g' Dockerfile
           else
             echo "自定义构建镜像: ${module}"
-            docker buildx build --platform "$platform" "$buildArg" $module --push
+            echo "执行命令: docker buildx build --platform ${platform} ${buildArg} ${module} --push"
+            docker buildx build --platform ${platform} ${buildArg} ${module} --push
             # echo -e "无指定模块名"
             exit 0
           fi
