@@ -42,8 +42,9 @@ services:
 
   vscode:
     image: luvx/vscode:latest
-    build:
-      dockerfile: Dockerfile
+    # build:
+    #   dockerfile: Dockerfile
+    #   target: vscode
     container_name: vscode
     ports:
       - 8000:8000
