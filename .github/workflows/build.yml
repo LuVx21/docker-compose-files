@@ -95,7 +95,8 @@ jobs:
             exit 0
           fi
           echo "构建镜像: ${image}:${tag} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url}"
-          docker buildx build -t "$image":latest -t "$image":"$tag" --platform "$platform" "$buildArg" --push "$url"
+          echo "执行命令: docker buildx build -t ${image}:latest -t ${image}:${tag} --platform ${platform} ${buildArg} --push ${url}"
+          docker buildx build -t ${image}:latest -t ${image}:${tag} --platform ${platform} ${buildArg} --push ${url}
       - name: 磁盘信息
         run: |
           echo "磁盘信息"
