@@ -4,7 +4,7 @@ FROM debian:bookworm AS base-0
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base-0:bookworm AS base-1
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends curl wget; \
+    apt-get update && apt-get install -y --no-install-recommends ca-certificates curl wget; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ ARG ARCH_SHORT=arm64
 FROM base-$TARGETARCH AS base
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base AS ops
+FROM luvx/base-2:bookworm AS ops
 
 RUN apt update && apt install -y zsh curl wget tree vim git
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -37,7 +37,7 @@ ARG JAVA_VERSION='23'
 ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-RUN mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/java/${JAVA_VERSION}/latest/jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
+RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/java/${JAVA_VERSION}/latest/jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base AS graalvm_jdk
@@ -46,7 +46,7 @@ ARG JAVA_VERSION='23'
 ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-RUN mkdir -p $JAVA_HOME && wget -q -O - "https://download.oracle.com/graalvm/${JAVA_VERSION}/latest/graalvm-jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
+RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/graalvm/${JAVA_VERSION}/latest/graalvm-jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # docker build --target mvnd -t luvx/mvnd:1.0.2-23 --platform linux/amd64 --build-arg MVND_VERSION=1.0.2 .
@@ -67,7 +67,7 @@ RUN mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $M
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base AS vscode
 
-RUN wget -q -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_SHORT}" \
+RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_SHORT}" \
     && tar -zxvf vscode_cli.tar.gz -C /usr/bin
 CMD ["sleep", "infinity"]
 

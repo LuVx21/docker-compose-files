@@ -1,0 +1,35 @@
+name: 测试用
+
+on:
+  workflow_dispatch:
+    inputs:
+      arg1:
+        description: '参数1'
+        required: true
+        default: ''
+
+env:
+  ENV1: "环境变量1"
+
+jobs:
+  jobId1:
+    name: 任务1
+    runs-on: ubuntu-latest
+    steps:
+      - name: 参数信息
+        env:
+          ARG1: ${{ inputs.arg1 }}
+        run: |
+          echo "------------------------------------------------------------------------------"
+          echo ${{ inputs.arg1 }}
+          echo "参数1: $ARG1"
+          echo "------------------------------------------------------------------------------"
+  jobId2:
+    name: 任务2
+    runs-on: ubuntu-latest
+    steps:
+      - name: 参数信息
+        run: |
+          echo "------------------------------------------------------------------------------"
+          echo ${{ inputs.arg1 }}
+          echo "------------------------------------------------------------------------------"

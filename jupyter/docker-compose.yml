@@ -15,16 +15,16 @@ services:
     #   - PASSWORD=xxxx
 
 
-  showdoc:
-    image: star7th/showdoc:latest
-    container_name: showdoc
-    ports:
-      - 50080:80
-    networks:
-      - net_common
-    volumes:
-      - $HOME/docker/showdoc/html:/var/www/html
-    privileged: true
+  # showdoc:
+  #   image: star7th/showdoc:latest
+  #   container_name: showdoc
+  #   ports:
+  #     - 50080:80
+  #   networks:
+  #     - net_common
+  #   volumes:
+  #     - $HOME/docker/showdoc/html:/var/www/html
+  #   privileged: true
 
 networks:
   net_common:
