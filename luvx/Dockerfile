@@ -1,20 +1,24 @@
+ARG VERSION=bookworm
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM debian:bookworm AS base-0
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-0:bookworm AS base-1
+FROM debian:${VERSION} AS base-0
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends ca-certificates curl wget; \
+    apt-get update && apt-get install -y --no-install-recommends ca-certificates; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-1:bookworm AS base-2
+FROM luvx/base-0:${VERSION} AS base-1
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends curl wget; \
+    rm -rf /var/lib/apt/lists/*
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM luvx/base-1:${VERSION} AS base-2
 RUN set -eux; \
     apt-get update && apt-get install -y --no-install-recommends git bzip2 unzip; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-1:bookworm AS base0
+FROM luvx/base-1:${VERSION} AS base0
 FROM base0 AS base-amd64
 ARG ARCH=x64
 ARG ARCH_SHORT=x64
@@ -25,7 +29,7 @@ ARG ARCH_SHORT=arm64
 FROM base-$TARGETARCH AS base
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-2:bookworm AS ops
+FROM luvx/base-2:${VERSION} AS ops
 
 RUN apt update && apt install -y zsh curl wget tree vim git
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -65,10 +69,13 @@ RUN mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $M
     && rm -rf maven-mvnd.tar.gz
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base AS vscode
+FROM base AS vscode_downloader
 
 RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_SHORT}" \
-    && tar -zxvf vscode_cli.tar.gz -C /usr/bin
+    && tar -zxvf vscode_cli.tar.gz
+
+FROM luvx/base-0:${VERSION} AS vscode
+COPY --from=vscode_downloader code /usr/bin
 CMD ["sleep", "infinity"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

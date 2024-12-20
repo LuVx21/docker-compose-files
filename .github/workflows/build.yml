@@ -55,7 +55,7 @@ jobs:
           echo "=============================================================================="
       - name: 构建
         env:
-          MODULE=${{ inputs.image }}
+          MODULE: ${{ inputs.image }}
         run: |
           module=$MODULE
           tag=${{ inputs.tag }}
