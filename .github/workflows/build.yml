@@ -54,8 +54,10 @@ jobs:
           df -hT
           echo "=============================================================================="
       - name: 构建
+        env:
+          MODULE=${{ inputs.image }}
         run: |
-          module=${{ inputs.image }}
+          module=$MODULE
           tag=${{ inputs.tag }}
           buildArg=${{ inputs.buildArg }}
           platform=${{ inputs.platform }}
