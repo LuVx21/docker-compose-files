@@ -6,6 +6,7 @@ RUN set -eux; \
     pkg='ca-certificates'; \
     if [ $T -ge 1 ]; then pkg=$pkg' curl wget'; fi; \
     if [ $T -ge 2 ]; then pkg=$pkg' git bzip2 unzip'; fi; \
+    sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
     apt-get update && apt-get install -y --no-install-recommends $pkg; \
     rm -rf /var/lib/apt/lists/*
 
@@ -71,6 +72,7 @@ ENV PATH=$MVND_HOME/bin:$MVND_HOME/mvn/bin:$PATH
 COPY --from=mvnd_downloader maven-mvnd.tar.gz .
 RUN mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $MVND_HOME \
     && rm -rf maven-mvnd.tar.gz
+VOLUME /root/.m2
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base AS vscode_downloader
@@ -80,6 +82,10 @@ RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=
 
 FROM luvx/base-0:${VERSION} AS vscode
 COPY --from=vscode_downloader code /usr/bin
+VOLUME /root/.vscode
+VOLUME /root/.vscode-server/data
+VOLUME /root/.vscode-server/extensions
+EXPOSE 8000
 CMD ["sleep", "infinity"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
