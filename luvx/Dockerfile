@@ -1,8 +1,12 @@
 ARG VERSION=bookworm
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM debian:${VERSION} AS base-0
+ARG T=0
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends ca-certificates; \
+    pkg='ca-certificates'; \
+    if [ $T -ge 1 ]; then pkg=$pkg' curl wget'; fi; \
+    if [ $T -ge 2 ]; then pkg=$pkg' git bzip2 unzip'; fi; \
+    apt-get update && apt-get install -y --no-install-recommends $pkg; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
