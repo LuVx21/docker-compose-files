@@ -134,6 +134,7 @@ redis:7
 redis:7-alpine
 redis:latest
 rust:latest
+rust:1-bookworm
 seataio/seata-server:latest
 technitium/dns-server:latest
 tzfun/etcd-workbench:latest

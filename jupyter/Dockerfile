@@ -25,7 +25,7 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
     && gonb --install \
     # 清除
-    && pip3 cache purge && go clean -cache && rm -fr ~/.cache /go/pkg \
+    && pip3 cache purge && go clean -cache && rm -fr /root/.cache /go/pkg \
     # 其他
     && mkdir -p $HOME/code
 
@@ -36,7 +36,7 @@ COPY --from=rust:1-bookworm --link /usr/local/rustup/ /root/.rustup/
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN cargo install evcxr_jupyter && evcxr_jupyter --install && cargo uninstall evcxr_jupyter; \
     # cargo install cargo-cache && cargo cache --remove-dir all; \
-    rm -fr ~/.cargo/registry/{cache,index,src} ~/.cargo/git/{checkouts,db}
+    rm -fr /root/.cargo/registry /root/.cargo/git
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
