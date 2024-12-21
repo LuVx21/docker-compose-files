@@ -37,7 +37,6 @@ COPY --from=rust:1-bookworm --link /usr/local/rustup/ /root/.rustup/
 RUN cargo install evcxr_jupyter && evcxr_jupyter --install && cargo uninstall evcxr_jupyter \
     && rm -fr ~/.cargo/registry/{cache,index,src} ~/.cargo/git/{checkouts,db} # && cargo install cargo-cache && cargo cache --remove-dir all
 
-VOLUME /root/.m2
-VOLUME /go/pkg
+VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
 CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'"]

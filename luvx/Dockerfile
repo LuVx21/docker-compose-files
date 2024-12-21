@@ -82,8 +82,7 @@ RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=
 
 FROM luvx/base-0:${VERSION} AS vscode
 COPY --from=vscode_downloader code /usr/bin
-VOLUME /root/.vscode
-VOLUME /root/.vscode-server
+VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
 CMD ["sleep", "infinity"]
 

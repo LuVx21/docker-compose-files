@@ -52,7 +52,8 @@ services:
       - net_common
     volumes:
       - $HOME/OneDrive/Code:/workspace
-      - vscode_ext:/root/.vscode-server
+      - vscode:/root/.vscode
+      - vscode-server:/root/.vscode-server
     environment:
       - TZ=Asia/Shanghai
     tty: true
@@ -63,5 +64,6 @@ networks:
     external: true
 
 volumes:
-  vscode_ext:
+  vscode:
+  vscode-server:
     external: true
