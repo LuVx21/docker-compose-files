@@ -7,12 +7,13 @@ services:
     networks:
       - net_common
     volumes:
-      - $HOME/docker/jupyter:/root/code
+      - $HOME/OneDrive/Code/doc/96.jupyter:/root/code
+      - $HOME/data:/root/data
       - $HOME/.m2:/root/.m2
       - $HOME/go/pkg:/go/pkg
-      - $HOME/data:/root/data
-    # environment:
-    #   - PASSWORD=xxxx
+    environment:
+      - TZ=Asia/Shanghai
+      # - PASSWORD=xxxx
 
 
   # showdoc:

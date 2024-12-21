@@ -52,15 +52,16 @@ services:
       - net_common
     volumes:
       - $HOME/OneDrive/Code:/workspace
-      - vscode_ext:/root/.vscode-server/extensions
+      - vscode_ext:/root/.vscode-server
     environment:
       - TZ=Asia/Shanghai
     tty: true
     command: code serve-web --host=0.0.0.0 --port=8000 --connection-token=xxxx
 
-volumes:
-  vscode_ext:
-
 networks:
   net_common:
+    external: true
+
+volumes:
+  vscode_ext:
     external: true

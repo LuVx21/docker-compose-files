@@ -1,4 +1,4 @@
-FROM python:3-bookworm AS base
+FROM python:3-bookworm AS jupyter
 WORKDIR /root
 
 # -------------以下为安装Go-------------
@@ -18,13 +18,6 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
-    # Golang 内核: gophernotes(太旧,泛型都不支持)
-    # && env GO111MODULE=on go install -ldflags="-w -s" github.com/gopherdata/gophernotes@v0.7.5 \
-    # && mkdir -p ~/.local/share/jupyter/kernels/gophernotes \
-    # && cp /go/pkg/mod/github.com/gopherdata/gophernotes@v0.7.5/kernel/* ~/.local/share/jupyter/kernels/gophernotes \
-    # && cd ~/.local/share/jupyter/kernels/gophernotes \
-    # && chmod +w ./kernel.json \
-    # && sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
     # Golang 内核: gonb
     && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH" \
     && go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
