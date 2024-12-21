@@ -32,7 +32,7 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
     && gonb --install \
     # 清除
-    && pip3 cache purge && go clean -cache && rm -fr ~/.cache \
+    && pip3 cache purge && go clean -cache && rm -fr ~/.cache /go/pkg \
     # 其他
     && mkdir -p $HOME/code
 
