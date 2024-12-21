@@ -34,7 +34,7 @@ ENV PATH=/root/.cargo/bin:$PATH
 COPY --from=rust:1-bookworm --link /usr/local/cargo/ /root/.cargo/
 COPY --from=rust:1-bookworm --link /usr/local/rustup/ /root/.rustup/
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN cargo install evcxr_jupyter && evcxr_jupyter --install && cargo uninstall evcxr_jupyter; \
+RUN cargo install evcxr_jupyter && evcxr_jupyter --install; \
     # cargo install cargo-cache && cargo cache --remove-dir all; \
     rm -fr /root/.cargo/registry /root/.cargo/git
 
