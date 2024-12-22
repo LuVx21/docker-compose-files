@@ -1,11 +1,15 @@
+# --build-arg CR=$ALIYUN_CR_NS
+ARG CR=${CR:-""}
+ARG REGISTRY=${CR}${CR:+/}
 ARG VERSION=bookworm
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM debian:${VERSION} AS base-0
+FROM ${REGISTRY}debian:${VERSION} AS base-0
 ARG T=0
 RUN set -eux; \
     pkg='ca-certificates'; \
     if [ $T -ge 1 ]; then pkg=$pkg' curl wget'; fi; \
-    if [ $T -ge 2 ]; then pkg=$pkg' git bzip2 unzip'; fi; \
+    if [ $T -ge 2 ]; then pkg=$pkg' bzip2 unzip xz-utils bzip2'; fi; \
+    if [ $T -ge 3 ]; then pkg=$pkg' git'; fi; \
     sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
     apt-get update && apt-get install -y --no-install-recommends $pkg; \
     rm -rf /var/lib/apt/lists/*
@@ -19,7 +23,7 @@ RUN set -eux; \
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base-1:${VERSION} AS base-2
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends git bzip2 unzip; \
+    apt-get update && apt-get install -y --no-install-recommends bzip2 unzip xz-utils bzip2; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -64,7 +68,7 @@ FROM base0 AS mvnd_downloader
 ARG MVND_VERSION='1.0.2' PLATFORM=linux ARCH=amd64
 RUN curl -fSL -o maven-mvnd.tar.gz https://github.com/apache/maven-mvnd/releases/download/${MVND_VERSION}/maven-mvnd-${MVND_VERSION}-${PLATFORM}-${ARCH}.tar.gz
 
-FROM eclipse-temurin:23 AS mvnd
+FROM ${REGISTRY}eclipse-temurin:23 AS mvnd
 
 ENV MVND_HOME=/opt/install/mvnd
 ENV PATH=$MVND_HOME/bin:$MVND_HOME/mvn/bin:$PATH
@@ -94,7 +98,7 @@ RUN echo "https://mirrors.aliyun.com/alpine/v3.19/main/" > /etc/apk/repositories
     && apk update && apk add --no-cache bash mysql-client
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM buildpack-deps:${VERSION} AS upx_downloader
+FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader
 ARG UPX_VERSION=4.2.4
 RUN <<EOT
     #!/bin/bash
@@ -110,7 +114,7 @@ RUN <<EOT
 EOT
 
 
-FROM debian:${VERSION} AS upx
+FROM ${REGISTRY}debian:${VERSION} AS upx
 COPY --from=upx_downloader upx /usr/bin
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
