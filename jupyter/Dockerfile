@@ -1,10 +1,14 @@
 FROM golang:1.23-bookworm AS go_base
+COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
 && go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
-&& go install -ldflags="-w -s" golang.org/x/tools/gopls@latest
+&& go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
+&& upx -9 /go/bin/*
 
 FROM rust:1-bookworm AS rust_base
+COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN cargo install evcxr_jupyter; \
+    upx -9 $CARGO_HOME/bin/evcxr_jupyter; \
     rm -fr $CARGO_HOME/registry $CARGO_HOME/git
 
 FROM python:3-bookworm AS jupyter
