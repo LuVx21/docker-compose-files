@@ -52,21 +52,21 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_REGISTRY_PASSWORD }}
+          password: ${{ secrets.GH_CR_PASSWORD }}
       - name: 小写GitHub用户名(namespace)
         run: echo "ACTOR_LOWER=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: 登录阿里云容器
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.ALIYUN_REGISTRY }}
-          username: ${{ secrets.ALIYUN_REGISTRY_USER }}
-          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+          registry: ${{ vars.ALI_CR }}
+          username: ${{ secrets.ALI_CR_USER }}
+          password: ${{ secrets.ALI_CR_PASSWORD }}
       - name: 登录腾讯云容器
         uses: docker/login-action@v3
         with:
-          registry: ${{ vars.TXYUN_REGISTRY }}
-          username: ${{ secrets.TXYUN_REGISTRY_USER }}
-          password: ${{ secrets.TXYUN_REGISTRY_PASSWORD }}
+          registry: ${{ vars.TX_CR }}
+          username: ${{ secrets.TX_CR_USER }}
+          password: ${{ secrets.TX_CR_PASSWORD }}
       - name: 从DockerHub拉取Docker镜像
         run: |
           input_images=${{ inputs.dockerhub_images }}

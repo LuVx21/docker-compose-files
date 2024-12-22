@@ -58,4 +58,4 @@ RUN evcxr_jupyter --install; \
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
-CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'"]
+CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''"]

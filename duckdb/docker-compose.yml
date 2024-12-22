@@ -3,7 +3,8 @@ services:
     image: luvx/duckdb:latest
     container_name: duckdb
     build:
-      dockerfile: Dockerfile
+      dockerfile: ../luvx/Dockerfile
+      target: duckdb
     networks:
       - net_common
     volumes:

@@ -97,11 +97,9 @@ EXPOSE 8000
 CMD ["sleep", "infinity"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM alpine:3.19 AS mysql_client
+FROM luvx/alpine:3.21 AS mysql_client
 
-RUN echo "https://mirrors.aliyun.com/alpine/v3.19/main/" > /etc/apk/repositories \
-    && echo "https://mirrors.aliyun.com/alpine/v3.19/community/" >> /etc/apk/repositories \
-    && apk update && apk add --no-cache bash mysql-client
+RUN apk update && apk add --no-cache mysql-client
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader
