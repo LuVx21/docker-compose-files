@@ -1,4 +1,4 @@
-# --build-arg CR=$ALIYUN_CR_NS
+# --build-arg CR=$ALI_CR_NS
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR}${CR:+/}
 ARG VERSION=bookworm
