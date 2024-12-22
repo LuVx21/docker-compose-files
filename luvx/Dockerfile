@@ -94,3 +94,23 @@ RUN echo "https://mirrors.aliyun.com/alpine/v3.19/main/" > /etc/apk/repositories
     && apk update && apk add --no-cache bash mysql-client
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM buildpack-deps:${VERSION} AS upx_downloader
+ARG UPX_VERSION=4.2.4
+RUN <<EOT
+    #!/bin/bash
+    dpkgArch="$(dpkg --print-architecture)"
+    case "${dpkgArch##*-}" in \
+        amd64) upxArch='amd64' ;;
+        arm64) upxArch='arm64' ;;
+        *) echo >&2 "不支持的架构: ${dpkgArch}"; exit 1 ;;
+    esac
+    # [[ $dpkgArch == 'arm64' ]] && upxArch="arm64" || upxArch="amd64"
+    wget -O upx.tar.xz "https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-${upxArch}_linux.tar.xz"
+    tar -Jxvf upx.tar.xz --strip-components 1
+EOT
+
+
+FROM debian:${VERSION} AS upx
+COPY --from=upx_downloader upx /usr/bin
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

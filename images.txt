@@ -28,7 +28,9 @@ bitnami/zookeeper:latest
 buildpack-deps:bookworm
 buildpack-deps:bookworm-curl
 buildpack-deps:bookworm-scm
+buildpack-deps:curl
 buildpack-deps:latest
+buildpack-deps:scm
 canal/canal-admin:latest
 canal/canal-server:latest
 centos:latest

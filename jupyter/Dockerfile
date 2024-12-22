@@ -1,10 +1,20 @@
+FROM golang:1.23-bookworm AS go_base
+RUN go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
+&& go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
+&& go install -ldflags="-w -s" golang.org/x/tools/gopls@latest
+
+FROM rust:1-bookworm AS rust_base
+RUN cargo install evcxr_jupyter; \
+    rm -fr $CARGO_HOME/registry $CARGO_HOME/git
+
 FROM python:3-bookworm AS jupyter
 WORKDIR /root
 
 # -------------以下为安装Go-------------
-ENV GOTOOLCHAIN=local GO111MODULE=on GOPROXY=https://goproxy.cn,direct GOPATH=/go
-ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-COPY --from=golang:1.23-bookworm --link /usr/local/go/ /usr/local/go/
+ENV GOTOOLCHAIN=local GO111MODULE=on GOPROXY=https://goproxy.cn,direct GOPATH=/go GOROOT=/usr/local/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+COPY --from=go_base --link $GOROOT $GOROOT
+COPY --from=go_base --link $GOPATH/bin/ $GOPATH/bin/
 
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/install/java
@@ -19,10 +29,8 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gonb
-    && mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 1777 "$GOPATH" \
-    && go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
-    && go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
-    && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
+    # && mkdir -p "$GOPATH/src" "$GOPATH/bin" \
+    # && chmod -R 1777 "$GOPATH" \
     && gonb --install \
     # 清除
     && pip3 cache purge && go clean -cache && rm -fr /root/.cache /go/pkg \
@@ -30,13 +38,14 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && mkdir -p $HOME/code
 
 # -------------以下为安装Rust-------------
-ENV PATH=/root/.cargo/bin:$PATH
-COPY --from=rust:1-bookworm --link /usr/local/cargo/ /root/.cargo/
-COPY --from=rust:1-bookworm --link /usr/local/rustup/ /root/.rustup/
+ENV CARGO_HOME=/usr/local/cargo RUSTUP_HOME=/usr/local/rustup
+ENV PATH=$CARGO_HOME/bin:$PATH
+COPY --from=rust_base --link $CARGO_HOME $CARGO_HOME
+COPY --from=rust_base --link $RUSTUP_HOME $RUSTUP_HOME
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN cargo install evcxr_jupyter && evcxr_jupyter --install; \
+RUN evcxr_jupyter --install; \
     # cargo install cargo-cache && cargo cache --remove-dir all; \
-    rm -fr /root/.cargo/registry /root/.cargo/git
+    rm -fr $CARGO_HOME/registry $CARGO_HOME/git
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
