@@ -1,5 +1,7 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR}${CR:+/}
-FROM ${REGISTRY}alpine:3.19 AS base-0
+ARG VERSION=3.19
+
+FROM ${REGISTRY}alpine:${VERSION} AS base-0
 
 # docker build -t luvx/test . --build-arg CR=$ALI_CR_NS

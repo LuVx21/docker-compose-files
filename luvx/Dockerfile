@@ -27,24 +27,30 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-1:${VERSION} AS base0
-FROM base0 AS base-amd64
-ARG ARCH=x64
-ARG ARCH_SHORT=x64
-FROM base0 AS base-arm64
-ARG ARCH=aarch64
-ARG ARCH_SHORT=arm64
+FROM luvx/base-1:${VERSION} AS base-1-arch-amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
+FROM luvx/base-1:${VERSION} AS base-1-arch-arm64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
+FROM base-1-arch-$TARGETARCH AS base-1-arch
 
-FROM base-$TARGETARCH AS base
+FROM luvx/base-2:${VERSION} AS base-2-arch-amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
+FROM luvx/base-2:${VERSION} AS base-2-arch-arm64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
+FROM base-2-arch-$TARGETARCH AS base-2-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base-2:${VERSION} AS ops
 
 RUN apt update && apt install -y zsh curl wget tree vim git
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
+    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
+    git clone --depth=1 https://github.com/zsh-users/zsh-completions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions && \
+    omz plugin enable git docker docker-compose history-substring-search z zsh-autosuggestions zsh-completions zsh-syntax-highlighting
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base AS oracle_jdk
+FROM base-1-arch AS oracle_jdk
 
 ARG JAVA_VERSION='23'
 ENV JAVA_HOME=/opt/install/java
@@ -53,7 +59,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/java/${JAVA_VERSION}/latest/jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base AS graalvm_jdk
+FROM base-1-arch AS graalvm_jdk
 
 ARG JAVA_VERSION='23'
 ENV JAVA_HOME=/opt/install/java
@@ -63,7 +69,7 @@ RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/graalvm/${JAVA
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # docker build --target mvnd -t luvx/mvnd:1.0.2-23 --platform linux/amd64 --build-arg MVND_VERSION=1.0.2 .
-FROM base0 AS mvnd_downloader
+FROM luvx/base-1:${VERSION} AS mvnd_downloader
 
 ARG MVND_VERSION='1.0.2' PLATFORM=linux ARCH=amd64
 RUN curl -fSL -o maven-mvnd.tar.gz https://github.com/apache/maven-mvnd/releases/download/${MVND_VERSION}/maven-mvnd-${MVND_VERSION}-${PLATFORM}-${ARCH}.tar.gz
@@ -79,9 +85,9 @@ RUN mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $M
 VOLUME /root/.m2
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base AS vscode_downloader
+FROM base-1-arch AS vscode_downloader
 
-RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_SHORT}" \
+RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_V1}" \
     && tar -zxvf vscode_cli.tar.gz
 
 FROM luvx/base-0:${VERSION} AS vscode
@@ -117,4 +123,12 @@ EOT
 FROM ${REGISTRY}debian:${VERSION} AS upx
 COPY --from=upx_downloader upx /usr/bin
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM base-2-arch AS duckdb_downloader
+RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
+    && unzip duckdb_cli.zip && rm duckdb_cli.zip
+
+FROM ${REGISTRY}debian:${VERSION} AS duckdb
+COPY --from=duckdb_downloader duckdb .
+ENTRYPOINT [ "./duckdb" ]
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
