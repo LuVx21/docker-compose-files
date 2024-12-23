@@ -130,3 +130,19 @@ COPY --from=duckdb_downloader duckdb .
 ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}maven:3-eclipse-temurin-8 AS rocketmq-dashboard-builder
+ARG RD_VERSION='2.0.0'
+
+RUN apt-get update && apt-get install -y git
+RUN git clone --depth=1 -b rocketmq-dashboard-${RD_VERSION} https://github.com/apache/rocketmq-dashboard && \
+    cd rocketmq-dashboard && mvn clean package -Dmaven.test.skip=true && \
+    mv target/rocketmq-dashboard-*.jar rocketmq-dashboard.jar
+
+FROM ${REGISTRY}eclipse-temurin:8-jre AS rocketmq-dashboard
+
+WORKDIR /app
+COPY --from=rocketmq-dashboard-builder rocketmq-dashboard.jar .
+ENV JAVA_OPTS=""
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar ./rocketmq-dashboard.jar" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

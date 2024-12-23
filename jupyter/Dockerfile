@@ -58,4 +58,7 @@ RUN evcxr_jupyter --install; \
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
-CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''", "NotebookApp.disable_check_xsrf=True" ]
+
+# 也可以这样, 在启动容器时再指定具体参数
+# ENTRYPOINT [ "jupyter", "lab" ]

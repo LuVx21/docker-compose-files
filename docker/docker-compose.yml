@@ -12,8 +12,23 @@ services:
     volumes:
       - $HOME/docker/docker/certs-ca:/certs/ca
       - $HOME/docker/docker/certs-client:/certs/client
-      # - /var/run/docker.sock:/var/run/docker.sock
     privileged: true
+
+# 使用前: /etc/docker/daemon.json
+# {
+#   "insecure-registries": ["ip:5000"]
+# }
+  registry:
+    image: registry:latest
+    container_name: registry
+    ports:
+      - 5000:5000
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - $HOME/docker/docker/registry:/var/lib/registry
 
 networks:
   net_common:

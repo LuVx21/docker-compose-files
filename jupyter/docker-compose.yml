@@ -14,7 +14,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       # - PASSWORD=xxxx
-
+    # command: jupyter lab --no-browser --allow-root --ip=0.0.0.0 --NotebookApp.allow_origin='*' --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.disable_check_xsrf=True
 
   # showdoc:
   #   image: star7th/showdoc:latest

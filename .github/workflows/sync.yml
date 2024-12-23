@@ -74,7 +74,7 @@ jobs:
           function pullMergeSync() {
             local image=$1
             local platform_str=$2
-            echo "镜像: $image, 平台: $platform"
+            echo "镜像: $image, 平台: $platform_str"
 
             image_name_tag=$(echo "$image" | awk -F'/' '{print $NF}')
             registry=$(echo "$image" | awk -F'/' '{if (NF==3) print $1; else print ""}')
@@ -113,13 +113,28 @@ jobs:
                 docker image rm $i
               done
             done
-            docker image prune -af
+            # docker image prune -af
             # docker image rm $image
           }
 
           if [[ -n $input_images ]]; then
+
+            declare -A map
             for image in ${input_images//,/ }; do
-              pullMergeSync $image $input_platform
+              key=$(echo $image | awk -F':' '{print $1}')
+              value=$(echo $image | awk -F':' '{if (NF==2) print $2; else print "latest"}')
+              if [[ -n "${map[$key]}" ]]; then
+                map["$key"]="${map[$key]},$value"
+              else
+                map["$key"]="$value"
+              fi
+            done
+
+            for image in "${!map[@]}"; do
+              for tag in ${map[$image]//,/ }; do
+                pullMergeSync "$image:$tag" $input_platform
+              done
+              docker image prune -af
             done
             exit 0
           fi
