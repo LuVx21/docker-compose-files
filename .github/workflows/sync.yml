@@ -77,13 +77,17 @@ jobs:
             echo "镜像: $image, 平台: $platform"
 
             image_name_tag=$(echo "$image" | awk -F'/' '{print $NF}')
+            registry=$(echo "$image" | awk -F'/' '{if (NF==3) print $1; else print ""}')
             namespace=$(echo "$image" | awk -F'/' '{if (NF==3) print $2; else if (NF==2) print $1; else print ""}')
             image_name=$(echo "$image_name_tag" | awk -F':' '{print $1}')
             image_tag=$(echo "$image_name_tag" | awk -F':' '{if (NF==2) print $2; else print "latest"}')
 
-            rsn=$(echo "$image" | awk -F':' '{print $1}')
-            new_image_name=`echo $rsn | sed 's/\//_/g'`
-            echo "解构后信息-> 空间:$namespace 镜像:$image_name 标签:$image_tag 新名称:$new_image_name"
+            new_image_name=$image_name
+            if [[ ! -z $registry || ! $namespace == luvx ]]; then
+                rsn=$(echo "$image" | awk -F':' '{print $1}')
+                new_image_name=`echo $rsn | sed 's/\//_/g'`
+            fi
+            echo "解构后信息-> 服务: $registry 空间:$namespace 镜像:$image_name 标签:$image_tag 新名称:$new_image_name"
 
             local platform_array=(${platform_str//,/ })
             local platform_count=${#platform_array[@]}
