@@ -92,11 +92,8 @@ services:
       - 53308:3306
 
 #  mysql-initer:
-#    image: luvx/mysql_client:latest
+#    image: alpine/mysql:latest
 #    container_name: mysql_client
-#    build:
-#      dockerfile: ../luvx/Dockerfile
-#      target: mysql_client
 #    networks:
 #      - net_common
 #    depends_on:

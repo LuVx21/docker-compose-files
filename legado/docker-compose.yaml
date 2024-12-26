@@ -1,4 +1,3 @@
-version: '3.1'
 services:
 # reader 在线阅读
 # 公开服务器(服务器位于日本)：[https://reader.nxnow.top](https://reader.nxnow.top) 测试账号/密码分别为guest/guest123，也可自行创建账号添加书源，不定期删除长期未登录账号(2周)

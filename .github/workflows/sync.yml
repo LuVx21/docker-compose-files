@@ -92,6 +92,7 @@ jobs:
             local platform_array=(${platform_str//,/ })
             local platform_count=${#platform_array[@]}
             for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
+              echo '↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓'
               registry_arr=(${registry//,/ })
               new_rsn=${registry_arr[0]}/${registry_arr[1]}/$new_image_name
               ps=''
@@ -112,6 +113,7 @@ jobs:
               for i in ${ps}; do
                 docker image rm $i
               done
+              echo '↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑'
             done
             # docker image prune -af
             # docker image rm $image

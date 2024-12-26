@@ -1,39 +1,63 @@
 #!/bin/bash
 
-image='' version='' url='.'
+# 必需
+module=$1
+tag=$2
+# 可选
+buildArg=$3
+platform=${4:-linux/amd64,linux/arm64}
 
-if [ "$1" = "" ];then
-    exit 1
-elif [ "$1" = "chartdb" ];then
-    image='luvx/chartdb' version='v1.2.0' url=https://github.com/chartdb/chartdb.git#"$version"
-elif [ "$1" = "dicedb" ];then
-    image='luvx/dicedb' version='0.0.5' url=https://github.com/DiceDB/dice.git#"$version"
-elif [ "$1" = "duckdb" ];then
-    image='luvx/duckdb' version='v1.1.3' url=https://github.com/LuVx21/docker-compose-files.git#master:duckdb
-    # url='../duckdb'
-elif [ "$1" = "json4u" ];then
-    image='luvx/json4u' version='v3.0.0' url=https://github.com/loggerhead/json4u.git#"$version"
-elif [ "$1" = "jupyter" ];then
-    image='luvx/jupyter' version='0' url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
-    # url='../jupyter'
-elif [ "$module" = "rocketmq-dashboard" ];then
-    image='luvx/rocketmq-dashboard' url=https://github.com/LuVx21/docker-compose-files.git#master:ali
-    # url='./ali'
-elif [ "$1" = "pichome" ];then
-    image='luvx/pichome' version='2.0' url=https://github.com/zyx0814/Pichome-docker.git
-elif [ "$1" = "sentinel" ];then
-    image='luvx/sentinel-dashboard' version='1.8.8'
-    curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
-    cd sentinel-dashboard && sed -i "" 's/1.8.6/1.8.8/g' Dockerfile && sed -i "" 's/amd64\///g' Dockerfile
-else
-    echo -e "无指定模块名"
-    exit 1
+minor=${tag%.*}
+major=${tag%%.*}
+if [[ -n $buildArg ]]; then
+  for arg in $buildArg; do
+    temp+="--build-arg $arg"
+  done
+  buildArg=$temp
 fi
 
+case "${module}" in
+  "chartdb")
+    url=https://github.com/chartdb/chartdb.git#v$tag
+    ;;
+  "dicedb")
+    url=https://github.com/DiceDB/dice.git#v$tag
+    ;;
+  "json4u")
+    url=https://github.com/loggerhead/json4u.git#v$tag
+    ;;
+  "jupyter")
+    url=https://github.com/LuVx21/docker-compose-files.git#master:jupyter
+    url="./jupyter"
+    ;;
+  "pichome")
+    url=https://github.com/zyx0814/Pichome-docker.git
+    ;;
+  "sentinel-dashboard")
+    curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
+    cd sentinel-dashboard && sed -i "" "s/1.8.6/1.8.8/g" Dockerfile && sed -i "" "s/amd64\///g" Dockerfile
+    ;;
+  "base-0"|"base-1"|"base-2"|"ops"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
+    url=https://github.com/LuVx21/docker-compose-files.git#master:luvx
+    url="./luvx"
+    target="--target $module"
+    ;;
+  *)
+    echo "自定义构建镜像: ${module}"
+    echo "执行命令: docker buildx build --push ${buildArg} --platform ${platform} ${module}"
+    docker buildx build --push ${buildArg} --platform ${platform} ${module}
+    exit 0
+  ;;
+esac;
 
-echo "构建镜像: ${image}:${version} 上下文: ${url}"
-docker buildx build \
-    -t "$image":latest -t "$image":"$version" \
-    --platform linux/amd64,linux/arm64 --push "$url"
+image="luvx/$module"
+echo "构建镜像: ${image} 版本: ${tag}, ${minor}, ${major} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url}"
 
-echo "完成......"
+echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest -t ${image}:${tag} -t ${image}:${minor} -t ${image}:${major} ${url}"
+docker buildx build --push ${buildArg} ${target} \
+  --platform ${platform} \
+  -t ${image}:latest \
+  -t ${image}:${tag} \
+  -t ${image}:${minor} \
+  -t ${image}:${major} \
+  ${url}

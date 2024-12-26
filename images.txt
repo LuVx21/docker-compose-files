@@ -82,6 +82,7 @@ ubuntu:oracular
 ubuntu:rolling
 zookeeper:latest
 
+luvx/alpine:3
 luvx/alpine:3.19
 luvx/alpine:3.20
 luvx/alpine:3.21
@@ -96,7 +97,6 @@ luvx/graalvm_jdk:latest
 luvx/json4u:latest
 luvx/jupyter:latest
 luvx/mvnd:latest
-luvx/mysql_client:latest
 luvx/oracle_jdk:latest
 luvx/pichome:latest
 luvx/rocketmq-dashboard:latest
@@ -104,6 +104,7 @@ luvx/sentinel-dashboard:latest
 luvx/upx:latest
 luvx/vscode:latest
 
+alpine/mysql:latest
 apachepulsar/pulsar-all:latest
 apachepulsar/pulsar:latest
 bitnami/elasticsearch:8

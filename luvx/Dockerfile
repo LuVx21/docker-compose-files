@@ -47,7 +47,9 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
     git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
     git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
     git clone --depth=1 https://github.com/zsh-users/zsh-completions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions && \
-    omz plugin enable git docker docker-compose history-substring-search z zsh-autosuggestions zsh-completions zsh-syntax-highlighting
+    chsh -s /usr/bin/zsh
+SHELL ["/usr/bin/zsh", "-c"]
+RUN source ~/.zshrc && omz plugin enable git docker docker-compose history-substring-search z zsh-autosuggestions zsh-completions zsh-syntax-highlighting
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-1-arch AS oracle_jdk
@@ -95,11 +97,6 @@ COPY --from=vscode_downloader code /usr/bin
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
 CMD ["sleep", "infinity"]
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/alpine:3.21 AS mysql_client
-
-RUN apk update && apk add --no-cache mysql-client
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader

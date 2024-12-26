@@ -14,15 +14,37 @@
 ```json
 {
   "registry-mirrors": [
-    "https://mirror.baidubce.com",
-    "https://dockerproxy.com",
-    "https://docker.m.daocloud.io",
-    "https://docker.nju.edu.cn",
-    "https://mirror.iscas.ac.cn",
-    "https://docker.mirrors.sjtug.sjtu.edu.cn"
   ]
 }
 ```
+
+mirrors:
+
+| mirror                            | 状态 |
+| :-------------------------------- | :--- |
+| https://atomhub.openatom.cn       | ✅    |
+| https://dhub.kubesre.xyz          | ✅    |
+| https://docker-registry.nmqu.com  | ✅    |
+| https://docker.1ms.run            | ✅    |
+| https://docker.1panel.live        | ✅    |
+| https://docker.639977.xyz         | ✅    |
+| https://docker.actima.top         | ✅    |
+| https://docker.aityp.com          | ✅    |
+| https://docker.imgdb.de           | ✅    |
+| https://docker.kejilion.pro       | ✅    |
+| https://docker.m.daocloud.io      | ✅    |
+| https://docker.nastool.de         | ✅    |
+| https://docker.udayun.com         | ✅    |
+| https://docker.unsee.tech         | ✅    |
+| https://dockerhub.xisoul.cn       | ✅    |
+| https://dockerproxy.net           | ✅    |
+| https://dockerpull.org            | ✅    |
+| https://hub.crdz.gq               | ✅    |
+| https://hub.firefly.store         | ✅    |
+| https://hub.littlediary.cn        | ✅    |
+| https://hub.rat.dev               | ✅    |
+| https://hub.xdark.top             | ✅    |
+| https://registry.dockermirror.com | ✅    |
 
 > https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
 

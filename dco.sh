@@ -1,13 +1,14 @@
 #!/bin/bash
 
+project=$1
+subcmd=$2
 url=''
 file=''
 
-if [ "$1" = "" ];
-then
+if [ "$project" = "" ]; then
     echo -e "需指定模块名"
     exit 1
-elif [ "$1" = "etcd" ];then
+elif [ "$project" = "etcd" ]; then
     url='https://raw.githubusercontent.com/bitnami/containers/main/bitnami/etcd/docker-compose-cluster.yml'
     file='etcd-docker-compose-cluster.yml'
 else
@@ -15,7 +16,7 @@ else
     exit 1
 fi
 
-if [ -f $file ];then
+if [ -f $file ]; then
   echo "使用现有文件:" $file
 else
   echo $file "文件不存在"
@@ -23,16 +24,15 @@ else
 fi
 
 
-if [ "$2" = "down" ];
-then
-    docker-compose -p $1 -f $file down
+if [ "$subcmd" = "down" ]; then
+    docker-compose -p $project -f $file down
 else
-    list=`docker-compose -p $1 -f $file ps | tail -n +2 | awk '{print $1}'`
+    list=`docker-compose -p $project -f $file ps | tail -n +2 | awk '{print $1}'`
     if [ -z "$list" ]; then
         echo "开始运行..."
-        docker-compose -p $1 -f $file up -d
+        docker-compose -p $project -f $file up -d
         # 加入网络
-        list=`docker-compose -p $1 -f $file ps | tail -n +2 | awk '{print $1}'`
+        list=`docker-compose -p $project -f $file ps | tail -n +2 | awk '{print $1}'`
         for i in $list; do
             echo $i '加入网络:net_common'
             docker network connect net_common $i
