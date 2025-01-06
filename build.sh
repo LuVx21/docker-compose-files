@@ -1,11 +1,12 @@
 #!/bin/bash
 
 # 必需
-module=$1
+repository=$1
 tag=$2
 # 可选
 buildArg=$3
 platform=${4:-linux/amd64,linux/arm64}
+CUSTOM_ARG=$5
 
 minor=${tag%.*}
 major=${tag%%.*}
@@ -16,7 +17,7 @@ if [[ -n $buildArg ]]; then
   buildArg=$temp
 fi
 
-case "${module}" in
+case "${repository}" in
   "chartdb")
     url=https://github.com/chartdb/chartdb.git#v$tag
     ;;
@@ -40,24 +41,21 @@ case "${module}" in
   "base-0"|"base-1"|"base-2"|"ops"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
     url=https://github.com/LuVx21/docker-compose-files.git#master:luvx
     url="./luvx"
-    target="--target $module"
+    target="--target $repository"
     ;;
   *)
-    echo "自定义构建镜像: ${module}"
-    echo "执行命令: docker buildx build --push ${buildArg} --platform ${platform} ${module}"
-    docker buildx build --push ${buildArg} --platform ${platform} ${module}
-    exit 0
+    # exit 0
   ;;
 esac;
 
-image="luvx/$module"
-echo "构建镜像: ${image} 版本: ${tag}, ${minor}, ${major} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url}"
+image="luvx/$repository"
+echo "构建镜像: ${image} 版本: ${tag}, ${minor}, ${major} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
-echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest -t ${image}:${tag} -t ${image}:${minor} -t ${image}:${major} ${url}"
+echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest -t ${image}:${tag} -t ${image}:${minor} -t ${image}:${major} ${url} ${CUSTOM_ARG}"
 docker buildx build --push ${buildArg} ${target} \
   --platform ${platform} \
   -t ${image}:latest \
   -t ${image}:${tag} \
   -t ${image}:${minor} \
   -t ${image}:${major} \
-  ${url}
+  ${url} ${CUSTOM_ARG}

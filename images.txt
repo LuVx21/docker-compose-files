@@ -182,6 +182,7 @@ bitnami/mongodb-sharded:latest
 bitnami/mongodb:latest
 clidey/whodb:latest
 dicedb/dicedb:latest
+dockurr/macos:latest
 excalidraw/excalidraw:latest
 mysql:5.7
 obsidiandynamics/kafdrop:latest
