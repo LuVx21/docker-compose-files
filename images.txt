@@ -134,7 +134,6 @@ containrrr/watchtower:latest
 cooderl/wewe-rss-server:latest
 cooderl/wewe-rss-web:latest
 dockurr/dnsmasq:latest
-dockurr/windows-arm:latest
 dockurr/windows:latest
 dpanel/dpanel:latest
 freshrss/freshrss:latest
@@ -169,7 +168,7 @@ ghcr.io/coder/coder:latest
 
 
 platform=linux/arm64
-
+dockurr/windows-arm:latest
 
 
 

@@ -133,7 +133,7 @@ ARG RD_VERSION='2.0.0'
 RUN apt-get update && apt-get install -y git
 RUN git clone --depth=1 -b rocketmq-dashboard-${RD_VERSION} https://github.com/apache/rocketmq-dashboard && \
     cd rocketmq-dashboard && mvn clean package -Dmaven.test.skip=true && \
-    mv target/rocketmq-dashboard-*.jar rocketmq-dashboard.jar
+    mv target/rocketmq-dashboard-*.jar /rocketmq-dashboard.jar
 
 FROM ${REGISTRY}eclipse-temurin:8-jre AS rocketmq-dashboard
 
