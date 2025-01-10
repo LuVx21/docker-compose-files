@@ -59,6 +59,15 @@ services:
     tty: true
     command: code serve-web --host=0.0.0.0 --port=8000 --connection-token=xxxx
 
+  grpcui:
+    image: fullstorydev/grpcui:latest
+    container_name: grpcui
+    ports:
+      - 18080:8080
+    networks:
+      - net_common
+    command: --plaintext mini.rx:9090
+
 networks:
   net_common:
     external: true

@@ -114,9 +114,9 @@ RUN <<EOT
     tar -Jxvf upx.tar.xz --strip-components 1
 EOT
 
-
 FROM ${REGISTRY}debian:${VERSION} AS upx
 COPY --from=upx_downloader upx /usr/bin
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-2-arch AS duckdb_downloader
 RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
@@ -141,5 +141,23 @@ WORKDIR /app
 COPY --from=rocketmq-dashboard-builder rocketmq-dashboard.jar .
 ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar ./rocketmq-dashboard.jar" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}golang:1.23-${VERSION} AS go-installer
+
+ARG GO_INSTALL_URL
+COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
+SHELL ["/bin/bash", "-c"]
+RUN <<EOT
+    #!/bin/bash
+    for URL in ${GO_INSTALL_URL//,/ }; do
+        go install -ldflags="-w -s" ${URL}
+    done
+    upx -9 $(go env GOPATH)/bin/*
+EOT
+
+FROM ${REGISTRY}debian:${VERSION} AS go-runner
+
+COPY --from=go-installer /go/bin/* /usr/local/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

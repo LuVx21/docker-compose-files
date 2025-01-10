@@ -12,7 +12,7 @@ minor=${tag%.*}
 major=${tag%%.*}
 if [[ -n $buildArg ]]; then
   for arg in $buildArg; do
-    temp+="--build-arg $arg"
+    temp+="--build-arg $arg "
   done
   buildArg=$temp
 fi

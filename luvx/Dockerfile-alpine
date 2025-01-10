@@ -1,0 +1,8 @@
+ARG CR=${CR:-""}
+ARG REGISTRY=${CR}${CR:+/}
+ARG VERSION=3.21
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM alpine:${VERSION} AS alpine
+RUN echo "https://mirrors.aliyun.com/alpine/v${VERSION}/main/" > /etc/apk/repositories \
+    && echo "https://mirrors.aliyun.com/alpine/v${VERSION}/community/" >> /etc/apk/repositories

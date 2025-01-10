@@ -113,7 +113,7 @@ bitnami/etcd:latest
 bitnami/golang:latest
 bitnami/influxdb:latest
 bitnami/java:latest
-bitnami/kafka:3.7
+bitnami/kafka:3.9
 bitnami/kafka:latest
 bitnami/memcached:latest
 bitnami/minio:latest
@@ -137,6 +137,7 @@ dockurr/dnsmasq:latest
 dockurr/windows:latest
 dpanel/dpanel:latest
 freshrss/freshrss:latest
+fullstorydev/grpcui
 grafana/grafana:latest
 hectorqin/reader:latest
 hectorqin/reader:openj9-latest
@@ -187,6 +188,5 @@ excalidraw/excalidraw:latest
 mysql:5.7
 obsidiandynamics/kafdrop:latest
 quay.io/debezium/debezium-ui:latest
-sameersbn/bind:latest
 sameersbn/bind:latest
 xuxueli/xxl-job-admin:2.4.2
