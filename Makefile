@@ -17,13 +17,15 @@ vscode:
 jupyter:
 	./build.sh jupyter latest
 upx:
+	./build.sh upx alpine-latest,alpine-4.2.4 "UPX_VERSION=4.2.4" "" "-f ./luvx/Dockerfile-alpine"
 	./build.sh upx 4.2.4 "UPX_VERSION=4.2.4"
 duckdb:
 	./build.sh duckdb latest
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard 2.0.0 "RD_VERSION=2.0.0"
 go-runner:
-	./build.sh xxx xxx "GO_INSTALL_URL=xxxx" "linux/amd64,linux/arm64" "--target=go-runner ."
+	./build.sh xxx alpine-xxx "GO_INSTALL_URL=xxxx" "" "-f ./luvx/Dockerfile-alpine --target=go-runner ./luvx"
+	./build.sh xxx xxx "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
 
 # -----------------------------------------------------------------------------------------------------------------------
 alpine:

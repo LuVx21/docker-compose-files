@@ -10,9 +10,9 @@ RUN tag=`cat /etc/alpine-release` && release=${tag%.*} && \
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/alpine:${VERSION} AS alpine-arch-amd64
-ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64
 FROM luvx/alpine:${VERSION} AS alpine-arch-arm64
-ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64
 FROM alpine-arch-$TARGETARCH AS alpine-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,6 +29,23 @@ EXPOSE 8000
 ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM alpine-arch AS upx_downloader
+ARG UPX_VERSION=4.2.4
+RUN <<EOT
+    #!/bin/sh
+    dpkgArch="$(arch --print-architecture)"
+    case "${dpkgArch##*-}" in \
+        x86_64) upxArch='amd64' ;;
+        aarch64) upxArch='arm64' ;;
+        *) echo >&2 "不支持的架构: ${dpkgArch}"; exit 1 ;;
+    esac
+    wget -O upx.tar.xz "https://github.com/upx/upx/releases/download/v${UPX_VERSION}/upx-${UPX_VERSION}-${upxArch}_linux.tar.xz"
+    tar -Jxvf upx.tar.xz --strip-components 1
+EOT
+
+FROM luvx/alpine:${VERSION} AS upx
+COPY --from=upx_downloader upx /usr/bin
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/alpine:${VERSION} AS litecli
 RUN apk add --no-cache litecli
 ENTRYPOINT ["litecli"]
@@ -40,3 +57,20 @@ ENTRYPOINT ["mycli"]
 FROM luvx/alpine:${VERSION} AS pgcli
 RUN apk add --no-cache pgcli
 ENTRYPOINT ["pgcli"]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}golang:1.23-alpine AS go-installer
+
+ARG GO_INSTALL_URL
+COPY --from=luvx/upx:alpine-latest --link /usr/bin/upx /usr/bin/upx
+RUN <<EOT
+    #!/bin/sh
+    for URL in ${GO_INSTALL_URL//,/ }; do
+        go install -ldflags="-w -s" ${URL}
+    done
+    upx -9 $(go env GOPATH)/bin/*
+EOT
+
+FROM ${REGISTRY}alpine:${VERSION} AS go-runner
+
+COPY --from=go-installer /go/bin/* /usr/local/bin

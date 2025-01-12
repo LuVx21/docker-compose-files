@@ -22,7 +22,7 @@ on:
           - linux/arm64,linux/amd64
           - linux/arm64
           - linux/amd64
-      custom_arg:
+      customArg:
         description: '自定义参数'
         required: false
         default: ''
@@ -59,7 +59,7 @@ jobs:
           echo "=============================================================================="
       - name: 构建
         env:
-          CUSTOM_ARG: {{ inputs.custom_arg }}
+          CUSTOM_ARG: {{ inputs.customArg }}
         run: |
           repository=${{ inputs.image }}
           tag=${{ inputs.tag }}

@@ -67,6 +67,7 @@ postgres:16-alpine
 postgres:17
 postgres:17-alpine
 postgres:latest
+python:3-alpine
 python:3-bookworm
 python:latest
 redis:7
@@ -96,15 +97,21 @@ luvx/duckdb:latest
 luvx/graalvm_jdk:latest
 luvx/json4u:latest
 luvx/jupyter:latest
+luvx/litecli:latest
 luvx/mvnd:latest
+luvx/mycli:latest
 luvx/oracle_jdk:latest
+luvx/pgcli:latest
 luvx/pichome:latest
 luvx/rocketmq-dashboard:latest
 luvx/sentinel-dashboard:latest
 luvx/upx:latest
 luvx/vscode:latest
 
+alpine/mongosh:latest
 alpine/mysql:latest
+alpine/psql:latest
+alpine/sqlite:latest
 apachepulsar/pulsar-all:latest
 apachepulsar/pulsar:latest
 bitnami/elasticsearch:8
@@ -138,11 +145,14 @@ dockurr/windows:latest
 dpanel/dpanel:latest
 freshrss/freshrss:latest
 fullstorydev/grpcui
+fullstorydev/grpcui:latest
+fullstorydev/grpcurl:latest
 grafana/grafana:latest
 hectorqin/reader:latest
 hectorqin/reader:openj9-latest
 hectorqin/remote-webview:latest
 henrygd/beszel:latest
+jauderho/octosql:latest
 liwei2633/gopeed:latest
 nacos/nacos-server:latest
 oceanbase/oceanbase-ce:latest
@@ -157,6 +167,7 @@ redis/redisinsight:latest
 seataio/seata-server:latest
 technitium/dns-server:latest
 tzfun/etcd-workbench:latest
+usql/usql:latest
 valkey/valkey:latest
 vrantt/databasir:latest
 wangqiru/mercury-parser-api:latest
