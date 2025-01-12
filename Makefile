@@ -30,6 +30,11 @@ alpine:
 	./build.sh alpine 3.20 "VERSION=3.20" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 	./build.sh alpine 3.21 "VERSION=3.21" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 
+cli:
+	./build.sh litecli 1.13.2 "" "" "-f ./luvx/Dockerfile-alpine --target=litecli ./luvx"
+	./build.sh mycli 1.29.2 "" "" "-f ./luvx/Dockerfile-alpine --target=mycli ./luvx"
+	./build.sh pgcli 4.1.0 "" "" "-f ./luvx/Dockerfile-alpine --target=pgcli ./luvx"
+
 # -----------------------------------------------------------------------------------------------------------------------
 dco-etcd:
 	./dco.sh etcd
