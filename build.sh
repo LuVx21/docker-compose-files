@@ -2,16 +2,19 @@
 
 # 必需
 repository=$1
-tag=$2
+tag=$2 # 支持多个,逗号分割
 # 可选
-buildArg=$3
+buildArg=$3 # 支持多个,逗号分割
 platform=${4:-linux/amd64,linux/arm64}
 CUSTOM_ARG=$5
 
-minor=${tag%.*}
-major=${tag%%.*}
+tags=()
+for _tag in ${tag//,/ }; do
+  tags+=($_tag ${_tag%.*} ${_tag%%.*})
+done
+tags=($(echo "${tags[@]}" | tr ' ' '\n' | sort | uniq | tr '\n' ' '))
 if [[ -n $buildArg ]]; then
-  for arg in $buildArg; do
+  for arg in ${buildArg//,/ }; do
     temp+="--build-arg $arg "
   done
   buildArg=$temp
@@ -49,13 +52,15 @@ case "${repository}" in
 esac;
 
 image="luvx/$repository"
-echo "构建镜像: ${image} 版本: ${tag}, ${minor}, ${major} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
+echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
-echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest -t ${image}:${tag} -t ${image}:${minor} -t ${image}:${major} ${url} ${CUSTOM_ARG}"
+for _tag in ${tags[@]}; do
+    image_info+="-t ${image}:${_tag} "
+done
+
+echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest ${image_info} ${url} ${CUSTOM_ARG}"
 docker buildx build --push ${buildArg} ${target} \
   --platform ${platform} \
   -t ${image}:latest \
-  -t ${image}:${tag} \
-  -t ${image}:${minor} \
-  -t ${image}:${major} \
+  ${image_info} \
   ${url} ${CUSTOM_ARG}

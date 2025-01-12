@@ -1,10 +1,11 @@
+# SHELL := /bin/bash
 CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base:
-	./build.sh base-0 latest "CR=${CR_NS} T=0"
-	./build.sh base-1 latest
-	./build.sh base-2 latest
+	./build.sh base-0 latest,bookworm "VERSION=bookworm,CR=${CR_NS},T=0"
+	./build.sh base-1 latest,bookworm "VERSION=bookworm"
+	./build.sh base-2 latest,bookworm "VERSION=bookworm"
 jdk:
 	./build.sh oracle_jdk  23 "JAVA_VERSION=23"
 	./build.sh graalvm_jdk 23 "JAVA_VERSION=23"
@@ -12,6 +13,7 @@ mvnd:
 	./build.sh mvnd 1.0.2 "MVND_VERSION=1.0.2" linux/amd64
 vscode:
 	./build.sh vscode 1.96.2
+	./build.sh vscode alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
 jupyter:
 	./build.sh jupyter latest
 upx:
@@ -25,8 +27,8 @@ go-runner:
 
 # -----------------------------------------------------------------------------------------------------------------------
 alpine:
-	./build.sh alpine 3.20 "VERSION=3.20" "linux/amd64,linux/arm64" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
-	./build.sh alpine 3.21 "VERSION=3.21" "linux/amd64,linux/arm64" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
+	./build.sh alpine 3.20 "VERSION=3.20" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
+	./build.sh alpine 3.21 "VERSION=3.21" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 
 # -----------------------------------------------------------------------------------------------------------------------
 dco-etcd:
