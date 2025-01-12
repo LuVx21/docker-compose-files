@@ -4,8 +4,9 @@ ARG VERSION=3.21
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM alpine:${VERSION} AS alpine
-RUN echo "https://mirrors.aliyun.com/alpine/v${VERSION}/main/" > /etc/apk/repositories \
-    && echo "https://mirrors.aliyun.com/alpine/v${VERSION}/community/" >> /etc/apk/repositories
+RUN tag=`cat /etc/alpine-release` && release=${tag%.*} && \
+    echo "https://mirrors.aliyun.com/alpine/v${release}/main/" > /etc/apk/repositories && \
+    echo "https://mirrors.aliyun.com/alpine/v${release}/community/" >> /etc/apk/repositories
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/alpine:${VERSION} AS alpine-arch-amd64
@@ -22,9 +23,10 @@ RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=
 
 FROM luvx/alpine:${VERSION} AS vscode
 COPY --from=vscode_downloader code /usr/bin
+RUN apk add --no-cache libstdc++ # curl procps gcompat
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
-CMD ["sleep", "infinity"]
+ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/alpine:${VERSION} AS litecli

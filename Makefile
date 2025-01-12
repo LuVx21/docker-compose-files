@@ -3,17 +3,17 @@ CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base:
-	./build.sh base-0 latest,bookworm "VERSION=bookworm,CR=${CR_NS},T=0"
-	./build.sh base-1 latest,bookworm "VERSION=bookworm"
-	./build.sh base-2 latest,bookworm "VERSION=bookworm"
+	./build.sh base-0 bookworm "VERSION=bookworm,CR=${CR_NS},T=0"
+	./build.sh base-1 bookworm "VERSION=bookworm"
+	./build.sh base-2 bookworm "VERSION=bookworm"
 jdk:
 	./build.sh oracle_jdk  23 "JAVA_VERSION=23"
 	./build.sh graalvm_jdk 23 "JAVA_VERSION=23"
 mvnd:
 	./build.sh mvnd 1.0.2 "MVND_VERSION=1.0.2" linux/amd64
 vscode:
+	./build.sh vscode alpine-latest,alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
 	./build.sh vscode 1.96.2
-	./build.sh vscode alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
 jupyter:
 	./build.sh jupyter latest
 upx:
@@ -30,7 +30,7 @@ alpine:
 	./build.sh alpine 3.20 "VERSION=3.20" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 	./build.sh alpine 3.21 "VERSION=3.21" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 
-cli:
+dbcli:
 	./build.sh litecli 1.13.2 "" "" "-f ./luvx/Dockerfile-alpine --target=litecli ./luvx"
 	./build.sh mycli 1.29.2 "" "" "-f ./luvx/Dockerfile-alpine --target=mycli ./luvx"
 	./build.sh pgcli 4.1.0 "" "" "-f ./luvx/Dockerfile-alpine --target=pgcli ./luvx"

@@ -96,7 +96,7 @@ FROM luvx/base-0:${VERSION} AS vscode
 COPY --from=vscode_downloader code /usr/bin
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
-CMD ["sleep", "infinity"]
+ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader
