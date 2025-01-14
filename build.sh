@@ -8,7 +8,9 @@ buildArg=$3 # 支持多个,逗号分割
 platform=${4:-linux/amd64,linux/arm64}
 CUSTOM_ARG=$5
 
-tags=()
+if [[ ! $tag =~ 'alpine' ]]; then
+  tags+=("latest")
+fi
 for _tag in ${tag//,/ }; do
   tags+=($_tag ${_tag%.*} ${_tag%%.*})
 done
@@ -57,9 +59,6 @@ echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数
 for _tag in ${tags[@]}; do
   image_info+="-t ${image}:${_tag} "
 done
-if [[ ! $tag =~ 'alpine' ]]; then
-  image_info+="-t ${image}:latest "
-fi
 
 echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"
 docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} \

@@ -66,7 +66,9 @@ jobs:
           buildArg=${{ inputs.buildArg }}
           platform=${{ inputs.platform }}
 
-          tags=()
+          if [[ ! $tag =~ 'alpine' ]]; then
+            tags+=("latest")
+          fi
           for _tag in ${tag//,/ }; do
             tags+=($_tag ${_tag%.*} ${_tag%%.*})
           done
@@ -115,9 +117,6 @@ jobs:
           for _tag in ${tags[@]}; do
             image_info+="-t ${image}:${_tag} "
           done
-          if [[ ! $tag =~ 'alpine' ]]; then
-            image_info+="-t ${image}:latest "
-          fi
 
           echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"
           docker buildx build --push ${buildArg} ${target} \

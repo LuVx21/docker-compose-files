@@ -91,7 +91,7 @@ FROM ${REGISTRY}buildpack-deps:curl AS iredis_downloader
 RUN wget  https://github.com/laixintao/iredis/releases/latest/download/iredis.tar.gz \
  && tar -xzf iredis.tar.gz
 
-FROM ${REGISTRY}debian:${VERSION} AS iredis
+FROM ${REGISTRY}debian:${VERSION}-slim AS iredis
 COPY --from=iredis_downloader iredis /usr/bin
 COPY --from=iredis_downloader lib /usr/bin/lib
 ENTRYPOINT [ "iredis" ]
@@ -124,7 +124,7 @@ RUN <<EOT
     tar -Jxvf upx.tar.xz --strip-components 1
 EOT
 
-FROM ${REGISTRY}debian:${VERSION} AS upx
+FROM ${REGISTRY}debian:${VERSION}-slim AS upx
 COPY --from=upx_downloader upx /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ FROM base-2-arch AS duckdb_downloader
 RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
     && unzip duckdb_cli.zip && rm duckdb_cli.zip
 
-FROM ${REGISTRY}debian:${VERSION} AS duckdb
+FROM ${REGISTRY}debian:${VERSION}-slim AS duckdb
 COPY --from=duckdb_downloader duckdb .
 ENTRYPOINT [ "./duckdb" ]
 
@@ -160,13 +160,13 @@ COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 SHELL ["/bin/bash", "-c"]
 RUN <<EOT
     #!/bin/bash
-    for URL in ${GO_INSTALL_URL//,/ }; do
+    for URL in $(echo "$GO_INSTALL_URL" | tr ',' ' '); do
         go install -ldflags="-w -s" ${URL}
     done
     upx -9 $(go env GOPATH)/bin/*
 EOT
 
-FROM ${REGISTRY}debian:${VERSION} AS go-runner
+FROM ${REGISTRY}debian:${VERSION}-slim AS go-runner
 
 COPY --from=go-installer /go/bin/* /usr/local/bin
 
@@ -174,5 +174,5 @@ COPY --from=go-installer /go/bin/* /usr/local/bin
 FROM ${REGISTRY}python:3-slim-${VERSION} AS python-runner
 ARG PACKAGES
 RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
-    for package in ${PACKAGES//,/ }; do pip3 install --no-cache-dir ${package}; done; \
+    for package in $(echo "$PACKAGES" | tr ',' ' '); do pip3 install --no-cache-dir ${package}; done; \
     pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache

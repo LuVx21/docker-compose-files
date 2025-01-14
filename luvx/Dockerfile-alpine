@@ -65,7 +65,7 @@ ARG GO_INSTALL_URL
 COPY --from=luvx/upx:alpine-latest --link /usr/bin/upx /usr/bin/upx
 RUN <<EOT
     #!/bin/sh
-    for URL in ${GO_INSTALL_URL//,/ }; do
+    for URL in $(echo "$GO_INSTALL_URL" | tr ',' ' '); do
         go install -ldflags="-w -s" ${URL}
     done
     upx -9 $(go env GOPATH)/bin/*
@@ -79,5 +79,5 @@ COPY --from=go-installer /go/bin/* /usr/local/bin
 FROM ${REGISTRY}python:3-alpine AS python-runner
 ARG PACKAGES
 RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
-    for package in ${PACKAGES//,/ }; do pip3 install --no-cache-dir ${package}; done; \
+    for package in $(echo "$PACKAGES" | tr ',' ' '); do pip3 install --no-cache-dir ${package}; done; \
     pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache

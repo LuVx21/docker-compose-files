@@ -13,6 +13,8 @@ mvnd:
 	./build.sh mvnd 1.0.2 "MVND_VERSION=1.0.2" linux/amd64
 iredis:
 	./build.sh iredis 1.15.0 "" linux/amd64 "--target=iredis ./luvx"
+	./build.sh iredis alpine-latest "PACKAGES=iredis" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	# ./build.sh iredis latest "PACKAGES=iredis" "" "--target=python-runner ./luvx"
 vscode:
 	./build.sh vscode alpine-latest,alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
 	./build.sh vscode 1.96.2
@@ -21,6 +23,7 @@ jupyter:
 upx:
 	./build.sh upx alpine-latest,alpine-4.2.4 "UPX_VERSION=4.2.4" "" "-f ./luvx/Dockerfile-alpine"
 	./build.sh upx 4.2.4 "UPX_VERSION=4.2.4"
+.PHONY: duckdb
 duckdb:
 	./build.sh duckdb latest
 rocketmq-dashboard:
@@ -30,7 +33,6 @@ go-runner:
 	./build.sh xxx xxx "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
 python-runner:
 	./build.sh toolong   alpine-latest "PACKAGES=toolong"   "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
-	./build.sh iredis    alpine-latest "PACKAGES=iredis"    "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
 	./build.sh frogmouth alpine-latest "PACKAGES=frogmouth" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
 	./build.sh dolphie   latest "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
 
