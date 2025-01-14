@@ -45,7 +45,7 @@ case "${repository}" in
     ;;
   "base-0"|"base-1"|"base-2"|"ops"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
     url=https://github.com/LuVx21/docker-compose-files.git#master:luvx
-    url="./luvx"
+    [[ $tag =~ 'alpine' ]] && url="./luvx/alpine" || url="./luvx"
     target="--target $repository"
     ;;
   *)
