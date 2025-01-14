@@ -40,6 +40,7 @@ fedora:41
 fedora:42
 fedora:latest
 golang:1.22-alpine
+golang:1.22-bookworm
 golang:1.23-alpine
 golang:1.23-bookworm
 golang:latest
@@ -72,6 +73,7 @@ python:3-bookworm
 python:latest
 redis:7
 redis:7-alpine
+redis:7-bookworm
 redis:latest
 rust:1-bookworm
 rust:latest

@@ -74,3 +74,8 @@ EOT
 FROM ${REGISTRY}alpine:${VERSION} AS go-runner
 
 COPY --from=go-installer /go/bin/* /usr/local/bin
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}python:3-alpine AS iredis
+RUN pip3 install iredis && pip3 cache purge && rm -fr /root/.cache
+ENTRYPOINT [ "iredis" ]

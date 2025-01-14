@@ -11,6 +11,9 @@ jdk:
 	./build.sh graalvm_jdk 23 "JAVA_VERSION=23"
 mvnd:
 	./build.sh mvnd 1.0.2 "MVND_VERSION=1.0.2" linux/amd64
+iredis:
+	./build.sh iredis alpine-latest,alpine-1.15.0 "" "" "-f ./luvx/Dockerfile-alpine --target=iredis ./luvx"
+	./build.sh iredis 1.15.0 "" linux/amd64 "--target=iredis ./luvx"
 vscode:
 	./build.sh vscode alpine-latest,alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
 	./build.sh vscode 1.96.2

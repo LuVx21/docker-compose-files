@@ -87,6 +87,16 @@ RUN mkdir -p $MVND_HOME && tar --strip-components=1 -xzf maven-mvnd.tar.gz -C $M
 VOLUME /root/.m2
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}buildpack-deps:curl AS iredis_downloader
+RUN wget  https://github.com/laixintao/iredis/releases/latest/download/iredis.tar.gz \
+ && tar -xzf iredis.tar.gz
+
+FROM ${REGISTRY}debian:${VERSION} AS iredis
+COPY --from=iredis_downloader iredis /usr/bin
+COPY --from=iredis_downloader lib /usr/bin/lib
+ENTRYPOINT [ "iredis" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-1-arch AS vscode_downloader
 
 RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_V1}" \

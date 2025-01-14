@@ -58,8 +58,8 @@ for _tag in ${tags[@]}; do
     image_info+="-t ${image}:${_tag} "
 done
 
-echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest ${image_info} ${url} ${CUSTOM_ARG}"
-docker buildx build --push ${buildArg} ${target} \
+echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest ${image_info} ${url} ${CUSTOM_ARG}"
+docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} \
   --platform ${platform} \
   -t ${image}:latest \
   ${image_info} \
