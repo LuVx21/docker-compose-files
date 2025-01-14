@@ -29,6 +29,10 @@ rocketmq-dashboard:
 go-runner:
 	./build.sh xxx alpine-xxx "GO_INSTALL_URL=xxxx" "" "-f ./luvx/Dockerfile-alpine --target=go-runner ./luvx"
 	./build.sh xxx xxx "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
+python-runner:
+	./build.sh toolong alpine-latest "PACKAGES=toolong" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	./build.sh dolphie alpine-latest "PACKAGES=dolphie" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	./build.sh frogmouth alpine-latest "PACKAGES=frogmouth" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
 
 # -----------------------------------------------------------------------------------------------------------------------
 alpine:
