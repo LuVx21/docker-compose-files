@@ -55,12 +55,14 @@ image="luvx/$repository"
 echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
 for _tag in ${tags[@]}; do
-    image_info+="-t ${image}:${_tag} "
+  image_info+="-t ${image}:${_tag} "
 done
+if [[ ! $tag =~ 'alpine' ]]; then
+  image_info+="-t ${image}:latest "
+fi
 
-echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} -t ${image}:latest ${image_info} ${url} ${CUSTOM_ARG}"
+echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"
 docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} \
   --platform ${platform} \
-  -t ${image}:latest \
   ${image_info} \
   ${url} ${CUSTOM_ARG}

@@ -171,3 +171,8 @@ FROM ${REGISTRY}debian:${VERSION} AS go-runner
 COPY --from=go-installer /go/bin/* /usr/local/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}python:3-slim-${VERSION} AS python-runner
+ARG PACKAGES
+RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
+    for package in ${PACKAGES//,/ }; do pip3 install --no-cache-dir ${package}; done; \
+    pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache

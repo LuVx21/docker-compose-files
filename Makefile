@@ -12,7 +12,6 @@ jdk:
 mvnd:
 	./build.sh mvnd 1.0.2 "MVND_VERSION=1.0.2" linux/amd64
 iredis:
-	./build.sh iredis alpine-latest,alpine-1.15.0 "" "" "-f ./luvx/Dockerfile-alpine --target=iredis ./luvx"
 	./build.sh iredis 1.15.0 "" linux/amd64 "--target=iredis ./luvx"
 vscode:
 	./build.sh vscode alpine-latest,alpine-1.96.2 "" "" "-f ./luvx/Dockerfile-alpine"
@@ -30,9 +29,10 @@ go-runner:
 	./build.sh xxx alpine-xxx "GO_INSTALL_URL=xxxx" "" "-f ./luvx/Dockerfile-alpine --target=go-runner ./luvx"
 	./build.sh xxx xxx "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
 python-runner:
-	./build.sh toolong alpine-latest "PACKAGES=toolong" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
-	./build.sh dolphie alpine-latest "PACKAGES=dolphie" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	./build.sh toolong   alpine-latest "PACKAGES=toolong"   "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	./build.sh iredis    alpine-latest "PACKAGES=iredis"    "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
 	./build.sh frogmouth alpine-latest "PACKAGES=frogmouth" "" "-f ./luvx/Dockerfile-alpine --target=python-runner ./luvx"
+	./build.sh dolphie   latest "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
 
 # -----------------------------------------------------------------------------------------------------------------------
 alpine:
@@ -40,9 +40,9 @@ alpine:
 	./build.sh alpine 3.21 "VERSION=3.21" "" "-f ./luvx/Dockerfile-alpine --target=alpine ./luvx"
 
 dbcli:
-	./build.sh litecli 1.13.2 "" "" "-f ./luvx/Dockerfile-alpine --target=litecli ./luvx"
-	./build.sh mycli 1.29.2 "" "" "-f ./luvx/Dockerfile-alpine --target=mycli ./luvx"
-	./build.sh pgcli 4.1.0 "" "" "-f ./luvx/Dockerfile-alpine --target=pgcli ./luvx"
+	./build.sh litecli alpine-latest,alpine-1.13.2 "" "" "-f ./luvx/Dockerfile-alpine --target=litecli ./luvx"
+	./build.sh mycli   alpine-latest,alpine-1.29.2 "" "" "-f ./luvx/Dockerfile-alpine --target=mycli ./luvx"
+	./build.sh pgcli   alpine-latest,alpine-4.1.0  "" "" "-f ./luvx/Dockerfile-alpine --target=pgcli ./luvx"
 
 # -----------------------------------------------------------------------------------------------------------------------
 dco-etcd:

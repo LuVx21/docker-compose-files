@@ -76,18 +76,8 @@ FROM ${REGISTRY}alpine:${VERSION} AS go-runner
 COPY --from=go-installer /go/bin/* /usr/local/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}python:3-alpine AS iredis
-RUN pip3 install iredis && pip3 cache purge && rm -fr /root/.cache
-ENTRYPOINT [ "iredis" ]
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 FROM ${REGISTRY}python:3-alpine AS python-runner
 ARG PACKAGES
-RUN <<EOT
-    #!/bin/sh
-    for package in ${PACKAGES//,/ }; do
-        pip3 install ${package}
-    done
-    pip3 cache purge && rm -fr /root/.cache
-EOT
+RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
+    for package in ${PACKAGES//,/ }; do pip3 install --no-cache-dir ${package}; done; \
+    pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache

@@ -12,7 +12,9 @@ debian:11-slim
 debian:12
 debian:12-slim
 debian:bookworm
+debian:bookworm-slim
 debian:bullseye
+debian:bullseye-slim
 debian:latest
 docker:latest
 eclipse-temurin:8
@@ -39,8 +41,8 @@ fedora:40
 fedora:41
 fedora:42
 fedora:latest
-golang:1.22-alpine
-golang:1.22-bookworm
+golang:1-alpine
+golang:1-bookworm
 golang:1.23-alpine
 golang:1.23-bookworm
 golang:latest
@@ -70,12 +72,15 @@ postgres:17-alpine
 postgres:latest
 python:3-alpine
 python:3-bookworm
+python:3-slim-bookworm
 python:latest
 redis:7
 redis:7-alpine
 redis:7-bookworm
 redis:latest
+rust:1-alpine
 rust:1-bookworm
+rust:1-slim-bookworm
 rust:latest
 ubuntu:focal
 ubuntu:jammy
