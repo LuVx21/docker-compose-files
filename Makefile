@@ -21,7 +21,7 @@ vscode:
 jupyter:
 	./build.sh jupyter latest
 upx:
-	./build.sh upx latest-alpine,alpine-4.2.4 "UPX_VERSION=4.2.4" "" ""
+	./build.sh upx latest-alpine,4.2.4-alpine "UPX_VERSION=4.2.4" "" ""
 	./build.sh upx 4.2.4 "UPX_VERSION=4.2.4"
 .PHONY: duckdb
 duckdb:

@@ -8,11 +8,22 @@ buildArg=$3 # 支持多个,逗号分割
 platform=${4:-linux/amd64,linux/arm64}
 CUSTOM_ARG=$5
 
+os=$(uname -s)
+
+
 if [[ ! $tag =~ 'alpine' ]]; then
   tags+=("latest")
 fi
 for _tag in ${tag//,/ }; do
-  tags+=($_tag ${_tag%.*} ${_tag%%.*})
+  if [[ $_tag == *-* ]]; then
+    # 提取出第一个-前和后的内容
+    prefix="${_tag%%-*}" suffix="${_tag#*-}"
+    # -前内容处理版本号
+    major="${prefix%%.*}-${suffix}" minor="${prefix%.*}-${suffix}"
+  else
+    major="${_tag%%.*}" minor="${_tag%.*}"
+  fi
+  tags+=($_tag ${major} ${minor})
 done
 tags=($(echo "${tags[@]}" | tr ' ' '\n' | sort | uniq | tr '\n' ' '))
 if [[ -n $buildArg ]]; then
@@ -57,7 +68,10 @@ image="luvx/$repository"
 echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
 for _tag in ${tags[@]}; do
-  image_info+="-t ${image}:${_tag} "
+    image_info+="-t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
+  if [[ ! $os == 'Darwin' ]]; then
+    image_info+="-t ${image}:${_tag} "
+  fi
 done
 
 echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"

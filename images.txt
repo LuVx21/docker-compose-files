@@ -7,14 +7,10 @@ buildpack-deps:curl
 buildpack-deps:latest
 buildpack-deps:scm
 centos:latest
-debian:11
-debian:11-slim
 debian:12
 debian:12-slim
 debian:bookworm
 debian:bookworm-slim
-debian:bullseye
-debian:bullseye-slim
 debian:latest
 docker:latest
 eclipse-temurin:8

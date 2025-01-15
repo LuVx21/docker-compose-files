@@ -51,6 +51,18 @@ jobs:
         with:
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
+      - name: 登录阿里云容器
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.ALI_CR }}
+          username: ${{ secrets.ALI_CR_USER }}
+          password: ${{ secrets.ALI_CR_PASSWORD }}
+      - name: 登录腾讯云容器
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.TX_CR }}
+          username: ${{ secrets.TX_CR_USER }}
+          password: ${{ secrets.TX_CR_PASSWORD }}
       - name: 磁盘信息
         run: |
           echo "磁盘信息"
@@ -60,17 +72,30 @@ jobs:
       - name: 构建
         env:
           CUSTOM_ARG: ${{ inputs.customArg }}
+          ALI_CR: ${{ vars.ALI_CR }}
+          TX_CR: ${{ vars.TX_CR }}
         run: |
           repository=${{ inputs.image }}
           tag=${{ inputs.tag }}
           buildArg=${{ inputs.buildArg }}
           platform=${{ inputs.platform }}
 
+          os=$(uname -s)
+
+
           if [[ ! $tag =~ 'alpine' ]]; then
             tags+=("latest")
           fi
           for _tag in ${tag//,/ }; do
-            tags+=($_tag ${_tag%.*} ${_tag%%.*})
+            if [[ $_tag == *-* ]]; then
+              # 提取出第一个-前和后的内容
+              prefix="${_tag%%-*}" suffix="${_tag#*-}"
+              # -前内容处理版本号
+              major="${prefix%%.*}-${suffix}" minor="${prefix%.*}-${suffix}"
+            else
+              major="${_tag%%.*}" minor="${_tag%.*}"
+            fi
+            tags+=($_tag ${major} ${minor})
           done
           tags=($(echo "${tags[@]}" | tr ' ' '\n' | sort | uniq | tr '\n' ' '))
           if [[ -n $buildArg ]]; then
@@ -115,7 +140,10 @@ jobs:
           echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
           for _tag in ${tags[@]}; do
-            image_info+="-t ${image}:${_tag} "
+              image_info+="-t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
+            if [[ ! $os == 'Darwin' ]]; then
+              image_info+="-t ${image}:${_tag} "
+            fi
           done
 
           echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"
