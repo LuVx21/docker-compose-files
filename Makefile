@@ -49,8 +49,5 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-build:
-	gh workflow run build.yml -f image=base-0 -f tag=latest
-	gh workflow run build.yml -f image=base-1 -f tag=latest
-	gh workflow run build.yml -f image=base-2 -f tag=latest
-	gh workflow run build.yml -f image=jupyter -f tag=latest
-	gh workflow run build.yml -f image=alpine -f tag=3.21 -f buildArg="VERSION=3.21" -f customArg="--target=alpine ./luvx/alpine"
+	# gh workflow run build.yml -f image=alpine -f tag=3.21 -f buildArg="VERSION=3.21" -f customArg="--target=alpine ./luvx/alpine"
+	gh workflow run build.yml -f image=custom -f tag=xxx -f customArg="make base alpine"
