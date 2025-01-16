@@ -18,6 +18,7 @@ iredis:
 vscode:
 	./build.sh vscode latest-alpine "" "" ""
 	./build.sh vscode latest
+.PHONY: jupyter
 jupyter:
 	./build.sh jupyter latest
 upx:

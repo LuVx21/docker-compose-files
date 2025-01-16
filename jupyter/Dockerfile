@@ -2,20 +2,20 @@ ARG CR=${CR:-""}
 ARG REGISTRY=${CR}${CR:+/}
 ARG VERSION=bookworm
 
-FROM ${REGISTRY}golang:1.23-${VERSION} AS go_base
+FROM ${REGISTRY}golang:1-${VERSION} AS go_base
 COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
 && go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
 && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
 && upx -9 /go/bin/*
 
-FROM ${REGISTRY}rust:1-${VERSION} AS rust_base
+FROM ${REGISTRY}rust:1-slim-${VERSION} AS rust_base
 COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN cargo install evcxr_jupyter; \
     upx -9 $CARGO_HOME/bin/evcxr_jupyter; \
     rm -fr $CARGO_HOME/registry $CARGO_HOME/git
 
-FROM ${REGISTRY}python:3-${VERSION} AS jupyter
+FROM ${REGISTRY}python:3-slim-${VERSION} AS jupyter
 WORKDIR /root
 
 # -------------以下为安装Go-------------
