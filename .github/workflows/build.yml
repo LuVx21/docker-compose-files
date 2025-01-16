@@ -131,6 +131,11 @@ jobs:
               [[ $tag =~ 'alpine' ]] && url="./luvx/alpine" || url="./luvx"
               target="--target $repository"
               ;;
+            "custom")
+              chmod +x *.sh
+              eval ${CUSTOM_ARG}
+              exit 0
+              ;;
             *)
               # exit 0
             ;;
