@@ -2,6 +2,8 @@ ARG CR=${CR:-""}
 ARG REGISTRY=${CR}${CR:+/}
 ARG VERSION=bookworm
 
+# FROM ${REGISTRY}buildpack-deps:${VERSION} AS downloader
+
 FROM ${REGISTRY}golang:1-${VERSION} AS go_base
 COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
