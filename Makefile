@@ -3,7 +3,7 @@ CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base:
-	./build.sh base-0 bookworm "VERSION=bookworm,CR=${CR_NS},T=0"
+	./build.sh base-0 bookworm "VERSION=bookworm,T=0"
 	./build.sh base-1 bookworm "VERSION=bookworm"
 	./build.sh base-2 bookworm "VERSION=bookworm"
 jdk:

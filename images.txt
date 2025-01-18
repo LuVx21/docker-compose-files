@@ -61,6 +61,7 @@ nginx:latest
 node:22
 node:22-alpine
 node:latest
+ollama/ollama:latest
 postgres:16
 postgres:16-alpine
 postgres:17

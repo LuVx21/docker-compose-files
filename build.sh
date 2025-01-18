@@ -74,8 +74,8 @@ for _tag in ${tags[@]}; do
   fi
 done
 
-echo "执行命令: docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}"
-docker buildx build --build-arg CR=${ALI_CR_NS} --push ${buildArg} ${target} \
+echo "执行命令: docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
+docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} \
   --platform ${platform} \
   ${image_info} \
   ${url} ${CUSTOM_ARG}

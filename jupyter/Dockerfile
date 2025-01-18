@@ -1,5 +1,5 @@
 ARG CR=${CR:-""}
-ARG REGISTRY=${CR}${CR:+/}
+ARG REGISTRY=${CR:+$CR/}
 ARG VERSION=bookworm
 
 # FROM ${REGISTRY}buildpack-deps:${VERSION} AS downloader

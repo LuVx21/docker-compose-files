@@ -1,5 +1,5 @@
 ARG CR=${CR:-""}
-ARG REGISTRY=${CR}${CR:+/}
+ARG REGISTRY=${CR:+$CR/}
 ARG VERSION=3.19
 
 FROM alpine:${VERSION} AS base-0

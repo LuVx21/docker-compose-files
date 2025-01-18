@@ -1,0 +1,32 @@
+
+services:
+  ollama:
+    image: ${DOCKERHUB_MIRROR}/ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - 11434:11434
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/ollama/aaa:/root/.ollama
+    environment:
+      - TZ=Asia/Shanghai
+
+# fastgpt
+  open-webui:
+    image: ${GH_CR_NJU}/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - 48080:8080
+    networks:
+      - net_common
+    environment:
+      - OLLAMA_BASE_URL=http://ollama
+    volumes:
+      - open-webui:/app/backend/data
+
+networks:
+  net_common:
+    external: true
+volumes:
+    open-webui:

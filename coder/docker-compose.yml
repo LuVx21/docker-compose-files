@@ -16,7 +16,7 @@ services:
       DOCKER_USER: $USER
 
   coder:
-    image: ghcr.io/coder/coder:${CODER_VERSION:-latest}
+    image: ${GH_CR_NJU}/coder/coder:${CODER_VERSION:-latest}
     networks:
       - net_common
     ports:
