@@ -57,14 +57,14 @@ case "${repository}" in
   "base-0"|"base-1"|"base-2"|"ops"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
     url=https://github.com/LuVx21/docker-compose-files.git#master:luvx
     [[ $tag =~ 'alpine' ]] && url="./luvx/alpine" || url="./luvx"
-    target="--target $repository"
+    target="--target ${repository}"
     ;;
   *)
     # exit 0
   ;;
 esac;
 
-image="luvx/$repository"
+image="luvx/${repository}"
 echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
 for _tag in ${tags[@]}; do
