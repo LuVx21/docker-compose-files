@@ -51,4 +51,7 @@ dco-etcd:
 
 workflow-build:
 	# gh workflow run build.yml -f image=alpine -f tag=3.21 -f buildArg="VERSION=3.21" -f customArg="--target=alpine ./luvx/alpine"
+	gh workflow run build.yml -f image=whodb -f tag=latest,latest-alpine,0.45.0 -f customArg="-f ./core/Dockerfile https://github.com/clidey/whodb.git#0.45.0"
+
+workflow-custom:
 	gh workflow run build.yml -f image=custom -f tag=xxx -f customArg="make base alpine"

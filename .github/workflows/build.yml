@@ -153,7 +153,7 @@ jobs:
           echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数: ${buildArg} 上下文: ${url} 自定义参数: ${CUSTOM_ARG}"
 
           for _tag in ${tags[@]}; do
-              image_info+="-t ghcr.io/${{ env.ACTOR_LOWER }}/${repository} -t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
+              image_info+="-t ghcr.io/${{ env.ACTOR_LOWER }}/${repository}:${_tag} -t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
             if [[ ! $os == 'Darwin' ]]; then
               image_info+="-t ${image}:${_tag} "
             fi
