@@ -11,9 +11,9 @@ CUSTOM_ARG=$5
 os=$(uname -s)
 
 
-if [[ ! $tag =~ 'alpine' ]]; then
-  tags+=("latest")
-fi
+# if [[ ! $tag =~ 'alpine' ]]; then
+#   tags+=("latest")
+# fi
 for _tag in ${tag//,/ }; do
   if [[ $_tag == *-* ]]; then
     # 提取出第一个-前和后的内容
