@@ -1,16 +1,18 @@
 services:
   jupyter:
-    image: luvx/jupyter:latest
+    image: luvx/jupyter:vscode
     container_name: jupyter
     ports:
       - 8888:8888
+      - 8000:8000
     networks:
       - net_common
     volumes:
-      - $HOME/OneDrive/Code/doc/96.jupyter:/root/code
+      - $HOME/OneDrive/Code:/workspace
       - $HOME/data:/root/data
       - $HOME/.m2:/root/.m2
       - $HOME/go/pkg:/go/pkg
+      - vscode-server:/root/.vscode-server
     environment:
       - TZ=Asia/Shanghai
       # - PASSWORD=xxxx
@@ -29,4 +31,8 @@ services:
 
 networks:
   net_common:
+    external: true
+
+volumes:
+  vscode-server:
     external: true

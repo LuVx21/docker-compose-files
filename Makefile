@@ -20,7 +20,8 @@ vscode:
 	./build.sh vscode latest
 .PHONY: jupyter
 jupyter:
-	./build.sh jupyter latest
+	./build.sh jupyter latest "" "" "--target=jupyter"
+	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 upx:
 	./build.sh upx latest-alpine,4.2.4-alpine "UPX_VERSION=4.2.4" "" ""
 	./build.sh upx latest,4.2.4 "UPX_VERSION=4.2.4"

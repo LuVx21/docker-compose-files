@@ -61,7 +61,17 @@ RUN evcxr_jupyter --install; \
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
-CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''", "NotebookApp.disable_check_xsrf=True" ]
+CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''", "--NotebookApp.disable_check_xsrf=True" ]
 
 # 也可以这样, 在启动容器时再指定具体参数
 # ENTRYPOINT [ "jupyter", "lab" ]
+
+FROM luvx/jupyter:latest AS jupyter-vscode
+COPY --from=luvx/vscode:latest-alpine --link /usr/bin/code /usr/bin/code
+VOLUME ["/root/.vscode", "/root/.vscode-server"]
+EXPOSE 8000
+RUN <<EOT bash
+    echo "#!/bin/sh" >> /entrypoint.sh
+    echo "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token $@ &> /dev/null" >> /entrypoint.sh
+    chmod +x /entrypoint.sh
+EOT
