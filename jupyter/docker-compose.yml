@@ -13,10 +13,11 @@ services:
       - $HOME/.m2:/root/.m2
       - $HOME/go/pkg:/go/pkg
       - vscode-server:/root/.vscode-server
+    working_dir: /workspace
     environment:
       - TZ=Asia/Shanghai
       # - PASSWORD=xxxx
-    # command: jupyter lab --no-browser --allow-root --ip=0.0.0.0 --NotebookApp.allow_origin='*' --NotebookApp.token='' --NotebookApp.password='' --NotebookApp.disable_check_xsrf=True
+    # command: jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True
 
   # showdoc:
   #   image: star7th/showdoc:latest

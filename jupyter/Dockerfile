@@ -34,10 +34,11 @@ COPY --from=luvx/oracle_jdk:latest --link $JAVA_HOME $JAVA_HOME
 # -------------以下为安装内核-------------
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
-RUN apt-get update && apt-get install -y --no-install-recommends wget unzip && rm -rf /var/lib/apt/lists/*; \
-    pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
-    && sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources \
-    && pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
+RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/; \
+    sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
+    # slim镜像时使用
+    apt-get update && apt-get install -y --no-install-recommends wget unzip build-essential && rm -rf /var/lib/apt/lists/*; \
+    pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gonb
@@ -61,7 +62,12 @@ RUN evcxr_jupyter --install; \
 
 VOLUME ["/root/.m2", "/go/pkg"]
 EXPOSE 8888
-CMD [ "jupyter", "lab", "--no-browser", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.allow_origin='*'", "--NotebookApp.token=''", "--NotebookApp.password=''", "--NotebookApp.disable_check_xsrf=True" ]
+RUN <<EOT bash
+    echo "#!/bin/sh" >> /entrypoint.sh
+    echo -n "jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True" >> /entrypoint.sh
+    chmod +x /entrypoint.sh
+EOT
+CMD ["/entrypoint.sh"]
 
 # 也可以这样, 在启动容器时再指定具体参数
 # ENTRYPOINT [ "jupyter", "lab" ]
@@ -71,7 +77,7 @@ COPY --from=luvx/vscode:latest-alpine --link /usr/bin/code /usr/bin/code
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
 RUN <<EOT bash
-    echo "#!/bin/sh" >> /entrypoint.sh
-    echo "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token $@ &> /dev/null" >> /entrypoint.sh
-    chmod +x /entrypoint.sh
+    echo " &" >> /entrypoint.sh
+    echo "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token" >> /entrypoint.sh
 EOT
+CMD ["/entrypoint.sh"]
