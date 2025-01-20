@@ -3,7 +3,7 @@ ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
 ARG VERSION=bookworm
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}debian:${VERSION} AS base-0
+FROM ${REGISTRY}debian:${VERSION} AS base
 ARG T=0
 RUN set -eux; \
     pkg='ca-certificates'; \
@@ -15,34 +15,23 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-0:latest AS base-1
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends curl wget; \
-    rm -rf /var/lib/apt/lists/*
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-1:latest AS base-2
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends bzip2 unzip xz-utils bzip2; \
-    rm -rf /var/lib/apt/lists/*
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-1:latest AS base-1-arch-amd64
+FROM luvx/base:1 AS base-1-arch-amd64
 ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
-FROM luvx/base-1:latest AS base-1-arch-arm64
+FROM luvx/base:1 AS base-1-arch-arm64
 ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
 FROM base-1-arch-$TARGETARCH AS base-1-arch
 
-FROM luvx/base-2:latest AS base-2-arch-amd64
+FROM luvx/base:2 AS base-2-arch-amd64
 ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
-FROM luvx/base-2:latest AS base-2-arch-arm64
+FROM luvx/base:2 AS base-2-arch-arm64
 ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
 FROM base-2-arch-$TARGETARCH AS base-2-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base-2:latest AS ops
+FROM luvx/base:3 AS ops
 
-RUN apt update && apt install -y zsh curl wget tree vim git
+RUN apt update && apt install -y zsh tree vim; \
+    rm -rf /var/lib/apt/lists/*
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
     git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
     git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
@@ -71,7 +60,7 @@ RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/graalvm/${JAVA
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # docker build --target mvnd -t luvx/mvnd:1.0.2-23 --platform linux/amd64 --build-arg MVND_VERSION=1.0.2 .
-FROM luvx/base-1:latest AS mvnd_downloader
+FROM luvx/base:1 AS mvnd_downloader
 
 ARG MVND_VERSION='1.0.2' PLATFORM=linux ARCH=amd64
 RUN curl -fSL -o maven-mvnd.tar.gz https://github.com/apache/maven-mvnd/releases/download/${MVND_VERSION}/maven-mvnd-${MVND_VERSION}-${PLATFORM}-${ARCH}.tar.gz
@@ -102,7 +91,7 @@ FROM base-1-arch AS vscode_downloader
 RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_V1}" \
     && tar -zxvf vscode_cli.tar.gz
 
-FROM luvx/base-0:latest AS vscode
+FROM luvx/base:0 AS vscode
 COPY --from=vscode_downloader code /usr/bin
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
@@ -167,8 +156,7 @@ RUN <<EOT
 EOT
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS go-runner
-
-COPY --from=go-installer /go/bin/* /usr/local/bin
+COPY --from=go-installer /go/bin/* /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}python:3-slim-${VERSION} AS python-runner

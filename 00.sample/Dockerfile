@@ -1,5 +1,6 @@
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-ARG VERSION=3.19
+ARG VERSION=3.21
 
-FROM alpine:${VERSION} AS base-0
+FROM ${REGISTRY}alpine:${VERSION} AS base-0
+CMD ["echo", "111111"]

@@ -60,8 +60,7 @@ RUN <<EOT
 EOT
 
 FROM ${REGISTRY}alpine:${VERSION} AS go-runner
-
-COPY --from=go-installer /go/bin/* /usr/local/bin
+COPY --from=go-installer /go/bin/* /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}python:3-alpine AS python-runner

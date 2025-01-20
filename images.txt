@@ -92,9 +92,11 @@ luvx/alpine:3.19
 luvx/alpine:3.20
 luvx/alpine:3.21
 luvx/alpine:latest
-luvx/base-0:latest
-luvx/base-1:latest
-luvx/base-2:latest
+luvx/base:0
+luvx/base:1
+luvx/base:2
+luvx/base:3
+luvx/base:latest
 luvx/chartdb:latest
 luvx/dicedb:latest
 luvx/duckdb:latest

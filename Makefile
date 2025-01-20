@@ -3,9 +3,10 @@ CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base:
-	./build.sh base-0 latest,bookworm "VERSION=bookworm,T=0"
-	./build.sh base-1 latest,bookworm "VERSION=bookworm"
-	./build.sh base-2 latest,bookworm "VERSION=bookworm"
+	./build.sh base 0-bookworm "VERSION=bookworm,T=0"
+	./build.sh base 1-bookworm "VERSION=bookworm,T=1"
+	./build.sh base latest,2-bookworm "VERSION=bookworm,T=2"
+	./build.sh base 3-bookworm "VERSION=bookworm,T=3"
 jdk:
 	./build.sh oracle_jdk  latest,23 "JAVA_VERSION=23"
 	./build.sh graalvm_jdk latest,23 "JAVA_VERSION=23"

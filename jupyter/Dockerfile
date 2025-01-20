@@ -27,18 +27,18 @@ COPY --from=go_base --link $GOROOT $GOROOT
 COPY --from=go_base --link $GOPATH/bin/ $GOPATH/bin/
 
 # -------------以下为安装Java-------------
-ENV JAVA_HOME=/opt/install/java
+ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
-COPY --from=luvx/oracle_jdk:latest --link $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:23-jdk --link $JAVA_HOME $JAVA_HOME
 
 # -------------以下为安装内核-------------
 
-# Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/; \
     sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
     # slim镜像时使用
-    apt-get update && apt-get install -y --no-install-recommends wget unzip build-essential && rm -rf /var/lib/apt/lists/*; \
-    pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
+    apt-get update -q && apt-get install -q -y --no-install-recommends wget unzip openssl ca-certificates build-essential libssl-dev pkg-config && rm -rf /var/lib/apt/lists/*;
+# Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
+RUN pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gonb
@@ -60,10 +60,14 @@ RUN evcxr_jupyter --install; \
     # cargo install cargo-cache && cargo cache --remove-dir all; \
     rm -fr $CARGO_HOME/registry $CARGO_HOME/git
 
-VOLUME ["/root/.m2", "/go/pkg"]
+VOLUME ["/root/.m2", "/go/pkg", "$CARGO_HOME/registry"]
 EXPOSE 8888
 RUN <<EOT bash
     echo "#!/bin/sh" >> /entrypoint.sh
+    echo 'if [ -z \$(which curl) ]; then pkg=\$pkg" curl ca-certificates"; fi;' >> /entrypoint.sh
+    echo 'if [ -z \$(which jq) ]; then pkg=\$pkg" jq"; fi;' >> /entrypoint.sh
+    echo 'if [ -z \$(which git) ]; then pkg=\$pkg" git"; fi;' >> /entrypoint.sh
+    echo 'apt-get update -q && apt-get install -q -y --no-install-recommends \$pkg;' >> /entrypoint.sh
     echo -n "jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True" >> /entrypoint.sh
     chmod +x /entrypoint.sh
 EOT
@@ -78,6 +82,5 @@ VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
 RUN <<EOT bash
     echo " &" >> /entrypoint.sh
-    echo "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token" >> /entrypoint.sh
+    echo -n "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token" >> /entrypoint.sh
 EOT
-CMD ["/entrypoint.sh"]
