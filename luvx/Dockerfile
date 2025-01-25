@@ -28,19 +28,6 @@ ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
 FROM base-2-arch-$TARGETARCH AS base-2-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/base:3 AS ops
-
-RUN apt update && apt install -y zsh tree vim; \
-    rm -rf /var/lib/apt/lists/*
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
-    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting && \
-    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions && \
-    git clone --depth=1 https://github.com/zsh-users/zsh-completions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions && \
-    chsh -s /usr/bin/zsh
-SHELL ["/usr/bin/zsh", "-c"]
-RUN source ~/.zshrc && omz plugin enable git docker docker-compose history-substring-search z zsh-autosuggestions zsh-completions zsh-syntax-highlighting
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-1-arch AS oracle_jdk
 
 ARG JAVA_VERSION='23'

@@ -4,9 +4,7 @@ ARG VERSION=3.21
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM alpine:${VERSION} AS alpine
-RUN tag=`cat /etc/alpine-release` && release=${tag%.*} && \
-    echo "https://mirrors.aliyun.com/alpine/v${release}/main/" > /etc/apk/repositories && \
-    echo "https://mirrors.aliyun.com/alpine/v${release}/community/" >> /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/alpine:latest AS alpine-arch-amd64

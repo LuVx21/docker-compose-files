@@ -3,10 +3,10 @@ CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base:
-	./build.sh base 0-bookworm "VERSION=bookworm,T=0"
-	./build.sh base 1-bookworm "VERSION=bookworm,T=1"
-	./build.sh base latest,2-bookworm "VERSION=bookworm,T=2"
-	./build.sh base 3-bookworm "VERSION=bookworm,T=3"
+	./build.sh base 0,0-bookworm "VERSION=bookworm,T=0"
+	./build.sh base 1,1-bookworm "VERSION=bookworm,T=1"
+	./build.sh base latest,2,2-bookworm "VERSION=bookworm,T=2"
+	./build.sh base 3,3-bookworm "VERSION=bookworm,T=3"
 jdk:
 	./build.sh oracle_jdk  latest,23 "JAVA_VERSION=23"
 	./build.sh graalvm_jdk latest,23 "JAVA_VERSION=23"
@@ -51,9 +51,19 @@ alpine:
 dco-etcd:
 	./dco.sh etcd
 
+workflow-sync:
+	gh workflow run sync.yml -f dockerhub_images=debian:bookworm,debian:bookworm-slim,debian:latest
+
 workflow-build:
-	# gh workflow run build.yml -f image=alpine -f tag=latest,3.21 -f buildArg="VERSION=3.21" -f customArg="--target=alpine ./luvx/alpine"
-	gh workflow run build.yml -f image=whodb -f tag=latest,latest-alpine,0.45.0 -f customArg="-f ./core/Dockerfile https://github.com/clidey/whodb.git#0.45.0"
+	gh workflow run build.yml \
+		-f image=alpine \
+		-f tag=latest,3.21 \
+		-f buildArg="VERSION=3.21" \
+		# -f platform="linux/arm64,linux/amd64" \
+		-f customArg="--target=alpine ./luvx/alpine"
 
 workflow-custom:
-	gh workflow run build.yml -f image=custom -f tag=xxx -f customArg="make base alpine"
+	gh workflow run build.yml \
+		-f image=custom \
+		-f tag=xxx \
+		-f customArg="make base alpine"

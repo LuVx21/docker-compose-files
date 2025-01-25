@@ -8,7 +8,10 @@ services:
     networks:
       - net_common
     volumes:
+      - $HOME/.gitconfig:/root/.gitconfig
+      - $HOME/.oh-my-zsh:/root/.oh-my-zsh
       - $HOME/OneDrive/Code:/workspace
+      - $HOME/code:/workspace/code
       - $HOME/data:/root/data
       - $HOME/.m2:/root/.m2
       - $HOME/go/pkg:/go/pkg
