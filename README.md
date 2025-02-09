@@ -48,6 +48,9 @@ mirrors:
 | https://hub.xdark.top             | ✅    |
 | https://registry.dockermirror.com | ✅    |
 
+* [境内 Docker 镜像状态监控](https://status.anye.xyz/status/docker)
+* [dockerhub镜像站存活](https://mirror.kentxxq.com/home)
+
 > https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
 
 

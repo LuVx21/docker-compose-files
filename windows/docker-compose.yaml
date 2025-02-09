@@ -19,3 +19,26 @@ services:
       KVM: "N"
     volumes:
       - "$HOME/docker/windows/storage:/storage/shared"
+
+# 来源: https://github.com/11notes/docker-kms
+  kms:
+    image: 11notes/kms:465f4d1
+    container_name: kms
+    environment:
+      TZ: Europe/Zurich
+    volumes:
+      - var:/kms/var
+    ports:
+      - 1688:1688/tcp
+  kms-gui:
+    image: 11notes/kms-gui:latest
+    container_name: kms-gui
+    environment:
+      TZ: Europe/Zurich
+    volumes:
+      - var:/kms/var
+    ports:
+      - 8080:8080/tcp
+
+volumes:
+  var:

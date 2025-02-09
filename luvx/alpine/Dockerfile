@@ -45,7 +45,7 @@ FROM luvx/alpine:latest AS upx
 COPY --from=upx_downloader upx /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}golang:1.23-alpine AS go-installer
+FROM ${REGISTRY}golang:1.24-alpine AS go-installer
 
 ARG GO_INSTALL_URL
 COPY --from=luvx/upx:latest-alpine --link /usr/bin/upx /usr/bin/upx

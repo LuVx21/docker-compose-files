@@ -129,7 +129,7 @@ ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar ./rocketmq-dashboard.jar" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}golang:1.23-${VERSION} AS go-installer
+FROM ${REGISTRY}golang:1.24-${VERSION} AS go-installer
 
 ARG GO_INSTALL_URL
 COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx

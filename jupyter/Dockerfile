@@ -70,7 +70,9 @@ RUN <<EOT bash
     echo 'if [ -z \$(which curl) ]; then pkg=\$pkg" curl ca-certificates"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which jq) ]; then pkg=\$pkg" jq"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which git) ]; then pkg=\$pkg" git"; fi;' >> /entrypoint.sh
+    echo 'if [ -z \$(which zsh) ]; then pkg=\$pkg" zsh"; fi;' >> /entrypoint.sh
     echo 'apt-get update -q && apt-get install -q -y --no-install-recommends \$pkg;' >> /entrypoint.sh
+    echo 'chsh -s \$(which zsh);' >> /entrypoint.sh
     echo -n "jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True" >> /entrypoint.sh
     chmod +x /entrypoint.sh
 EOT
