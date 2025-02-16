@@ -71,7 +71,7 @@ for _tag in ${tags[@]}; do
   if [[ ! $os == 'Darwin' ]]; then
     image_info+="-t ghcr.io/luvx21/${repository}:${_tag} -t ${image}:${_tag} "
   fi
-  image_info+="-t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
+  image_info+="-t ${ALI_CR}/${image}:${_tag} "
 done
 
 echo "执行命令: docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
