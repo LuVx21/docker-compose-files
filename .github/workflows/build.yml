@@ -65,12 +65,12 @@ jobs:
           registry: ${{ vars.ALI_CR }}
           username: ${{ secrets.ALI_CR_USER }}
           password: ${{ secrets.ALI_CR_PASSWORD }}
-      - name: 登录腾讯云容器
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.TX_CR }}
-          username: ${{ secrets.TX_CR_USER }}
-          password: ${{ secrets.TX_CR_PASSWORD }}
+      # - name: 登录腾讯云容器
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ vars.TX_CR }}
+      #     username: ${{ secrets.TX_CR_USER }}
+      #     password: ${{ secrets.TX_CR_PASSWORD }}
       - name: 磁盘信息
         run: |
           echo "磁盘信息"
@@ -81,7 +81,7 @@ jobs:
         env:
           CUSTOM_ARG: ${{ inputs.customArg }}
           ALI_CR: ${{ vars.ALI_CR }}
-          TX_CR: ${{ vars.TX_CR }}
+          # TX_CR: ${{ vars.TX_CR }}
         run: |
           repository=${{ inputs.image }}
           tag=${{ inputs.tag }}
@@ -156,7 +156,7 @@ jobs:
             if [[ ! $os == 'Darwin' ]]; then
               image_info+="-t ghcr.io/${{ env.ACTOR_LOWER }}/${repository}:${_tag} -t ${image}:${_tag} "
             fi
-            image_info+="-t ${ALI_CR}/${image}:${_tag} -t ${TX_CR}/${image}:${_tag} "
+            image_info+="-t ${ALI_CR}/${image}:${_tag} "
           done
 
           echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'

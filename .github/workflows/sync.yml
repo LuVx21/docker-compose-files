@@ -61,12 +61,12 @@ jobs:
           registry: ${{ vars.ALI_CR }}
           username: ${{ secrets.ALI_CR_USER }}
           password: ${{ secrets.ALI_CR_PASSWORD }}
-      - name: 登录腾讯云容器
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ vars.TX_CR }}
-          username: ${{ secrets.TX_CR_USER }}
-          password: ${{ secrets.TX_CR_PASSWORD }}
+      # - name: 登录腾讯云容器
+      #   uses: docker/login-action@v3
+      #   with:
+      #     registry: ${{ vars.TX_CR }}
+      #     username: ${{ secrets.TX_CR_USER }}
+      #     password: ${{ secrets.TX_CR_PASSWORD }}
       - name: 从DockerHub拉取Docker镜像
         run: |
           input_images=${{ inputs.dockerhub_images }}
@@ -91,7 +91,7 @@ jobs:
 
             local platform_array=(${platform_str//,/ })
             local platform_count=${#platform_array[@]}
-            for registry in ${{ vars.ALIYUN }} ${{ vars.TXYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
+            for registry in ${{ vars.ALIYUN }} ghcr.io,${{ env.ACTOR_LOWER }}; do
               echo '↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓'
               registry_arr=(${registry//,/ })
               new_rsn=${registry_arr[0]}/${registry_arr[1]}/$new_image_name
