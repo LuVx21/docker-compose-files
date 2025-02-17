@@ -52,7 +52,7 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-sync:
-	gh workflow run sync.yml -f dockerhub_images=debian:bookworm,debian:bookworm-slim,debian:latest
+	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images=debian:bookworm,debian:bookworm-slim,debian:latest
 
 workflow-build:
 	gh workflow run build.yml \

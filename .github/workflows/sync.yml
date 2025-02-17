@@ -103,7 +103,7 @@ jobs:
                 new_image=$new_rsn:$tag_with_p
                 ps+="$new_image "
                 echo "同步镜像 $image -> $new_image"
-                docker tag $image $new_image && docker push $new_image
+                docker tag $image $new_image && time docker push $new_image
               done
 
               if [[ $platform_count -ge 2 ]]; then
