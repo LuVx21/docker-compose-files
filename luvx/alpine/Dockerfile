@@ -3,23 +3,36 @@ ARG REGISTRY=${CR:+$CR/}
 ARG VERSION=3.21
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM alpine:${VERSION} AS alpine
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+
+FROM ${REGISTRY}alpine:${VERSION} AS base
+ARG T=0
+RUN set -eux; \
+    if [ $T -ge 1 ]; then pkg=$pkg' ca-certificates curl wget'; fi; \
+    if [ $T -ge 2 ]; then pkg=$pkg' bzip2 unzip xz bzip2'; fi; \
+    if [ $T -ge 3 ]; then pkg=$pkg' git'; fi; \
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+    apk add --update --no-cache $pkg && rm -fr /var/cache/apk/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/alpine:latest AS alpine-arch-amd64
+FROM luvx/base:1-alpine AS base-1-arch-amd64
 ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64
-FROM luvx/alpine:latest AS alpine-arch-arm64
+FROM luvx/base:1-alpine AS base-1-arch-arm64
 ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64
-FROM alpine-arch-$TARGETARCH AS alpine-arch
+FROM base-1-arch-$TARGETARCH AS base-1-arch
+
+FROM luvx/base:2-alpine AS base-2-arch-amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64
+FROM luvx/base:2-alpine AS base-2-arch-arm64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64
+FROM base-2-arch-$TARGETARCH AS base-2-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM alpine-arch AS vscode_downloader
+FROM base-1-arch AS vscode_downloader
 
 RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-${ARCH_V1}" \
     && tar -zxvf vscode_cli.tar.gz
 
-FROM luvx/alpine:latest AS vscode
+FROM luvx/base:0-alpine AS vscode
 COPY --from=vscode_downloader code /usr/bin
 RUN apk add --update --no-cache libstdc++ # curl procps gcompat
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
@@ -27,8 +40,8 @@ EXPOSE 8000
 ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM alpine-arch AS upx_downloader
-ARG UPX_VERSION=4.2.4
+FROM base-1-arch AS upx_downloader
+ARG UPX_VERSION=5.0.0
 RUN <<EOT
     #!/bin/sh
     dpkgArch="$(arch --print-architecture)"
@@ -41,8 +54,17 @@ RUN <<EOT
     tar -Jxvf upx.tar.xz --strip-components 1
 EOT
 
-FROM luvx/alpine:latest AS upx
+FROM luvx/base:0-alpine AS upx
 COPY --from=upx_downloader upx /usr/bin
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM base-2-arch AS duckdb_downloader
+RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
+    && unzip duckdb_cli.zip && rm duckdb_cli.zip
+
+FROM luvx/base:0-alpine AS duckdb
+COPY --from=duckdb_downloader duckdb .
+ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}golang:1.24-alpine AS go-installer
@@ -68,6 +90,6 @@ RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/w
     pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM luvx/alpine:latest AS alpine-runner
+FROM luvx/base:0-alpine AS alpine-runner
 ARG PACKAGE
 RUN apk add --update --no-cache ${PACKAGE} && rm -fr /var/cache/apk/*

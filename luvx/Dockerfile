@@ -86,7 +86,7 @@ ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader
-ARG UPX_VERSION=4.2.4
+ARG UPX_VERSION=5.0.0
 RUN <<EOT
     #!/bin/bash
     dpkgArch="$(dpkg --print-architecture)"
@@ -102,15 +102,6 @@ EOT
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS upx
 COPY --from=upx_downloader upx /usr/bin
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base-2-arch AS duckdb_downloader
-RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
-    && unzip duckdb_cli.zip && rm duckdb_cli.zip
-
-FROM ${REGISTRY}debian:${VERSION}-slim AS duckdb
-COPY --from=duckdb_downloader duckdb .
-ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}maven:3-eclipse-temurin-8 AS rocketmq-dashboard-builder

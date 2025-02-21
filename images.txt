@@ -112,6 +112,7 @@ bitnami/redis-cluster:latest
 bitnami/redis-sentinel:latest
 bitnami/redis:latest
 bitnami/rust:latest
+bitnami/valkey:latest
 bitnami/zookeeper:latest
 canal/canal-admin:latest
 canal/canal-server:latest
@@ -149,6 +150,12 @@ seataio/seata-server:latest
 technitium/dns-server:latest
 tzfun/etcd-workbench:latest
 usql/usql:latest
+valkey/valkey:7
+valkey/valkey:7-alpine
+valkey/valkey:7-bookworm
+valkey/valkey:8
+valkey/valkey:8-alpine
+valkey/valkey:8-bookworm
 valkey/valkey:latest
 vrantt/databasir:latest
 wangqiru/mercury-parser-api:latest

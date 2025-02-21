@@ -2,6 +2,11 @@
 CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
+base-alpine:
+	./build.sh base 0-alpine "VERSION=3.21,T=0"
+	./build.sh base 1-alpine "VERSION=3.21,T=1"
+	./build.sh base 2-alpine "VERSION=3.21,T=2"
+	./build.sh base 3-alpine "VERSION=3.21,T=3"
 base:
 	./build.sh base 0,0-bookworm "VERSION=bookworm,T=0"
 	./build.sh base 1,1-bookworm "VERSION=bookworm,T=1"
@@ -24,11 +29,11 @@ jupyter:
 	./build.sh jupyter latest "" "" "--target=jupyter"
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 upx:
-	./build.sh upx latest-alpine,4.2.4-alpine "UPX_VERSION=4.2.4" "" ""
-	./build.sh upx latest,4.2.4 "UPX_VERSION=4.2.4"
+	./build.sh upx latest-alpine,5.0.0-alpine "UPX_VERSION=5.0.0" "" ""
+	./build.sh upx latest,5.0.0 "UPX_VERSION=5.0.0"
 .PHONY: duckdb
 duckdb:
-	./build.sh duckdb latest
+	./build.sh duckdb latest,latest-alpine "" "" "--target=duckdb ./luvx/alpine"
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard latest,2.0.0 "RD_VERSION=2.0.0"
 go-runner:
@@ -43,9 +48,6 @@ python-runner:
 	./build.sh dolphie   latest "PACKAGES=dolphie"          "" "--target=python-runner ./luvx"
 
 # -----------------------------------------------------------------------------------------------------------------------
-alpine:
-	./build.sh alpine 3.20 "VERSION=3.20" "" "--target=alpine ./luvx/alpine"
-	./build.sh alpine latest,3.21 "VERSION=3.21" "" "--target=alpine ./luvx/alpine"
 
 # -----------------------------------------------------------------------------------------------------------------------
 dco-etcd:
