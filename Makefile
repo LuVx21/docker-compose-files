@@ -31,9 +31,8 @@ jupyter:
 upx:
 	./build.sh upx latest-alpine,5.0.0-alpine "UPX_VERSION=5.0.0" "" ""
 	./build.sh upx latest,5.0.0 "UPX_VERSION=5.0.0"
-.PHONY: duckdb
 duckdb:
-	./build.sh duckdb latest,latest-alpine "" "" "--target=duckdb ./luvx/alpine"
+	./build.sh duckdb latest
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard latest,2.0.0 "RD_VERSION=2.0.0"
 go-runner:

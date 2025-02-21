@@ -104,6 +104,15 @@ FROM ${REGISTRY}debian:${VERSION}-slim AS upx
 COPY --from=upx_downloader upx /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM base-2-arch AS duckdb_downloader
+RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
+    && unzip duckdb_cli.zip && rm duckdb_cli.zip
+
+FROM ${REGISTRY}debian:${VERSION}-slim AS duckdb
+COPY --from=duckdb_downloader duckdb .
+ENTRYPOINT [ "./duckdb" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}maven:3-eclipse-temurin-8 AS rocketmq-dashboard-builder
 ARG RD_VERSION='2.0.0'
 

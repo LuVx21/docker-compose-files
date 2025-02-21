@@ -7,10 +7,11 @@ ARG VERSION=3.21
 FROM ${REGISTRY}alpine:${VERSION} AS base
 ARG T=0
 RUN set -eux; \
+    pkg=''; \
     if [ $T -ge 1 ]; then pkg=$pkg' ca-certificates curl wget'; fi; \
     if [ $T -ge 2 ]; then pkg=$pkg' bzip2 unzip xz bzip2'; fi; \
     if [ $T -ge 3 ]; then pkg=$pkg' git'; fi; \
-    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories; \
     apk add --update --no-cache $pkg && rm -fr /var/cache/apk/*
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -56,15 +57,6 @@ EOT
 
 FROM luvx/base:0-alpine AS upx
 COPY --from=upx_downloader upx /usr/bin
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM base-2-arch AS duckdb_downloader
-RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
-    && unzip duckdb_cli.zip && rm duckdb_cli.zip
-
-FROM luvx/base:0-alpine AS duckdb
-COPY --from=duckdb_downloader duckdb .
-ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}golang:1.24-alpine AS go-installer

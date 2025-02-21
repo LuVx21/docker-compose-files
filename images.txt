@@ -1,5 +1,9 @@
 #使用platform分割
 platform=linux/arm64,linux/amd64
+alpine:3
+alpine:3.20
+alpine:3.21
+alpine:latest
 buildpack-deps:bookworm
 buildpack-deps:bookworm-curl
 buildpack-deps:bookworm-scm
