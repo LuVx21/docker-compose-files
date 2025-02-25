@@ -25,6 +25,21 @@ services:
     volumes:
       - open-webui:/app/backend/data
 
+  one-api:
+    platform: linux/amd64
+    image: ${GH_CR_NJU}/songquanpeng/one-api
+    container_name: one-api
+    ports:
+      - 3000:3000
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+      # 使用 MySQL
+      # - SQL_DSN="root:123456@tcp(localhost:3306)/oneapi"
+    volumes:
+      - $HOME/docker/one-api/data:/data
+
 networks:
   net_common:
     external: true

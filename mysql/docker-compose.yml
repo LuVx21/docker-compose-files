@@ -155,6 +155,16 @@ services:
     networks:
       - net_common
 
+  backupx:
+    image: jeessy/backup-x:latest
+    container_name: backupx
+    ports:
+      - 9977:9977
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/db/backupx/data:/app/backup-x-files
+
 networks:
   net_common:
     external: true

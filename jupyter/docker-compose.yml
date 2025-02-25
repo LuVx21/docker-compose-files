@@ -13,10 +13,10 @@ services:
       - $HOME/data:/root/data
       - $HOME/go/pkg:/go/pkg
       - $HOME/.m2:/root/.m2
-      - $HOME/.continue:root/.continue
-      - $HOME/.dbclient:root/.dbclient
+      - $HOME/.continue:/root/.continue
+      - $HOME/.dbclient:/root/.dbclient
       - $HOME/.gitconfig:/root/.gitconfig
-      - $HOME/.marscode:root/.marscode
+      - $HOME/.marscode:/root/.marscode
       - $HOME/.oh-my-zsh:/root/.oh-my-zsh
       - vscode:/root/.vscode
       - vscode-server:/root/.vscode-server

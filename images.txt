@@ -188,6 +188,7 @@ clidey/whodb:latest
 dicedb/dicedb:latest
 dockurr/macos:latest
 excalidraw/excalidraw:latest
+justsong/one-api
 mysql:5.7
 obsidiandynamics/kafdrop:latest
 quay.io/debezium/debezium-ui:latest

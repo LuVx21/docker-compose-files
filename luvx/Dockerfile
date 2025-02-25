@@ -13,6 +13,14 @@ RUN set -eux; \
     sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
     apt-get update && apt-get install -y --no-install-recommends $pkg; \
     rm -rf /var/lib/apt/lists/*
+RUN dpkgArch="$(dpkg --print-architecture)"; \
+    case "${dpkgArch##*-}" in \
+        amd64) ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ;; \
+        arm64) ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ;; \
+        *) echo >&2 "不支持的架构: ${dpkgArch}"; exit 1 ;; \
+    esac; \
+    # 使用时先执行: export $(cat /env | xargs)
+    echo "ARCH=$ARCH\nARCH_V1=$ARCH_V1\nARCH_V2=$ARCH_V2" > /env
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base:1 AS base-1-arch-amd64
