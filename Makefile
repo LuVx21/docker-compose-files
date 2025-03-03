@@ -33,6 +33,8 @@ upx:
 	./build.sh upx latest,5.0.0 "UPX_VERSION=5.0.0"
 duckdb:
 	./build.sh duckdb latest
+ldb:
+	./build.sh ldb latest,9 "TAG=v9.10.0" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard latest,2.0.0 "RD_VERSION=2.0.0"
 go-runner:

@@ -121,6 +121,18 @@ COPY --from=duckdb_downloader duckdb .
 ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}buildpack-deps:${VERSION} AS ldb_builder
+ARG TAG
+RUN if [ -z $TAG ]; then TAG=$(git ls-remote --tags https://github.com/facebook/rocksdb | grep -v '\^{}' | grep -o 'refs/tags/[^{}]*' | sort -V | tail -n1 | sed 's|refs/tags/||'); fi; \
+    git clone -b $TAG --depth=1 https://github.com/facebook/rocksdb; \
+    cd rocksdb && make -j$(nproc) DEBUG_LEVEL=0 USE_SNAPPY=1 USE_LZ4=1 USE_ZSTD=1 USE_ZLIB=1 ldb sst_dump
+
+FROM ${REGISTRY}debian:${VERSION}-slim AS ldb
+RUN apt update && apt install -y libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
+COPY --from=ldb_builder /rocksdb/ldb /usr/bin
+COPY --from=ldb_builder /rocksdb/sst_dump /usr/bin
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}maven:3-eclipse-temurin-8 AS rocketmq-dashboard-builder
 ARG RD_VERSION='2.0.0'
 
