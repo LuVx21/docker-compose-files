@@ -8,9 +8,12 @@ file=''
 if [ "$project" = "" ]; then
     echo -e "需指定模块名"
     exit 1
-elif [ "$project" = "etcd" ]; then
+elif [ "$project" = "bitnami-etcd" ]; then
     url='https://raw.githubusercontent.com/bitnami/containers/main/bitnami/etcd/docker-compose-cluster.yml'
     file='etcd-docker-compose-cluster.yml'
+elif [ "$project" = "bitnami-kafka" ]; then
+    url='https://raw.githubusercontent.com/bitnami/containers/refs/heads/main/bitnami/kafka/docker-compose-cluster.yml'
+    file='kafka-docker-compose-cluster.yml'
 else
     echo -e "无指定模块名"
     exit 1

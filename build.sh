@@ -70,6 +70,8 @@ echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数
 for _tag in ${tags[@]}; do
   if [[ ! $os == 'Darwin' ]]; then
     image_info+="-t ghcr.io/luvx21/${repository}:${_tag} -t ${image}:${_tag} "
+  else
+    image_info+="-t ${TX_CR}/${image}:${_tag} "
   fi
   image_info+="-t ${ALI_CR}/${image}:${_tag} "
 done

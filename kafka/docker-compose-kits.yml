@@ -1,0 +1,42 @@
+services:
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    networks:
+      - net_common
+    # restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - /etc/localtime:/etc/localtime
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=cluster_name_01 # 集群名称
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_0:9092,kafka_1:9092,kafka_2:9092 # 集群地址
+
+  kafka-console-ui:
+    platform: linux/amd64
+    image: wdkang/kafka-console-ui
+    container_name: kafka-console-ui
+    networks:
+      - net_common
+    ports:
+      - 7766:7766
+    volumes:
+      - $HOME/docker/kafka-console-ui/data:/app/data
+      - $HOME/docker/kafka-console-ui/log:/app/log
+    privileged: true
+
+  kafdrop:
+    platform: linux/amd64
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    networks:
+      - net_common
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka_0:9092,kafka_1:9092,kafka_2:9092"
+
+networks:
+  net_common:
+    external: true

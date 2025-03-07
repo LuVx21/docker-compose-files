@@ -9,7 +9,7 @@ services:
       - net_common
     volumes:
       - $HOME/OneDrive/Code:/workspace
-      - $HOME/code:/workspace/code
+      - $HOME/code:/root/code
       - $HOME/data:/root/data
       - $HOME/go/pkg:/go/pkg
       - $HOME/.m2:/root/.m2
@@ -18,6 +18,7 @@ services:
       - $HOME/.gitconfig:/root/.gitconfig
       - $HOME/.marscode:/root/.marscode
       - $HOME/.oh-my-zsh:/root/.oh-my-zsh
+      - $HOME/.ssh:/root/.ssh
       - vscode:/root/.vscode
       - vscode-server:/root/.vscode-server
     working_dir: /workspace

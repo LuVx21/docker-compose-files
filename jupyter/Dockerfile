@@ -9,6 +9,8 @@ COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
 RUN go install -ldflags="-w -s" github.com/janpfeifer/gonb@latest \
 && go install -ldflags="-w -s" golang.org/x/tools/cmd/goimports@latest \
 && go install -ldflags="-w -s" golang.org/x/tools/gopls@latest \
+&& go install -ldflags="-w -s" github.com/go-delve/delve/cmd/dlv@latest \
+&& go install -ldflags="-w -s" honnef.co/go/tools/cmd/staticcheck@latest \
 && upx -9 /go/bin/*
 
 FROM ${REGISTRY}rust:1-slim-${VERSION} AS rust_base

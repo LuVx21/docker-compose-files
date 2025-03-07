@@ -1,6 +1,10 @@
+x-common-config: &common-config
+  environment:
+    - TZ=Asia/Shanghai
 
 services:
   xxx:
+    <<: *common-config
     build:
       dockerfile: Dockerfile
     image: IMAGE_NAME:${IMAGE_VERSION}
