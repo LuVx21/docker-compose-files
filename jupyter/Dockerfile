@@ -35,9 +35,11 @@ COPY --from=eclipse-temurin:23-jdk --link $JAVA_HOME $JAVA_HOME
 
 RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/; \
     sed -i 's|deb.debian.org|mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources; \
-    curl https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/refs/heads/master/templates/minimal.zshrc > /root/.zshrc; \
     # slim镜像时使用
-    apt-get update -q && apt-get install -q -y --no-install-recommends wget unzip openssl ca-certificates build-essential libssl-dev pkg-config && rm -rf /var/lib/apt/lists/*;
+    apt-get update -q && \
+    apt-get install -q -y --no-install-recommends curl && \
+    apt-get install -q -y --no-install-recommends wget unzip openssl ca-certificates build-essential libssl-dev pkg-config && rm -rf /var/lib/apt/lists/*; \
+    curl https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/refs/heads/master/templates/minimal.zshrc > /root/.zshrc;
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
