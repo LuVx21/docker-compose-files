@@ -50,6 +50,8 @@ python-runner:
 	./build.sh toolong   latest-alpine "PACKAGES=toolong"   "" "--target=python-runner ./luvx/alpine"
 	./build.sh frogmouth latest-alpine "PACKAGES=frogmouth" "" "--target=python-runner ./luvx/alpine"
 	./build.sh dolphie   latest        "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
+telegram:
+	./build.sh telegram-deepseek-bot   latest "" "" "https://github.com/luvx12/telegram-deepseek-bot.git#main"
 
 # -----------------------------------------------------------------------------------------------------------------------
 

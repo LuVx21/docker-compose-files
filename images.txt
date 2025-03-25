@@ -42,6 +42,9 @@ eclipse-temurin:21-jre
 eclipse-temurin:23
 eclipse-temurin:23-jdk
 eclipse-temurin:23-jre
+eclipse-temurin:24
+eclipse-temurin:24-jdk
+eclipse-temurin:24-jre
 eclipse-temurin:latest
 elasticsearch:7.17.27
 elasticsearch:8.17.2
@@ -55,8 +58,10 @@ gcc:12
 gcc:13
 gcc:14
 gcc:latest
+golang:1
 golang:1-alpine
 golang:1-bookworm
+golang:1.24
 golang:1.24-alpine
 golang:1.24-bookworm
 golang:latest

@@ -1,7 +1,7 @@
 services:
-  kafka_0:
+  kafka-0:
     image: bitnami/kafka:${KAFKA_VERSION}
-    container_name: kafka_0
+    container_name: kafka-0
     networks:
       - net_common
     user: root
@@ -11,7 +11,7 @@ services:
       # KRaft
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker # kafka角色, 做broker, 也要做controller
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka_0:9093,1@kafka_1:9093,2@kafka_2:9093 # 集群地址
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093 # 集群地址
       - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv # 使用Kafka时的集群id, 集群内的Kafka都要用这个id做初始化, UUID即可
 
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER # 指定供外部使用的控制类请求信息
@@ -28,11 +28,11 @@ services:
       # KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=2
       # KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=3
     volumes:
-      - $HOME/docker/kafka_v3/kafka_0/kafka/kraft:/bitnami/kafka
+      - $HOME/docker/kafka_v3/kafka-0/kafka/kraft:/bitnami/kafka
 
-  kafka_1:
+  kafka-1:
     image: bitnami/kafka:${KAFKA_VERSION}
-    container_name: kafka_1
+    container_name: kafka-1
     networks:
       - net_common
     user: root
@@ -41,7 +41,7 @@ services:
     environment:
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka_0:9093,1@kafka_1:9093,2@kafka_2:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
       - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
 
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
@@ -53,11 +53,11 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://mini.rx:29092 # mini.rx:29092
       - KAFKA_CFG_BROKER_ID=1
     volumes:
-      - $HOME/docker/kafka_v3/kafka_1/kafka/kraft:/bitnami/kafka
+      - $HOME/docker/kafka_v3/kafka-1/kafka/kraft:/bitnami/kafka
 
-  kafka_2:
+  kafka-2:
     image: bitnami/kafka:${KAFKA_VERSION}
-    container_name: kafka_2
+    container_name: kafka-2
     networks:
       - net_common
     user: root
@@ -66,7 +66,7 @@ services:
     environment:
       - KAFKA_CFG_NODE_ID=2
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka_0:9093,1@kafka_1:9093,2@kafka_2:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
       - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
 
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
@@ -78,7 +78,7 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://mini.rx:39092 # mini.rx:39092
       - KAFKA_CFG_BROKER_ID=2
     volumes:
-      - $HOME/docker/kafka_v3/kafka_2/kafka/kraft:/bitnami/kafka
+      - $HOME/docker/kafka_v3/kafka-2/kafka/kraft:/bitnami/kafka
 
 networks:
   net_common:

@@ -31,7 +31,7 @@ COPY --from=go_base --link $GOPATH/bin/ $GOPATH/bin/
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
-COPY --from=eclipse-temurin:23-jdk --link $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:24-jdk --link $JAVA_HOME $JAVA_HOME
 
 # -------------以下为安装内核-------------
 
@@ -93,3 +93,4 @@ RUN <<EOT bash
     echo " &" >> /entrypoint.sh
     echo -n "code serve-web --host=0.0.0.0 --port=8000 --without-connection-token" >> /entrypoint.sh
 EOT
+HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost:8000 || exit 1

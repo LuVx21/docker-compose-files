@@ -1,0 +1,17 @@
+services:
+  elegram-deepseek-bot:
+    image: jackyin0822/telegram-deepseek-bot:latest
+    container_name: telegram-deepseek-bot
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/telegram-deepseek-bot/data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+      - DEEPSEEK_TOKEN=${DEEPSEEK_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      # - TELEGRAM_PROXY="host.docker.internal:7890"
+
+networks:
+  net_common:
+    external: true
