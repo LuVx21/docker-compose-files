@@ -1,0 +1,32 @@
+services:
+  libsql-primary:
+    platform: linux/amd64
+    image: ${GH_CR_NJU}/tursodatabase/libsql-server:latest
+    container_name: primary
+    ports:
+      - 8080:8080
+      - 5001:5001
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/sqld:/var/lib/sqld
+    environment:
+      - TZ=Asia/Shanghai
+      - SQLD_NODE=primary
+
+  libsql-replica:
+    platform: linux/amd64
+    image: ${GH_CR_NJU}/tursodatabase/libsql-server:latest
+    container_name: replica
+    # ports:
+    #   - 8081:8080
+    networks:
+      - net_common
+    environment:
+      - TZ=Asia/Shanghai
+      - SQLD_NODE=replica
+      - SQLD_PRIMARY_URL=https://primary:8080
+
+networks:
+  net_common:
+    external: true

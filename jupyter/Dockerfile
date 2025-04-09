@@ -44,7 +44,7 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/; \
     curl https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/refs/heads/master/templates/minimal.zshrc > /root/.zshrc;
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
-RUN pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel && jupyter lab --generate-config \
+RUN pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel catppuccin-jupyterlab && jupyter lab --generate-config \
     && wget https://github.com/SpencerPark/IJava/releases/download/v1.3.0/ijava-1.3.0.zip \
     && unzip ijava-1.3.0.zip -d ijava && python3 ./ijava/install.py --sys-prefix && rm -fr ijava* \
     # Golang 内核: gonb

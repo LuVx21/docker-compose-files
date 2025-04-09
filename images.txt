@@ -72,6 +72,7 @@ maven:3-eclipse-temurin-11
 maven:3-eclipse-temurin-17
 maven:3-eclipse-temurin-21
 maven:3-eclipse-temurin-23
+maven:3-eclipse-temurin-24
 maven:latest
 mongo-express:latest
 mongo:7
@@ -81,6 +82,10 @@ mysql:9
 mysql:latest
 neo4j:latest
 nextcloud:latest
+nginx:1-alpine
+nginx:1-bookworm
+nginx:alpine
+nginx:bookworm
 nginx:latest
 node:23
 node:23-alpine
@@ -99,6 +104,9 @@ python:latest
 redis:7
 redis:7-alpine
 redis:7-bookworm
+redis:8
+redis:8-alpine
+redis:8-bookworm
 redis:latest
 rust:1-alpine
 rust:1-bookworm
@@ -152,7 +160,6 @@ dockurr/dnsmasq:latest
 dockurr/windows:latest
 dpanel/dpanel:latest
 freshrss/freshrss:latest
-fullstorydev/grpcui
 fullstorydev/grpcui:latest
 fullstorydev/grpcurl:latest
 grafana/grafana:latest
@@ -216,4 +223,4 @@ mysql:5.7
 obsidiandynamics/kafdrop:latest
 quay.io/debezium/debezium-ui:latest
 sameersbn/bind:latest
-xuxueli/xxl-job-admin:2.4.2
+xuxueli/xxl-job-admin:3.0.0

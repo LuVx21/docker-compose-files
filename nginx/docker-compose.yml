@@ -1,16 +1,24 @@
 
 services:
+
+  app:
+    image: docker/getting-started:latest
+    # container_name: app
+    networks:
+      - net_common
+
   nginx:
-    image: nginx:1.24
+    image: nginx:1-alpine
     container_name: nginx
     ports:
       - 80:80
     networks:
       - net_common
     volumes:
-      - $HOME/docker/nginx/conf.d:/etc/nginx/conf.d # 配置文件目录挂载
-      - $HOME/docker/nginx/html:/usr/share/nginx/html # 静态资源根目录挂载
-      - $HOME/docker/nginx/logs:/var/log/nginx # 日志文件挂载
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      # - $HOME/docker/nginx/conf.d:/etc/nginx/conf.d # 配置文件目录挂载
+      # - $HOME/docker/nginx/html:/usr/share/nginx/html # 静态资源根目录挂载
+      # - $HOME/docker/nginx/logs:/var/log/nginx # 日志文件挂载
 
   nginx-ui:
     image: uozi/nginx-ui:latest

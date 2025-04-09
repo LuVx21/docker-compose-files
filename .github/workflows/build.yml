@@ -41,6 +41,8 @@ jobs:
           echo "=============================================================================="
           echo ${{ inputs.image }}
           echo ${{ inputs.tag }}
+          echo ${{ inputs.buildArg }}
+          echo ${{ inputs.customArg }}
           echo "=============================================================================="
       - name: 代码检出
         uses: actions/checkout@v4

@@ -38,7 +38,7 @@ FROM base-2-arch-$TARGETARCH AS base-2-arch
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-1-arch AS oracle_jdk
 
-ARG JAVA_VERSION='23'
+ARG JAVA_VERSION='21'
 ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 
@@ -47,7 +47,7 @@ RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/java/${JAVA_VE
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-1-arch AS graalvm_jdk
 
-ARG JAVA_VERSION='23'
+ARG JAVA_VERSION='21'
 ENV JAVA_HOME=/opt/install/java
 ENV PATH=$JAVA_HOME/bin:$PATH
 
@@ -94,7 +94,7 @@ ENTRYPOINT ["code"]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS upx_downloader
-ARG UPX_VERSION=5.0.0
+ARG UPX_VERSION=5.0.1
 RUN <<EOT
     #!/bin/bash
     dpkgArch="$(dpkg --print-architecture)"

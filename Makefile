@@ -13,8 +13,8 @@ base:
 	./build.sh base latest,2,2-bookworm "VERSION=bookworm,T=2"
 	./build.sh base 3,3-bookworm        "VERSION=bookworm,T=3"
 jdk:
-	./build.sh oracle_jdk  23 "JAVA_VERSION=23"
-	./build.sh graalvm_jdk 23 "JAVA_VERSION=23"
+	./build.sh oracle_jdk  21 "JAVA_VERSION=21"
+	./build.sh graalvm_jdk 21 "JAVA_VERSION=21"
 	./build.sh oracle_jdk  latest,24 "JAVA_VERSION=24"
 	./build.sh graalvm_jdk latest,24 "JAVA_VERSION=24"
 mvnd:
@@ -32,8 +32,8 @@ jupyter:
 	./build.sh jupyter latest "" "" "--target=jupyter"
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 upx:
-	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.0.0"
-	./build.sh upx latest,5               "UPX_VERSION=5.0.0"
+	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.0.1"
+	./build.sh upx latest,5               "UPX_VERSION=5.0.1"
 duckdb:
 	./build.sh duckdb latest
 ldb:

@@ -1,6 +1,20 @@
-version: "3"
+# https://raw.githubusercontent.com/alibaba/nacos/refs/heads/master/distribution/conf/mysql-schema.sql
 
 services:
+  nacos0:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos0
+    ports:
+      - 58080:8080
+      - 58848:8848
+      - 59848:9848
+    networks:
+      - net_common
+    environment:
+      - MODE=standalone
+    env_file:
+      - ./env/nacos.env
+
   nacos1:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos1

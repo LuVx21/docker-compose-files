@@ -1,15 +1,63 @@
-
 services:
-  etcd-workbench:
-    platform: linux/amd64
-    image: tzfun/etcd-workbench:latest
-    container_name: etcd-workbench
+  etcd0:
+    image: bitnami/etcd:${ETCD_VERSION}
+    container_name: etcd0
     ports:
-      - 8002:8002
+      - 2379:2379
     networks:
       - net_common
-    # volumes:
-    #   - ./etcd-workbench.conf:/usr/tzfun/etcd-workbench/etcd-workbench.conf
+    volumes:
+      - $HOME/docker/etcd/single:/bitnami/etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  etcd1:
+    image: bitnami/etcd:${ETCD_VERSION}
+    container_name: etcd1
+    networks:
+      - net_common
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd1
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd1:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd1:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+  etcd2:
+    image: bitnami/etcd:${ETCD_VERSION}
+    container_name: etcd2
+    networks:
+      - net_common
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd2
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd2:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd2:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+  etcd3:
+    image: bitnami/etcd:${ETCD_VERSION}
+    container_name: etcd3
+    networks:
+      - net_common
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd3
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd3:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd3:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
 
 networks:
   net_common:

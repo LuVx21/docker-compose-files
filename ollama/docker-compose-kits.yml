@@ -1,5 +1,5 @@
 services:
-  elegram-deepseek-bot:
+  telegram-deepseek-bot:
     image: jackyin0822/telegram-deepseek-bot:latest
     container_name: telegram-deepseek-bot
     networks:
@@ -8,9 +8,27 @@ services:
       - $HOME/docker/telegram-deepseek-bot/data:/app/data
     environment:
       - TZ=Asia/Shanghai
+      - LANG=zh
       - DEEPSEEK_TOKEN=${DEEPSEEK_TOKEN}
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       # - TELEGRAM_PROXY="host.docker.internal:7890"
+
+  new-api:
+    image: calciumion/new-api:latest
+    container_name: new-api
+    ports:
+      - "3000:3000"
+    networks:
+      - net_common
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    environment:
+      - SQL_DSN=root:xxx@tcp(mysql-master:3306)/new-api  # Point to the mysql service
+      # - REDIS_CONN_STRING=redis://redis
+      - TZ=Asia/Shanghai
+      - ERROR_LOG_ENABLED=true # 是否启用错误日志记录
+    command: --log-dir /app/logs
 
 networks:
   net_common:

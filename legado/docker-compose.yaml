@@ -11,6 +11,9 @@ services:
     # restart: always
     ports:
       - 58081:8080 #4396端口映射可自行修改
+    dns:
+      - 114.114.114.114
+      - 8.8.8.8
     networks:
       - share_net
     volumes:
