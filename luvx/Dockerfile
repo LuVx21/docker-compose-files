@@ -15,24 +15,24 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 RUN dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
-        amd64) ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ;; \
-        arm64) ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ;; \
+        amd64) ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64 ;; \
+        arm64) ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64 ;; \
         *) echo >&2 "不支持的架构: ${dpkgArch}"; exit 1 ;; \
     esac; \
     # 使用时先执行: export $(cat /env | xargs)
-    echo "ARCH=$ARCH\nARCH_V1=$ARCH_V1\nARCH_V2=$ARCH_V2" > /env
+    echo "ARCH=$ARCH\nARCH_V1=$ARCH_V1\nARCH_V2=$ARCH_V2\nARCH_V3=$ARCH_V3" > /env
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base:1 AS base-1-arch-amd64
-ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64
 FROM luvx/base:1 AS base-1-arch-arm64
-ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64
 FROM base-1-arch-$TARGETARCH AS base-1-arch
 
 FROM luvx/base:2 AS base-2-arch-amd64
-ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64
+ARG ARCH=x64 ARCH_V1=x64 ARCH_V2=amd64 ARCH_V3=amd64
 FROM luvx/base:2 AS base-2-arch-arm64
-ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64
+ARG ARCH=aarch64 ARCH_V1=arm64 ARCH_V2=aarch64 ARCH_V3=arm64
 FROM base-2-arch-$TARGETARCH AS base-2-arch
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ COPY --from=upx_downloader upx /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-2-arch AS duckdb_downloader
-RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V2}.zip" \
+RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/download/duckdb_cli-linux-${ARCH_V3}.zip" \
     && unzip duckdb_cli.zip && rm duckdb_cli.zip
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS duckdb
