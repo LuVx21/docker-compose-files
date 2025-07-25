@@ -3,6 +3,7 @@ platform=linux/arm64,linux/amd64
 alpine:3
 alpine:3.20
 alpine:3.21
+alpine:3.22
 alpine:latest
 apache/kafka-native:4.0.0
 apache/kafka-native:latest
@@ -10,8 +11,10 @@ apache/kafka:4.0.0
 apache/kafka:latest
 bash:4
 bash:4-alpine3.21
+bash:4-alpine3.22
 bash:5
 bash:5-alpine3.21
+bash:5-alpine3.22
 bash:latest
 buildpack-deps:bookworm
 buildpack-deps:bookworm-curl
