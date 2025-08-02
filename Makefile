@@ -39,7 +39,7 @@ duckdb:
 ldb:
 	./build.sh ldb latest,9 "TAG=v9.10.0" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
-	./build.sh rocketmq-dashboard latest,2 "RD_VERSION=2.0.0"
+	./build.sh rocketmq-dashboard latest,2 "RD_VERSION=2.1.0"
 go-runner:
 	./build.sh xxx latest-alpine "GO_INSTALL_URL=xxxx" "" "--target=go-runner ./luvx/alpine"
 	./build.sh xxx latest "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
@@ -65,8 +65,8 @@ workflow-sync:
 workflow-build:
 	gh workflow run build.yml \
 		-f image=alpine \
-		-f tag=latest,3.21 \
-		-f buildArg="VERSION=3.21" \
+		-f tag=latest,3.22 \
+		-f buildArg="VERSION=3.22" \
 		# -f platform="linux/arm64,linux/amd64" \
 		-f customArg="--target=alpine ./luvx/alpine"
 

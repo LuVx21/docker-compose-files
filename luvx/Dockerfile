@@ -134,7 +134,7 @@ COPY --from=ldb_builder /rocksdb/sst_dump /usr/bin
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}maven:3-eclipse-temurin-8 AS rocketmq-dashboard-builder
-ARG RD_VERSION='2.0.0'
+ARG RD_VERSION='2.1.0'
 
 RUN apt-get update && apt-get install -y git
 RUN git clone --depth=1 -b rocketmq-dashboard-${RD_VERSION} https://github.com/apache/rocketmq-dashboard && \
