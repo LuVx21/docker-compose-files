@@ -1,7 +1,7 @@
 # --build-arg CR=$ALI_CR_NS
 ARG CR=${CR:-""}
 ARG REGISTRY=${CR:+$CR/}
-ARG VERSION=bookworm
+ARG VERSION=trixie
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}debian:${VERSION} AS base
 ARG T=0

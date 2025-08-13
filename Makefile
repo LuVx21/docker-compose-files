@@ -8,10 +8,14 @@ base-alpine:
 	./build.sh base 2-alpine "VERSION=3.22,T=2"
 	./build.sh base 3-alpine "VERSION=3.22,T=3"
 base:
-	./build.sh base 0,0-bookworm        "VERSION=bookworm,T=0"
-	./build.sh base 1,1-bookworm        "VERSION=bookworm,T=1"
-	./build.sh base latest,2,2-bookworm "VERSION=bookworm,T=2"
-	./build.sh base 3,3-bookworm        "VERSION=bookworm,T=3"
+	./build.sh base 0-bookworm        "VERSION=bookworm,T=0"
+	./build.sh base 1-bookworm        "VERSION=bookworm,T=1"
+	./build.sh base 2-bookworm        "VERSION=bookworm,T=2"
+	./build.sh base 3-bookworm        "VERSION=bookworm,T=3"
+	./build.sh base 0,0-trixie        "VERSION=trixie,T=0"
+	./build.sh base 1,1-trixie        "VERSION=trixie,T=1"
+	./build.sh base latest,2,2-trixie "VERSION=trixie,T=2"
+	./build.sh base 3,3-trixie        "VERSION=trixie,T=3"
 jdk:
 	./build.sh oracle_jdk  21 "JAVA_VERSION=21"
 	./build.sh graalvm_jdk 21 "JAVA_VERSION=21"
@@ -60,7 +64,7 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-sync:
-	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images=debian:bookworm,debian:bookworm-slim,debian:latest
+	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images=debian:trixie,debian:trixie-slim,debian:latest
 
 workflow-build:
 	gh workflow run build.yml \
