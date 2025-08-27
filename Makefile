@@ -3,26 +3,35 @@ CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
 base-alpine:
-	./build.sh base 0-alpine "VERSION=3.22,T=0"
-	./build.sh base 1-alpine "VERSION=3.22,T=1"
-	./build.sh base 2-alpine "VERSION=3.22,T=2"
-	./build.sh base 3-alpine "VERSION=3.22,T=3"
+	@for tag in 0 1 2 3; do \
+		for os in 21 22; do \
+			./build.sh base $$tag-alpine-$$os "VERSION=3.$$os,T=$$tag"; \
+		done; \
+	done
 base:
-	./build.sh base 0-bookworm        "VERSION=bookworm,T=0"
-	./build.sh base 1-bookworm        "VERSION=bookworm,T=1"
-	./build.sh base 2-bookworm        "VERSION=bookworm,T=2"
-	./build.sh base 3-bookworm        "VERSION=bookworm,T=3"
-	./build.sh base 0,0-trixie        "VERSION=trixie,T=0"
-	./build.sh base 1,1-trixie        "VERSION=trixie,T=1"
-	./build.sh base latest,2,2-trixie "VERSION=trixie,T=2"
-	./build.sh base 3,3-trixie        "VERSION=trixie,T=3"
+	@for tag in 0 1 2 3; do \
+		for os in bookworm trixie; do \
+			tags="$$tag-$$os"; \
+			if [ "$$os" = "trixie" ]; then \
+				tags="$$tags,$$tag"; \
+			fi; \
+			if [ "$$tag" -eq 2 ]; then \
+				tags="$$tags,latest"; \
+			fi; \
+			./build.sh base "$$tags" "VERSION=$$os,T=$$tag"; \
+		done; \
+	done
 jdk:
-	./build.sh oracle_jdk  21 "JAVA_VERSION=21"
-	./build.sh graalvm_jdk 21 "JAVA_VERSION=21"
-	./build.sh oracle_jdk  latest,24 "JAVA_VERSION=24"
-	./build.sh graalvm_jdk latest,24 "JAVA_VERSION=24"
+	@for tag in 21 24 25; do \
+		tags="$$tag"; \
+		if [ "$$tag" = "25" ]; then \
+			tags="$$tags,latest"; \
+		fi; \
+		./build.sh oracle_jdk  "$$tags" "JAVA_VERSION=$$tag"; \
+		./build.sh graalvm_jdk "$$tags" "JAVA_VERSION=$$tag"; \
+	done
 mvnd:
-	./build.sh mvnd latest,1 "MVND_VERSION=1.0.2"      linux/amd64
+	./build.sh mvnd latest,1 "MVND_VERSION=1.0.3"      linux/amd64
 	./build.sh mvnd 2        "MVND_VERSION=2.0.0-rc-3" linux/amd64
 iredis:
 	./build.sh iredis latest,1      ""                linux/amd64 "--target=iredis ./luvx"
@@ -40,6 +49,10 @@ upx:
 	./build.sh upx latest,5               "UPX_VERSION=5.0.2"
 duckdb:
 	./build.sh duckdb latest
+pichome:
+	./build.sh pichome latest,2
+mongosh:
+	./build.sh mongosh latest "" "" "--target=mongosh ./luvx"
 ldb:
 	./build.sh ldb latest,9 "TAG=v9.10.0" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
@@ -54,8 +67,6 @@ python-runner:
 	./build.sh toolong   latest-alpine "PACKAGES=toolong"   "" "--target=python-runner ./luvx/alpine"
 	./build.sh frogmouth latest-alpine "PACKAGES=frogmouth" "" "--target=python-runner ./luvx/alpine"
 	./build.sh dolphie   latest        "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
-telegram:
-	./build.sh telegram-deepseek-bot   latest "" "" "https://github.com/luvx12/telegram-deepseek-bot.git#main"
 
 # -----------------------------------------------------------------------------------------------------------------------
 

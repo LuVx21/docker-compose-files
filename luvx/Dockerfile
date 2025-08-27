@@ -54,10 +54,10 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 RUN mkdir -p $JAVA_HOME && wget -O - "https://download.oracle.com/graalvm/${JAVA_VERSION}/latest/graalvm-jdk-${JAVA_VERSION}_linux-${ARCH}_bin.tar.gz" | tar -zxvf - -C $JAVA_HOME --strip-components 1
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# docker build --target mvnd -t luvx/mvnd:1.0.2-23 --platform linux/amd64 --build-arg MVND_VERSION=1.0.2 .
+# docker build --target mvnd -t luvx/mvnd:1.0.3-23 --platform linux/amd64 --build-arg MVND_VERSION=1.0.3 .
 FROM luvx/base:1 AS mvnd_downloader
 
-ARG MVND_VERSION='1.0.2' PLATFORM=linux ARCH=amd64
+ARG MVND_VERSION='1.0.3' PLATFORM=linux ARCH=amd64
 RUN curl -fSL -o maven-mvnd.tar.gz https://github.com/apache/maven-mvnd/releases/download/${MVND_VERSION}/maven-mvnd-${MVND_VERSION}-${PLATFORM}-${ARCH}.tar.gz
 
 FROM ${REGISTRY}eclipse-temurin:23 AS mvnd
@@ -119,6 +119,10 @@ RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/latest/
 FROM ${REGISTRY}debian:${VERSION}-slim AS duckdb
 COPY --from=duckdb_downloader duckdb .
 ENTRYPOINT [ "./duckdb" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}debian:${VERSION}-slim AS mongosh
+COPY --from=mongo:latest --link /usr/bin/mongosh /usr/bin/mongosh
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS ldb_builder

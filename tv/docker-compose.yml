@@ -1,0 +1,32 @@
+services:
+  moontv-core:
+    # image: ${GH_CR_NJU}/moontechlab/lunatv:latest
+    image: ${GH_CR_NJU}/szemeng76/lunatv:latest
+    container_name: moontv-core
+    ports:
+      - 53011:3000
+    networks:
+      - net_common
+    environment:
+      - USERNAME=admin
+      - PASSWORD=xxx
+      # - NEXT_PUBLIC_STORAGE_TYPE=kvrocks
+      # - KVROCKS_URL=redis://moontv-kvrocks:6666
+      - NEXT_PUBLIC_STORAGE_TYPE=redis
+      - REDIS_URL=redis://xx:xx@xx:xx
+
+#     depends_on:
+#       - moontv-kvrocks
+#   moontv-kvrocks:
+#     image: apache/kvrocks
+#     container_name: moontv-kvrocks
+#     volumes:
+#       - kvrocks-data:/var/lib/kvrocks
+#     networks:
+#       - net_common
+# volumes:
+#   kvrocks-data:
+
+networks:
+  net_common:
+    external: true

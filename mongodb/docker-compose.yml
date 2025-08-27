@@ -9,7 +9,7 @@ services:
       - 27017:27017
     volumes:
       # - $HOME/docker/mongo/mongo/etc/localtime:/etc/localtime:ro
-      - $HOME/docker/mongo/mongo/data/db:/data/db
+      - $HOME/docker/mongo/mongo${MONGO_VERSION}/data/db:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: 1121

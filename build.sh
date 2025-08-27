@@ -52,7 +52,8 @@ case "${repository}" in
     ;;
   "sentinel-dashboard")
     curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
-    cd sentinel-dashboard && sed -i "" "s/1.8.6/1.8.8/g" Dockerfile && sed -i "" "s/amd64\///g" Dockerfile
+    cd sentinel-dashboard && sed -i "" "s/1.8.6/1.8.9/g" Dockerfile && sed -i "" "s/amd64\///g" Dockerfile
+    url="."
     ;;
   "base"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
     url=https://github.com/LuVx21/docker-compose-files.git#master:luvx

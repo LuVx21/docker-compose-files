@@ -1,6 +1,12 @@
 name: 同步DockerHub镜像
 
 on:
+  # schedule:
+  #   - cron: "23 3 1 * *"
+  push:
+    branches: [ master ]
+    paths:
+      - images.txt
   workflow_dispatch:
     inputs:
       platform:
@@ -32,7 +38,7 @@ jobs:
           echo ${{ inputs.dockerhub_images }}
           echo "=============================================================================="
       - name: 代码检出
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       # 增加可用磁盘空间
       - name: 增加构建磁盘空间
         uses: easimon/maximize-build-space@master
@@ -142,7 +148,12 @@ jobs:
           fi
 
           echo "同步images.txt镜像"
-          while IFS= read -r line || [ -n "$line" ]; do
+          content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/e9efe6f205e1952b66796ada1ac0d4a6956b83e5/images.txt)
+          if echo "$content" | grep -q '#exit'; then
+          else
+            content="$content $(cat images.txt)"
+          fi
+          echo $content | while IFS= read -r line || [ -n "$line" ]; do
             [[ -z "$line" ]] && continue
             if echo "$line" | grep -q '^\s*#'; then
                 continue
@@ -155,4 +166,4 @@ jobs:
             else
                 cur_platform=$platform
             fi
-          done < images.txt
+          done
