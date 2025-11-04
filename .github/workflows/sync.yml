@@ -150,6 +150,7 @@ jobs:
           echo "同步images.txt镜像"
           content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/e9efe6f205e1952b66796ada1ac0d4a6956b83e5/images.txt)
           if echo "$content" | grep -q '#exit'; then
+            echo "仅远程"
           else
             content="$content $(cat images.txt)"
           fi
