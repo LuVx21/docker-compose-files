@@ -19,7 +19,7 @@ on:
         - linux/arm64
         - linux/amd64
       dockerhub_images:
-        description: '要拉取的镜像,如foo/bar:v1,bar/foo:v2(空则读取images.txt)'
+        description: '要拉取的镜像,如"foo/bar:v1|bar/foo:v2"(支持花括号展开,空则读取images.txt)'
         required: false
         default: ''
 
@@ -116,45 +116,63 @@ jobs:
                 echo "多平台: $ps -> $new_rsn:$image_tag"
                 docker manifest create $new_rsn:$image_tag $ps && docker manifest push $new_rsn:$image_tag && docker manifest rm $new_rsn:$image_tag
               fi
-              for i in ${ps}; do
-                docker image rm $i
-              done
+              # for i in ${ps}; do
+              #   docker image rm $i
+              # done
               echo '↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑'
             done
             # docker image prune -af
             # docker image rm $image
           }
 
+          function pullMergeSyncBatch() {
+            local line=$1
+            local platform_str=$2
+            for image in eval "echo $line"; do
+              pullMergeSync $image $platform_str
+            done
+            docker rmi -f $(docker images -q)
+            docker image prune -af
+            docker system prune -af --volumes
+          }
+
           if [[ -n $input_images ]]; then
-
-            declare -A map
-            for image in ${input_images//,/ }; do
-              key=$(echo $image | awk -F':' '{print $1}')
-              value=$(echo $image | awk -F':' '{if (NF==2) print $2; else print "latest"}')
-              if [[ -n "${map[$key]}" ]]; then
-                map["$key"]="${map[$key]},$value"
-              else
-                map["$key"]="$value"
-              fi
+            for line in ${input_images//|/ }; do
+              pullMergeSyncBatch $line $input_platform
             done
 
-            for image in "${!map[@]}"; do
-              for tag in ${map[$image]//,/ }; do
-                pullMergeSync "$image:$tag" $input_platform
-              done
-              docker image prune -af
-            done
+            # 支持简单输入,不支持花括号展开
+            # declare -A map
+            # for image in ${input_images//|/ }; do
+            #   key=$(echo $image | awk -F':' '{print $1}')
+            #   value=$(echo $image | awk -F':' '{if (NF==2) print $2; else print "latest"}')
+            #   if [[ -n "${map[$key]}" ]]; then
+            #     map["$key"]="${map[$key]},$value"
+            #   else
+            #     map["$key"]="$value"
+            #   fi
+            # done
+
+            # for image in "${!map[@]}"; do
+            #   for tag in ${map[$image]//,/ }; do
+            #     pullMergeSync "$image:$tag" $input_platform
+            #   done
+            #   docker image prune -af
+            # done
             exit 0
           fi
 
           echo "同步images.txt镜像"
-          content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/e9efe6f205e1952b66796ada1ac0d4a6956b83e5/images.txt)
+          content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/images.txt)
           if echo "$content" | grep -q '#exit'; then
             echo "仅远程"
           else
             content="$content $(cat images.txt)"
           fi
-          echo $content | while IFS= read -r line || [ -n "$line" ]; do
+
+          # 原读文件
+          # echo $content | while IFS= read -r line || [ -n "$line" ]; do
+          for line in $content; do
             [[ -z "$line" ]] && continue
             if echo "$line" | grep -q '^\s*#'; then
                 continue
@@ -162,8 +180,8 @@ jobs:
 
             platform=$(echo "$line" | awk -F'platform[ =]' '{if (NF>1) print $2}' | awk '{print $1}')
             if [ -z "$platform" ]; then
-                image=$(echo "$line" | awk '{print $NF}')
-                pullMergeSync $image $cur_platform
+                # image=$(echo "$line" | awk '{print $NF}')
+                pullMergeSyncBatch $line $cur_platform
             else
                 cur_platform=$platform
             fi

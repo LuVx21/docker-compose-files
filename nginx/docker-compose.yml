@@ -20,6 +20,17 @@ services:
       # - $HOME/docker/nginx/html:/usr/share/nginx/html # 静态资源根目录挂载
       # - $HOME/docker/nginx/logs:/var/log/nginx # 日志文件挂载
 
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - $HOME/docker/nginx/proxyManager/data:/data
+      - $HOME/docker/nginx/proxyManager/letsencrypt:/etc/letsencrypt
+
   nginx-ui:
     image: uozi/nginx-ui:latest
     container_name: nginx-ui
