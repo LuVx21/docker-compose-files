@@ -128,7 +128,7 @@ jobs:
           function pullMergeSyncBatch() {
             local line=$1
             local platform_str=$2
-            for image in eval "echo $line"; do
+            for image in $(eval "echo $line"); do
               pullMergeSync $image $platform_str
             done
             docker rmi -f $(docker images -q)
