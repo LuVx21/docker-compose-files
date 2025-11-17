@@ -19,7 +19,7 @@ on:
         - linux/arm64
         - linux/amd64
       dockerhub_images:
-        description: '要拉取的镜像,如"foo/bar:v1|bar/foo:v2"(支持花括号展开,空则读取images.txt)'
+        description: '要拉取的镜像,如"foo/bar:v1#bar/foo:v2"(支持花括号展开,空则读取images.txt)'
         required: false
         default: ''
 
@@ -34,8 +34,8 @@ jobs:
       - name: 参数信息
         run: |
           echo "=============================================================================="
-          echo ${{ inputs.platform }}
-          echo ${{ inputs.dockerhub_images }}
+          echo "${{ inputs.platform }}"
+          echo "${{ inputs.dockerhub_images }}"
           echo "=============================================================================="
       - name: 代码检出
         uses: actions/checkout@v5
@@ -137,13 +137,13 @@ jobs:
           }
 
           if [[ -n $input_images ]]; then
-            for line in ${input_images//|/ }; do
+            for line in ${input_images//#/ }; do
               pullMergeSyncBatch $line $input_platform
             done
 
             # 支持简单输入,不支持花括号展开
             # declare -A map
-            # for image in ${input_images//|/ }; do
+            # for image in ${input_images//#/ }; do
             #   key=$(echo $image | awk -F':' '{print $1}')
             #   value=$(echo $image | awk -F':' '{if (NF==2) print $2; else print "latest"}')
             #   if [[ -n "${map[$key]}" ]]; then
