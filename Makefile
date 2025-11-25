@@ -44,6 +44,7 @@ vscode:
 jupyter:
 	./build.sh jupyter latest "" "" "--target=jupyter"
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
+	./build.sh rust_base latest "" "" "--target=rust_base ./jupyter"
 upx:
 	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.0.2"
 	./build.sh upx latest,5               "UPX_VERSION=5.0.2"
