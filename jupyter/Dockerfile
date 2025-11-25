@@ -31,7 +31,7 @@ COPY --from=go_base --link $GOPATH/bin/ $GOPATH/bin/
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
-COPY --from=eclipse-temurin:24-jdk --link $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:25-jdk --link $JAVA_HOME $JAVA_HOME
 
 # -------------以下为安装内核-------------
 
@@ -71,6 +71,9 @@ VOLUME ["/root/.m2", "/go/pkg", "$CARGO_HOME/registry"]
 EXPOSE 8888
 RUN <<EOT bash
     echo "#!/bin/sh" >> /entrypoint.sh
+    echo 'rustup --version;cargo --version;rustc --version;go version;java -version;python --version;' >> /entrypoint.sh
+    echo '/usr/bin/code update;' >> /entrypoint.sh
+    echo 'pip install --upgrade pip;' >> /entrypoint.sh
     echo 'if [ -z \$(which curl) ]; then pkg=\$pkg" curl ca-certificates"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which jq) ]; then pkg=\$pkg" jq"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which git) ]; then pkg=\$pkg" git"; fi;' >> /entrypoint.sh
