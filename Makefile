@@ -54,7 +54,7 @@ pichome:
 mongosh:
 	./build.sh mongosh latest "" "" "--target=mongosh ./luvx"
 ldb:
-	./build.sh ldb latest,9 "TAG=v9.10.0" "" "--target=ldb ./luvx"
+	./build.sh ldb latest,10 "" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard latest,2 "RD_VERSION=2.1.0"
 go-runner:
