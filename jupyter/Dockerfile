@@ -21,6 +21,7 @@ RUN cargo install evcxr_jupyter; \
 
 FROM ${REGISTRY}python:3-slim-${VERSION} AS jupyter
 WORKDIR /root
+USER luvx
 
 # -------------以下为安装Go-------------
 ENV GOTOOLCHAIN=local GO111MODULE=on GOPROXY=https://goproxy.cn,direct GOPATH=/go GOROOT=/usr/local/go
