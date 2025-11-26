@@ -51,8 +51,7 @@ canal/canal-{admin,server}:latest
 chat2db/chat2db:latest
 codercom/code-server:latest
 containrrr/watchtower:latest
-cooderl/wewe-rss-server:latest
-cooderl/wewe-rss-web:latest
+cooderl/wewe-rss-{web,server}:latest
 dockurr/dnsmasq:latest
 dockurr/windows:latest
 dpanel/dpanel:latest
@@ -67,14 +66,12 @@ liwei2633/gopeed:latest
 nacos/nacos-server:latest
 oceanbase/oceanbase-ce:latest
 ollama/ollama:latest
-portainer/agent:latest
-portainer/portainer-ce:latest
+portainer/{agent,portainer-ce}:latest
 prom/alertmanager:latest
 prom/node-exporter:latest
 prom/prometheus:latest
 provectuslabs/kafka-ui:latest
-redis/redis-stack-server:latest
-redis/redisinsight:latest
+redis/{redisinsight,redis-stack-server,redis-stack}:latest
 seataio/seata-server:latest
 technitium/dns-server:latest
 tzfun/etcd-workbench:latest
@@ -84,6 +81,7 @@ vrantt/databasir:latest
 wangqiru/mercury-parser-api:latest
 wdkang/kafka-console-ui:latest
 xhofe/alist:latest
+openlistteam/openlist:latest
 
 
 gcr.io/cadvisor/cadvisor:latest

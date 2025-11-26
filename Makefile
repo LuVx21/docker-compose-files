@@ -2,6 +2,24 @@
 CR_NS=
 
 # -----------------------------------------------------------------------------------------------------------------------
+test:
+	docker build \
+ 	--target go-runner \
+	--build-arg A=A \
+ 	--build-arg B=B \
+	-t luvx/test:latest \
+	.
+
+	docker run --rm -it \
+	--name test_$$(date +%s) \
+	--network=net_common \
+	--add-host="host.docker.internal:host-gateway" \
+	-w /app \
+	-v $$(pwd):/app \
+# 	--entrypoint /bin/sh \ # 直接进入容器shell
+	luvx/test:latest
+
+# -----------------------------------------------------------------------------------------------------------------------
 base-alpine:
 	@for tag in 0 1 2 3; do \
 		for os in 21 22; do \
@@ -59,8 +77,19 @@ ldb:
 rocketmq-dashboard:
 	./build.sh rocketmq-dashboard latest,2 "RD_VERSION=2.1.0"
 go-runner:
-	./build.sh xxx latest-alpine "GO_INSTALL_URL=xxxx" "" "--target=go-runner ./luvx/alpine"
-	./build.sh xxx latest "GO_INSTALL_URL=xxxx" "" "--target=go-runner ."
+	./build.sh gore    latest-alpine "GO_INSTALL_URL=github.com/x-motemen/gore/cmd/gore@latest;golang.org/x/tools/gopls@latest" "" "--target=go-installer ./luvx/alpine"
+	./build.sh hget    latest-alpine "GO_INSTALL_URL=github.com/huydx/hget@latest"                                              "" "--target=go-runner ./luvx/alpine"
+	./build.sh glow    latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/glow@latest"                                      "" "--target=go-runner ./luvx/alpine"
+	./build.sh gum     latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/gum@latest"                                       "" "--target=go-runner ./luvx/alpine"
+	./build.sh pget    latest-alpine "GO_INSTALL_URL=github.com/Code-Hex/pget/cmd/pget@latest"                                  "" "--target=go-runner ./luvx/alpine"
+	./build.sh crush   latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/crush@latest"                                     "" "--target=go-runner ./luvx/alpine"
+	./build.sh lazysql latest-alpine "GO_INSTALL_URL=github.com/jorgerojas26/lazysql@latest"                                    "" "--target=go-runner-scratch ./luvx/alpine"
+# 	./build.sh lazygit latest-alpine "GO_INSTALL_URL=github.com/jesseduffield/lazygit@latest"                                   "" "--target=go-runner ./luvx/alpine"
+	./build.sh lazydocker latest-alpine "GO_INSTALL_URL=github.com/jesseduffield/lazydocker@latest"                             "" "--target=go-runner-scratch ./luvx/alpine"
+	./build.sh go-cyclic latest-alpine "GO_INSTALL_URL=github.com/elza2/go-cyclic@latest"                                       "" "--target=go-runner-scratch ./luvx/alpine"
+# 	./build.sh octosql latest-alpine "GO_INSTALL_URL=github.com/cube2222/octosql@latest"                                        "" "--target=go-runner ./luvx/alpine"
+# 	./build.sh usql    latest-alpine "GO_INSTALL_URL=github.com/xo/usql@latest"                                                 "" "--target=go-runner ./luvx/alpine"
+	./build.sh gore latest "GO_INSTALL_URL=github.com/x-motemen/gore/cmd/gore@latest;golang.org/x/tools/gopls@latest" "" "--target=go-installer ./luvx"
 python-runner:
 	./build.sh litecli   latest-alpine "PACKAGES=litecli"   "" "--target=python-runner ./luvx/alpine"
 	./build.sh mycli     latest-alpine "PACKAGES=mycli"     "" "--target=python-runner ./luvx/alpine"
@@ -68,6 +97,10 @@ python-runner:
 	./build.sh toolong   latest-alpine "PACKAGES=toolong"   "" "--target=python-runner ./luvx/alpine"
 	./build.sh frogmouth latest-alpine "PACKAGES=frogmouth" "" "--target=python-runner ./luvx/alpine"
 	./build.sh dolphie   latest        "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
+
+gemini:
+	$(eval VERSION := 0.18.0)
+	./build.sh gemini-cli   latest "CLI_VERSION_ARG=$(VERSION)"   "" "https://github.com/google-gemini/gemini-cli.git#v$(VERSION)"
 
 # -----------------------------------------------------------------------------------------------------------------------
 

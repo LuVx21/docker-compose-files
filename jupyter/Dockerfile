@@ -21,7 +21,6 @@ RUN cargo install evcxr_jupyter; \
 
 FROM ${REGISTRY}python:3-slim-${VERSION} AS jupyter
 WORKDIR /root
-USER luvx
 
 # -------------以下为安装Go-------------
 ENV GOTOOLCHAIN=local GO111MODULE=on GOPROXY=https://goproxy.cn,direct GOPATH=/go GOROOT=/usr/local/go
@@ -79,6 +78,7 @@ RUN <<EOT bash
     echo 'if [ -z \$(which jq) ]; then pkg=\$pkg" jq"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which git) ]; then pkg=\$pkg" git"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which zsh) ]; then pkg=\$pkg" zsh"; fi;' >> /entrypoint.sh
+    echo 'if [ -z \$(which sudo) ]; then pkg=\$pkg" sudo"; fi;' >> /entrypoint.sh
     echo 'apt-get update -q && apt-get install -q -y --no-install-recommends \$pkg;' >> /entrypoint.sh
     echo 'chsh -s \$(which zsh);' >> /entrypoint.sh
     echo -n "jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True" >> /entrypoint.sh
@@ -90,6 +90,8 @@ CMD ["/entrypoint.sh"]
 # ENTRYPOINT [ "jupyter", "lab" ]
 
 FROM luvx/jupyter:latest AS jupyter-vscode
+# RUN groupadd -r luvx && useradd -r -m -g luvx -s /bin/bash luvx
+# USER luvx
 COPY --from=luvx/vscode:latest-alpine --link /usr/bin/code /usr/bin/code
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000

@@ -14,6 +14,9 @@ elif [ "$project" = "bitnami-etcd" ]; then
 elif [ "$project" = "bitnami-kafka" ]; then
     url='https://raw.githubusercontent.com/bitnami/containers/refs/heads/main/bitnami/kafka/docker-compose-cluster.yml'
     file='kafka-docker-compose-cluster.yml'
+elif [ "$project" = "file-transfer-go" ]; then
+    url='https://raw.githubusercontent.com/MatrixSeven/file-transfer-go/refs/heads/main/docker-compose.yml'
+    file='file-transfer-go-docker-compose.yml'
 else
     echo -e "无指定模块名"
     exit 1

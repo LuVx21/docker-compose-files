@@ -5,7 +5,7 @@ repository=$1
 tag=$2 # 支持多个,逗号分割
 # 可选
 buildArg=$3 # 支持多个,逗号分割
-platform=${4:-linux/amd64,linux/arm64}
+platform=${4:-linux/arm64,linux/amd64}
 CUSTOM_ARG=$5
 
 os=$(uname -s)
@@ -70,7 +70,7 @@ echo "构建镜像: ${image} 版本: ${tags[@]} 架构: ${platform} 构建参数
 
 for _tag in ${tags[@]}; do
   if [[ ! $os == 'Darwin' ]]; then
-    image_info+="-t ghcr.io/luvx21/${repository}:${_tag} -t ${image}:${_tag} "
+    image_info+="-t ${image}:${_tag} -t ghcr.io/luvx21/${repository}:${_tag} "
   else
     image_info+="-t ${TX_CR}/${image}:${_tag} "
   fi
@@ -81,4 +81,4 @@ echo "执行命令: docker buildx build --push --build-arg CR=${ALI_CR_NS} ${bui
 docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} \
   --platform ${platform} \
   ${image_info} \
-  ${url} ${CUSTOM_ARG}
+  ${url} ${CUSTOM_ARG} # --output type=docker,dest=- | docker load # 推送的同时本地也有一份

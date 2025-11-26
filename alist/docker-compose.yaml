@@ -1,13 +1,34 @@
 services:
-    alist:
-        # restart: always
-        volumes:
-            - $HOME/docker/alist:/opt/alist/data
-        ports:
-            - '55244:5244'
-        environment:
-            - PUID=0
-            - PGID=0
-            - UMASK=022
-        container_name: alist
-        image: 'xhofe/alist:latest'
+  # alist:
+  #   image: 'xhofe/alist:latest'
+  #   container_name: alist
+  #   ports:
+  #     - '55244:5244'
+  #   networks:
+  #     - net_common
+  #   volumes:
+  #     - $HOME/docker/alist:/opt/alist/data
+  #   environment:
+  #     - PUID=0
+  #     - PGID=0
+  #     - UMASK=022
+
+  openlist:
+    image: 'openlistteam/openlist:latest'
+    container_name: openlist
+    ports:
+      - '5244:5244'
+      - '5245:5245'
+    networks:
+      - net_common
+    user: '0:0'
+    volumes:
+      - $HOME/docker/openlist:/opt/openlist/data
+    environment:
+      - UMASK=022
+      - TZ=Asia/Shanghai
+
+
+networks:
+  net_common:
+    external: true

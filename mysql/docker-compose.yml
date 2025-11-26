@@ -129,7 +129,7 @@ services:
 #      - 8080:8080
 
 #  whodb:
-#    image: luvx/whodb:latest
+#    image: clidey/whodb:latest
 #    container_name: whodb
 #    networks:
 #      - net_common

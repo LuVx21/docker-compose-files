@@ -76,8 +76,8 @@ RUN wget https://github.com/laixintao/iredis/releases/latest/download/iredis.tar
  && tar -xzf iredis.tar.gz
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS iredis
-COPY --from=iredis_downloader iredis /usr/bin
-COPY --from=iredis_downloader lib /usr/bin/lib
+COPY --from=iredis_downloader iredis /usr/bin/
+COPY --from=iredis_downloader lib /usr/bin/lib/
 ENTRYPOINT [ "iredis" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=
     && tar -zxvf vscode_cli.tar.gz
 
 FROM luvx/base:0 AS vscode
-COPY --from=vscode_downloader code /usr/bin
+COPY --from=vscode_downloader code /usr/bin/
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
 ENTRYPOINT ["code"]
@@ -109,7 +109,7 @@ RUN <<EOT
 EOT
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS upx
-COPY --from=upx_downloader upx /usr/bin
+COPY --from=upx_downloader upx /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM base-2-arch AS duckdb_downloader
@@ -122,7 +122,7 @@ ENTRYPOINT [ "./duckdb" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}debian:${VERSION}-slim AS mongosh
-COPY --from=mongo:latest --link /usr/bin/mongosh /usr/bin/mongosh
+COPY --from=mongo:latest --link /usr/bin/mongosh /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}buildpack-deps:${VERSION} AS ldb_builder
@@ -133,8 +133,8 @@ RUN if [ -z $TAG ]; then TAG=$(git ls-remote --tags https://github.com/facebook/
 
 FROM ${REGISTRY}debian:${VERSION}-slim AS ldb
 RUN apt update && apt install -y libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev
-COPY --from=ldb_builder /rocksdb/ldb /usr/bin
-COPY --from=ldb_builder /rocksdb/sst_dump /usr/bin
+COPY --from=ldb_builder /rocksdb/ldb /usr/bin/
+COPY --from=ldb_builder /rocksdb/sst_dump /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}maven:3-eclipse-temurin-17 AS rocketmq-dashboard-builder
@@ -153,31 +153,38 @@ ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar ./rocketmq-dashboard.jar" ]
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}golang:1.24-${VERSION} AS go-installer
+FROM ${REGISTRY}golang:1.25-${VERSION} AS go-installer
 
 ARG GO_INSTALL_URL
-COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/upx
+COPY --from=luvx/upx:latest --link /usr/bin/upx /usr/bin/
 SHELL ["/bin/bash", "-c"]
 RUN <<EOT
     #!/bin/bash
-    for URL in $(echo "$GO_INSTALL_URL" | tr ',' ' '); do
+    for URL in $(echo "$GO_INSTALL_URL" | tr ';' ' '); do
         go install -ldflags="-w -s" ${URL}
     done
     upx -9 $(go env GOPATH)/bin/*
 EOT
 
+FROM FROM scratch AS go-runner-scratch
+WORKDIR /app
+COPY --from=go-installer /go/bin/* /usr/bin/
+
 FROM ${REGISTRY}debian:${VERSION}-slim AS go-runner
-COPY --from=go-installer /go/bin/* /usr/bin
+WORKDIR /app
+COPY --from=go-installer /go/bin/* /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}python:3-slim-${VERSION} AS python-runner
+WORKDIR /app
 ARG PACKAGES
 RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
-    for package in $(echo "$PACKAGES" | tr ',' ' '); do pip3 install --no-cache-dir ${package}; done; \
+    for package in $(echo "$PACKAGES" | tr ';' ' '); do pip3 install --no-cache-dir ${package}; done; \
     pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}debian:${VERSION}-slim AS debian-runner
+WORKDIR /app
 ARG PACKAGE
 RUN apt-get update && apt-get install -y --no-install-recommends ${PACKAGE}; \
     rm -rf /var/lib/apt/lists/*

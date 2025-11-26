@@ -34,7 +34,7 @@ RUN wget -O vscode_cli.tar.gz "https://code.visualstudio.com/sha/download?build=
     && tar -zxvf vscode_cli.tar.gz
 
 FROM luvx/base:0-alpine AS vscode
-COPY --from=vscode_downloader code /usr/bin
+COPY --from=vscode_downloader code /usr/bin/
 RUN apk add --update --no-cache libstdc++ # curl procps gcompat
 VOLUME ["/root/.vscode", "/root/.vscode-server"]
 EXPOSE 8000
@@ -56,32 +56,40 @@ RUN <<EOT
 EOT
 
 FROM luvx/base:0-alpine AS upx
-COPY --from=upx_downloader upx /usr/bin
+COPY --from=upx_downloader upx /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}golang:1.24-alpine AS go-installer
+FROM ${REGISTRY}golang:1.25-alpine AS go-installer
 
 ARG GO_INSTALL_URL
-COPY --from=luvx/upx:latest-alpine --link /usr/bin/upx /usr/bin/upx
+COPY --from=luvx/upx:latest-alpine --link /usr/bin/upx /usr/bin/
 RUN <<EOT
     #!/bin/sh
-    for URL in $(echo "$GO_INSTALL_URL" | tr ',' ' '); do
+    for URL in $(echo "$GO_INSTALL_URL" | tr ';' ' '); do
         go install -ldflags="-w -s" ${URL}
     done
     upx -9 $(go env GOPATH)/bin/*
+    go clean -modcache
 EOT
 
+FROM scratch AS go-runner-scratch
+WORKDIR /app
+COPY --from=go-installer /go/bin/* /usr/bin/
+
 FROM ${REGISTRY}alpine:${VERSION} AS go-runner
-COPY --from=go-installer /go/bin/* /usr/bin
+WORKDIR /app
+COPY --from=go-installer /go/bin/* /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}python:3-alpine AS python-runner
+WORKDIR /app
 ARG PACKAGES
 RUN pip3 config set global.index-url https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple; \
-    for package in $(echo "$PACKAGES" | tr ',' ' '); do pip3 install --no-cache-dir ${package}; done; \
+    for package in $(echo "$PACKAGES" | tr ';' ' '); do pip3 install --no-cache-dir ${package}; done; \
     pip3 cache purge && rm -fr $(pip3 cache dir) && rm -fr /root/.cache
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM luvx/base:0-alpine AS alpine-runner
+WORKDIR /app
 ARG PACKAGE
 RUN apk add --update --no-cache ${PACKAGE} && rm -fr /var/cache/apk/*
