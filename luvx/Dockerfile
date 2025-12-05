@@ -166,7 +166,7 @@ RUN <<EOT
     upx -9 $(go env GOPATH)/bin/*
 EOT
 
-FROM FROM scratch AS go-runner-scratch
+FROM scratch AS go-runner-scratch
 WORKDIR /app
 COPY --from=go-installer /go/bin/* /usr/bin/
 

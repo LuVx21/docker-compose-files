@@ -109,7 +109,7 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-sync:
-	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images=debian:trixie,debian:trixie-slim,debian:latest
+	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
 
 workflow-build:
 	gh workflow run build.yml \
