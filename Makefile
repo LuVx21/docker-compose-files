@@ -22,8 +22,8 @@ test:
 # -----------------------------------------------------------------------------------------------------------------------
 base-alpine:
 	@for tag in 0 1 2 3; do \
-		for os in 21 22; do \
-			./build.sh base $$tag-alpine-$$os "VERSION=3.$$os,T=$$tag"; \
+		for os in 21 22 23; do \
+			./build.sh base $$tag-alpine-$$os "VERSION=$$os,T=$$tag"; \
 		done; \
 	done
 base:
@@ -64,8 +64,8 @@ jupyter:
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 	./build.sh rust_base latest "" "" "--target=rust_base ./jupyter"
 upx:
-	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.0.2"
-	./build.sh upx latest,5               "UPX_VERSION=5.0.2"
+	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.1.0"
+	./build.sh upx latest,5               "UPX_VERSION=5.1.0"
 duckdb:
 	./build.sh duckdb latest
 pichome:
@@ -109,13 +109,13 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-sync:
-	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
+	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22,.23}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
 
 workflow-build:
 	gh workflow run build.yml \
 		-f image=alpine \
-		-f tag=latest,3.22 \
-		-f buildArg="VERSION=3.22" \
+		-f tag=latest,3.23 \
+		-f buildArg="VERSION=3.23" \
 		# -f platform="linux/arm64,linux/amd64" \
 		-f customArg="--target=alpine ./luvx/alpine"
 

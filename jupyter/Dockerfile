@@ -41,7 +41,8 @@ RUN pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple/; \
     apt-get update -q && \
     apt-get install -q -y --no-install-recommends curl && \
     apt-get install -q -y --no-install-recommends wget unzip openssl ca-certificates build-essential libssl-dev pkg-config && rm -rf /var/lib/apt/lists/*; \
-    curl https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/refs/heads/master/templates/minimal.zshrc > /root/.zshrc;
+    curl https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/refs/heads/master/templates/minimal.zshrc > /root/.zshrc; \
+    sed -i "s|git|git history-substring-search z zsh-autosuggestions zsh-completions zsh-syntax-highlighting|g" /root/.zshrc;
 
 # Kotlin 内核 来源: https://github.com/Kotlin/kotlin-jupyter
 RUN pip3 install --no-cache-dir jupyterlab kotlin-jupyter-kernel catppuccin-jupyterlab && jupyter lab --generate-config \
@@ -62,7 +63,7 @@ ENV PATH=$CARGO_HOME/bin:$PATH
 COPY --from=rust_base --link $CARGO_HOME $CARGO_HOME
 COPY --from=rust_base --link $RUSTUP_HOME $RUSTUP_HOME
 # RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN curl https://raw.githubusercontent.com/LuVx21/coding-config/refs/heads/master/rust/config.toml > $CARGO_HOME/config.toml; \
+RUN curl https://raw.githubusercontent.com/LuVx21/coding-config/refs/heads/main/rust/config.toml > $CARGO_HOME/config.toml; \
     evcxr_jupyter --install; \
     # cargo install cargo-cache && cargo cache --remove-dir all; \
     rm -fr $CARGO_HOME/registry $CARGO_HOME/git
