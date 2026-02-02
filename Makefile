@@ -4,9 +4,9 @@ CR_NS=
 # -----------------------------------------------------------------------------------------------------------------------
 test:
 	docker build \
- 	--target go-runner \
+--target go-runner \
 	--build-arg A=A \
- 	--build-arg B=B \
+--build-arg B=B \
 	-t luvx/test:latest \
 	.
 
@@ -97,9 +97,10 @@ python-runner:
 	./build.sh toolong   latest-alpine "PACKAGES=toolong"   "" "--target=python-runner ./luvx/alpine"
 	./build.sh frogmouth latest-alpine "PACKAGES=frogmouth" "" "--target=python-runner ./luvx/alpine"
 	./build.sh dolphie   latest        "PACKAGES=dolphie"   "" "--target=python-runner ./luvx"
+# 	./build.sh sqlit-tui latest        "PACKAGES=sqlit-tui" "" "--target=python-runner ./luvx"
 
 gemini:
-	$(eval VERSION := 0.18.0)
+	$(eval VERSION := 0.33.1)
 	./build.sh gemini-cli   latest "CLI_VERSION_ARG=$(VERSION)"   "" "https://github.com/google-gemini/gemini-cli.git#v$(VERSION)"
 
 # -----------------------------------------------------------------------------------------------------------------------
@@ -109,7 +110,7 @@ dco-etcd:
 	./dco.sh etcd
 
 workflow-sync:
-	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22,.23}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
+	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22,.23}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25,.26}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
 
 workflow-build:
 	gh workflow run build.yml \

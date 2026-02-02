@@ -54,7 +54,7 @@ jobs:
       - name: 重启Docker服务
         run: sudo service docker restart
       - name: 登录GitHub容器
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -62,13 +62,13 @@ jobs:
       - name: 小写GitHub用户名(namespace)
         run: echo "ACTOR_LOWER=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: 登录阿里云容器
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ vars.ALI_CR }}
           username: ${{ secrets.ALI_CR_USER }}
           password: ${{ secrets.ALI_CR_PASSWORD }}
       # - name: 登录腾讯云容器
-      #   uses: docker/login-action@v3
+      #   uses: docker/login-action@v4
       #   with:
       #     registry: ${{ vars.TX_CR }}
       #     username: ${{ secrets.TX_CR_USER }}

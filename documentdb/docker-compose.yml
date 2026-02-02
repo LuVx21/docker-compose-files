@@ -1,0 +1,23 @@
+# mongosh "mongodb://username:password@localhost:10260/?tls=true&tlsAllowInvalidCertificates=true&authMechanism=SCRAM-SHA-256"
+
+services:
+  documentdb:
+    image: ${GH_CR_NJU}/documentdb/documentdb/documentdb-local:${IMAGE_VERSION}
+    container_name: documentdb
+    ports:
+      - 5432:9712  # pg端口
+      - 27018:10260 # 可用--documentdb-port参数修改
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/documentdb/data:/data
+    environment:
+      - PORT=10260
+      - PG_PORT=9712
+      - USERNAME=username
+      - PASSWORD=password
+      - LOG_LEVEL=info
+
+networks:
+  net_common:
+    external: true

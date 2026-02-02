@@ -21,6 +21,7 @@ services:
       - $HOME/.ssh:/root/.ssh
       - vscode:/root/.vscode
       - vscode-server:/root/.vscode-server
+      - /etc/ssl/cert.pem:/etc/ssl/cert.pem
     working_dir: /workspace
     environment:
       - TZ=Asia/Shanghai

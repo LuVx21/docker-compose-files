@@ -1,0 +1,32 @@
+services:
+  ferretdb:
+    image: ${GH_CR_NJU}/ferretdb/ferretdb:${IMAGE_VERSION}
+    container_name: ferretdb
+    restart: on-failure
+    ports:
+      - 27018:27017
+    networks:
+      - net_common
+    environment:
+      - FERRETDB_POSTGRESQL_URL=postgres://username:password@postgres:5432/postgres
+    depends_on:
+      - postgres
+
+  postgres:
+    image: ${GH_CR_NJU}/ferretdb/postgres-documentdb:17-0.107.0-ferretdb-${IMAGE_VERSION}
+    container_name: ferretdb-store
+    restart: on-failure
+    ports:
+      - 5432:5432
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/ferretdb/postgresql/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+
+networks:
+  net_common:
+    external: true
