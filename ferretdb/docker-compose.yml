@@ -13,7 +13,7 @@ services:
       - postgres
 
   postgres:
-    image: ${GH_CR_NJU}/ferretdb/postgres-documentdb:17-0.107.0-ferretdb-${IMAGE_VERSION}
+    image: ${GH_CR_NJU}/ferretdb/postgres-documentdb:${PG_VERSION}-${DOCUMENTDB_VERSION}-ferretdb-${IMAGE_VERSION}
     container_name: ferretdb-store
     restart: on-failure
     ports:

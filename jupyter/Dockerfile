@@ -31,7 +31,7 @@ COPY --from=go_base --link $GOPATH/bin/ $GOPATH/bin/
 # -------------以下为安装Java-------------
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH=$JAVA_HOME/bin:$PATH
-COPY --from=eclipse-temurin:25-jdk --link $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:26-jdk --link $JAVA_HOME $JAVA_HOME
 
 # -------------以下为安装内核-------------
 

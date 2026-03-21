@@ -40,16 +40,16 @@ base:
 		done; \
 	done
 jdk:
-	@for tag in 21 24 25; do \
+	@for tag in 21 25 26; do \
 		tags="$$tag"; \
-		if [ "$$tag" = "25" ]; then \
+		if [ "$$tag" = "26" ]; then \
 			tags="$$tags,latest"; \
 		fi; \
 		./build.sh oracle_jdk  "$$tags" "JAVA_VERSION=$$tag"; \
 		./build.sh graalvm_jdk "$$tags" "JAVA_VERSION=$$tag"; \
 	done
 mvnd:
-	./build.sh mvnd latest,1 "MVND_VERSION=1.0.3"      linux/amd64
+	./build.sh mvnd latest,1 "MVND_VERSION=1.0.5"      linux/amd64
 	./build.sh mvnd 2        "MVND_VERSION=2.0.0-rc-3" linux/amd64
 iredis:
 	./build.sh iredis latest,1      ""                linux/amd64 "--target=iredis ./luvx"

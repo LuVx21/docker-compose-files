@@ -2,12 +2,21 @@
 <summary>点击展开目录</summary>
 <!-- TOC -->
 
+- [actions](#actions)
 - [镜像](#镜像)
 
 <!-- /TOC -->
 </details>
 
 ![Alt](https://repobeats.axiom.co/api/embed/fa032c64baf9522131d3fea5d8feb396bb2b42c9.svg "Repobeats analytics image")
+
+一些常用镜像环境, 快速启动
+
+## actions
+
+同步`hub.docker.com`镜像到国内(或自建`registry`); 构建自用镜像
+
+需要配置对应的`${{ vars.xxx }}`(`registry`和`namespace`), 和`${{ secrets.xxx }}`(认证信息)
 
 ## 镜像
 
@@ -50,6 +59,10 @@ mirrors:
 
 * [境内 Docker 镜像状态监控](https://status.anye.xyz/status/docker)
 * [dockerhub镜像站存活](https://mirror.kentxxq.com/home)
+
+https://docker.chenby.cn
+https://docker.hpcloud.cloud
+https://dockerhub.icu
 
 > https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
 

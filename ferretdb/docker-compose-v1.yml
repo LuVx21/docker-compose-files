@@ -7,8 +7,11 @@ services:
       - 27018:27017
     networks:
       - net_common
+    volumes:
+      - $HOME/docker/ferretdb_v1/state:/state
     environment:
-      - FERRETDB_POSTGRESQL_URL=postgres://username:password@postgres:5432/postgres
+      - FERRETDB_HANDLER=sqlite
+      # - FERRETDB_POSTGRESQL_URL=postgres://username:password@postgres:5432/postgres
     depends_on:
       - postgres
 

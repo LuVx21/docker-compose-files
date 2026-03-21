@@ -7,7 +7,7 @@ bash:{latest,{4,5}{,-alpine3.23}}
 buildpack-deps:{latest,curl,scm,{bookworm,trixie}{,-curl,-scm}}
 debian:{latest,{12,13,bookworm,trixie}{,-slim}}
 docker:{latest,cli,dind}
-eclipse-temurin:{latest,{8,11,17,21,24,25}{,-jdk,-jre}}
+eclipse-temurin:{latest,{8,11,17,21,25,26}{,-jdk,-jre}}
 fedora:{latest,39,40,41,42}
 flink:latest
 gcc:{latest,12,13,14}
