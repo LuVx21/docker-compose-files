@@ -2,7 +2,7 @@
 services:
   xxl-job-admin:
     platform: linux/amd64
-    image: xuxueli/xxl-job-admin:2.4.0
+    image: xuxueli/xxl-job-admin:3.4.0
     container_name: xxl-job-admin
     networks:
       - net_common

@@ -40,7 +40,7 @@ services:
       - share_net
 # 自动更新docker镜像
 #  watchtower:
-#    image: containrrr/watchtower
+#    image: nickfedor/watchtower
 #    container_name: watchtower
 #    # restart: always
 #    # 环境变量,设置为上海时区
