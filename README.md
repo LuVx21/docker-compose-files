@@ -67,6 +67,12 @@ https://dockerhub.icu
 > https://gist.github.com/y0ngb1n/7e8f16af3242c7815e7ca2f0833d3ea6
 
 
-南京大学ghcr镜像站:
 
-`docker pull ghcr.nju.edu.cn/<your-username>/<your-image>:<tag>`
+
+ghcr镜像:
+| 镜像            | 说明               |
+| :-------------- | :----------------- |
+| ghcr.nju.edu.cn | 南京大学ghcr镜像站 |
+| ghcr.milu.moe   |                    |
+
+> `docker pull xxx/<your-username>/<your-image>:<tag>`
