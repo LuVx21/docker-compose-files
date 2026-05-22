@@ -51,8 +51,9 @@ case "${repository}" in
     url=https://github.com/zyx0814/Pichome-docker.git
     ;;
   "sentinel-dashboard")
+    mkdir sentinel-dashboard
     curl https://raw.githubusercontent.com/alibaba/Sentinel/master/sentinel-dashboard/Dockerfile > ./sentinel-dashboard/Dockerfile
-    cd sentinel-dashboard && sed -i "" "s/amd64\///g" Dockerfile
+    cd sentinel-dashboard && sed -i "" "s/1.8.6/1.8.10/g" Dockerfile && sed -i "" "s/amd64\///g" Dockerfile
     url="."
     ;;
   "base"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
