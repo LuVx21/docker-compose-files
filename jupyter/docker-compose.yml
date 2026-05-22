@@ -3,21 +3,25 @@ services:
     image: ${ALI_CR:+$ALI_CR/}luvx/jupyter:vscode
     container_name: jupyter
     ports:
+      - 10022:22
       - 8888:8888
       - 8000:8000
     networks:
       - net_common
     volumes:
-      - $HOME/OneDrive/Code:/workspace
+      - $HOME/OneDrive/Code:/root/OneDrive/Code
+      - $HOME/Dropbox/Code:/root/Dropbox/Code
       - $HOME/code:/root/code
       - $HOME/data:/root/data
       - $HOME/go/pkg:/go/pkg
-      - $HOME/.m2:/root/.m2
+      - $HOME/.claude:/root/.claude
       - $HOME/.continue:/root/.continue
       - $HOME/.dbclient:/root/.dbclient
       - $HOME/.gitconfig:/root/.gitconfig
+      - $HOME/.m2:/root/.m2
       - $HOME/.marscode:/root/.marscode
       - $HOME/.oh-my-zsh:/root/.oh-my-zsh
+      - $HOME/.openclaude:/root/.openclaude
       - $HOME/.ssh:/root/.ssh
       - vscode:/root/.vscode
       - vscode-server:/root/.vscode-server

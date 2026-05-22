@@ -2,7 +2,7 @@ version: "3"
 
 services:
   sentinel-server:
-    image: luvx/sentinel-dashboard:1.8.10
+    image: ${ALI_CR:+$ALI_CR/}luvx/sentinel-dashboard:1.8.10
     container_name: sentinel-dashboard
     networks:
       - net_common

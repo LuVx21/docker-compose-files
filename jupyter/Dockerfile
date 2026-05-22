@@ -77,6 +77,7 @@ RUN <<EOT bash
     echo 'pip install --upgrade pip;' >> /entrypoint.sh
     echo 'if [ -z \$(which curl) ]; then pkg=\$pkg" curl ca-certificates"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which jq) ]; then pkg=\$pkg" jq"; fi;' >> /entrypoint.sh
+    echo 'if [ -z \$(which ssh) ]; then pkg=\$pkg" openssh-client"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which git) ]; then pkg=\$pkg" git"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which zsh) ]; then pkg=\$pkg" zsh"; fi;' >> /entrypoint.sh
     echo 'if [ -z \$(which sudo) ]; then pkg=\$pkg" sudo"; fi;' >> /entrypoint.sh

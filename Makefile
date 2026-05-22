@@ -64,8 +64,8 @@ jupyter:
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 	./build.sh rust_base latest "" "" "--target=rust_base ./jupyter"
 upx:
-	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.1.0"
-	./build.sh upx latest,5               "UPX_VERSION=5.1.0"
+	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.1.1"
+	./build.sh upx latest,5               "UPX_VERSION=5.1.1"
 duckdb:
 	./build.sh duckdb latest
 pichome:
@@ -80,7 +80,7 @@ go-runner:
 	./build.sh gore    latest-alpine "GO_INSTALL_URL=github.com/x-motemen/gore/cmd/gore@latest;golang.org/x/tools/gopls@latest" "" "--target=go-installer ./luvx/alpine"
 	./build.sh hget    latest-alpine "GO_INSTALL_URL=github.com/huydx/hget@latest"                                              "" "--target=go-runner ./luvx/alpine"
 	./build.sh glow    latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/glow@latest"                                      "" "--target=go-runner ./luvx/alpine"
-	./build.sh gum     latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/gum@latest"                                       "" "--target=go-runner ./luvx/alpine"
+	./build.sh gum     latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/gum@latest"                                       "" "--target=go-runner-scratch ./luvx/alpine"
 	./build.sh pget    latest-alpine "GO_INSTALL_URL=github.com/Code-Hex/pget/cmd/pget@latest"                                  "" "--target=go-runner ./luvx/alpine"
 	./build.sh crush   latest-alpine "GO_INSTALL_URL=github.com/charmbracelet/crush@latest"                                     "" "--target=go-runner ./luvx/alpine"
 	./build.sh lazysql latest-alpine "GO_INSTALL_URL=github.com/jorgerojas26/lazysql@latest"                                    "" "--target=go-runner-scratch ./luvx/alpine"

@@ -9,6 +9,7 @@ services:
     ports:
       - "50080:80"                   # 映射端口
     volumes:
+      - /etc/ssl/cert.pem:/etc/ssl/cert.pem
       - $HOME/docker/freshrss/data:/var/www/FreshRSS/data
       - $HOME/docker/freshrss/extensions:/var/www/FreshRSS/extensions
     environment:

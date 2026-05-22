@@ -1,8 +1,8 @@
 
 services:
   golang:
-    # image: golang:1.25
-    image: bitnami/golang:1.25
+    # image: golang:1.26
+    image: bitnami/golang:1.26
     container_name: golang
     networks:
       - net_common
