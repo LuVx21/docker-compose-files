@@ -31,6 +31,7 @@ mirrors:
 
 | mirror                            | 状态 |
 | :-------------------------------- | :--- |
+| https://gh-proxy.com/docker       | ✅    |
 | https://atomhub.openatom.cn       | ✅    |
 | https://dhub.kubesre.xyz          | ✅    |
 | https://docker-registry.nmqu.com  | ✅    |
@@ -76,3 +77,10 @@ ghcr镜像:
 | ghcr.milu.moe   |                    |
 
 > `docker pull xxx/<your-username>/<your-image>:<tag>`
+
+
+```bash
+for REGISTRY in $(docker-credential-osxkeychain list 2>/dev/null | jq -r 'keys[]'); do
+  echo $REGISTRY | docker-credential-osxkeychain get
+done
+```
