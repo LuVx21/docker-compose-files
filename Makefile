@@ -64,8 +64,8 @@ jupyter:
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 	./build.sh rust_base latest "" "" "--target=rust_base ./jupyter"
 upx:
-	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.1.1"
-	./build.sh upx latest,5               "UPX_VERSION=5.1.1"
+	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.2.0"
+	./build.sh upx latest,5               "UPX_VERSION=5.2.0"
 duckdb:
 	./build.sh duckdb latest
 pichome:
