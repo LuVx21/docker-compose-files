@@ -59,7 +59,6 @@ dpanel/dpanel:latest
 freshrss/freshrss:latest
 fullstorydev/{grpcui,grpcurl}:latest
 grafana/grafana:latest
-hectorqin/reader:{,openj9-}latest
 hectorqin/remote-webview:latest
 henrygd/beszel:latest
 jauderho/octosql:latest
