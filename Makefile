@@ -46,7 +46,7 @@ jdk:
 			tags="$$tags,latest"; \
 		fi; \
 		./build.sh oracle_jdk  "$$tags" "JAVA_VERSION=$$tag"; \
-		./build.sh graalvm_jdk "$$tags" "JAVA_VERSION=$$tag"; \
+# 		./build.sh graalvm_jdk "$$tags" "JAVA_VERSION=$$tag"; \
 	done
 mvnd:
 	./build.sh mvnd latest,1 "MVND_VERSION=1.0.5"      linux/amd64
