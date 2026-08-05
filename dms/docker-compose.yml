@@ -1,0 +1,18 @@
+services:
+  dbx:
+    image: t8y2/dbx:latest
+    container_name: dbx
+    ports:
+      - 4224:4224
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/dbx/data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+      - http_proxy=http://host.docker.internal:7890
+      - https_proxy=http://host.docker.internal:7890
+
+networks:
+  net_common:
+    external: true

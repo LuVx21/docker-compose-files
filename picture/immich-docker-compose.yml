@@ -1,0 +1,81 @@
+#
+# WARNING: To install Immich, follow our guide: https://docs.immich.app/install/docker-compose
+#
+# Make sure to use the docker-compose.yml of the current release:
+#
+# https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
+#
+# The compose file on main may not be compatible with the latest release.
+
+name: immich
+
+services:
+  immich-server:
+    image: $GH_CR_NJU/immich-app/immich-server:${IMMICH_VERSION:-release}
+    container_name: immich_server
+    volumes:
+      - $HOME/docker/immich/data:/data
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '2283:2283'
+    networks:
+      - net_common
+    depends_on:
+      # - redis
+      - database
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOSTNAME=redis-master
+      # - REDIS_PORT=6379
+      # - REDIS_USERNAME=default
+      - REDIS_PASSWORD=1121
+      # - REDIS_DBINDEX=0
+    restart: always
+    healthcheck:
+      disable: false
+
+  # immich-machine-learning:
+  #   image: $GH_CR_NJU/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+  #   container_name: immich_machine_learning
+  #   networks:
+  #     - net_common
+  #   volumes:
+  #     - $HOME/docker/immich/ml:/cache
+  #   env_file:
+  #     - .env
+  #   restart: always
+  #   healthcheck:
+  #     disable: false
+
+  # redis:
+  #   image: docker.io/valkey/valkey:9
+  #   container_name: immich_redis
+  #   networks:
+  #     - net_common
+  #   healthcheck:
+  #     test: redis-cli ping || exit 1
+  #   restart: always
+
+  database:
+    image: $GH_CR_NJU/immich-app/postgres:${DB_VERSION}
+    container_name: immich_postgres
+    networks:
+      - net_common
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: immich
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - $HOME/docker/postgresql18:/var/lib/postgresql
+    shm_size: 128mb
+    restart: always
+    healthcheck:
+      disable: false
+
+networks:
+  net_common:
+    external: true

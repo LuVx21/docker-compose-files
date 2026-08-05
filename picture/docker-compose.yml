@@ -1,0 +1,55 @@
+services:
+  # pichome:
+  #   platform: linux/amd64
+  #   image: oaooa/pichome:latest
+  #   container_name: pichome
+  #   ports:
+  #     - 1080:80
+  #   networks:
+  #     - net_common
+  #   volumes:
+  #     - "$HOME/docker/pichome:/var/www/html"
+  #     - "$HOME/docker/pichome/data:/home/data"
+
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    ports:
+      - 2342:2342
+    networks:
+      - net_common
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: xr0926
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"
+      PHOTOPRISM_DATABASE_USER: "root"
+      PHOTOPRISM_DATABASE_PASSWORD: "1121"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+    volumes:
+      - $HOME/docker/photoprism/storage:/photoprism/storage
+      - $HOME/docker/photoprism/pictures:/photoprism/originals
+
+  lomo:
+    image: lomorage/arm64-lomorage:latest
+    container_name: lomorage
+    ports:
+      - 8000:8000
+      - 8004:8004
+    networks:
+      - net_common
+    privileged: true
+    cap_add:
+      - ALL
+    volumes:
+      - $HOME/docker/lomo/media/jeromy/My Passport1:/media/WD_36AA8D42AA8D001B
+      - $HOME/docker/lomo/media/jeromy/My Passport:/media/WD_90C27F73C27F5C82
+      - $HOME/docker/lomo:/lomo
+      - /dev:/dev
+    environment:
+      - LOMOD_DISABLE_MOUNT_MONITOR=1
+
+  # chronoframe: github.com/hoshinosuzumi/chronoframe
+
+networks:
+  net_common:
+    external: true

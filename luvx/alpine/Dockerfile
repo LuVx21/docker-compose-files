@@ -93,3 +93,14 @@ FROM luvx/base:0-alpine-${VERSION} AS alpine-runner
 WORKDIR /app
 ARG PACKAGE
 RUN apk add --update --no-cache ${PACKAGE} && rm -fr /var/cache/apk/*
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FROM ${REGISTRY}alpine:3.${VERSION} AS sshd
+RUN apk add --no-cache openssh && ssh-keygen -A && echo 'root:1121' | chpasswd \
+    && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config \
+    && echo 'PermitOpen any' >> /etc/ssh/sshd_config \
+    && sed -i 's/AllowTcpForwarding no/AllowTcpForwarding yes/' /etc/ssh/sshd_config \
+    && sed -i 's/GatewayPorts no/GatewayPorts yes/' /etc/ssh/sshd_config
+
+CMD ["/usr/sbin/sshd", "-D"]

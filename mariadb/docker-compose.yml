@@ -1,0 +1,28 @@
+services:
+  mariadb:
+    image: mariadb:12
+    container_name: mariadb
+    # ports:
+    #   - 3306:3306
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/mariadb/data:/var/lib/mysql
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_ROOT_PASSWORD: "1121"
+      MARIADB_USER: "luvx"
+      MARIADB_PASSWORD: "1121"
+      MARIADB_DATABASE: "boot"
+    stop_grace_period: 15s
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
+    ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
+    command: --innodb-buffer-pool-size=512M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+
+networks:
+  net_common:
+    external: true

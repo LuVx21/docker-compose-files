@@ -188,3 +188,16 @@ WORKDIR /app
 ARG PACKAGE
 RUN apt-get update && apt-get install -y --no-install-recommends ${PACKAGE}; \
     rm -rf /var/lib/apt/lists/*
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+FROM ${REGISTRY}debian:${VERSION}-slim AS sshd
+RUN apt-get update && apt-get install -y --no-install-recommends openssh-server \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /var/run/sshd \
+    && echo 'root:1121' | chpasswd \
+    && sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config \
+    && echo 'PermitOpen any' >> /etc/ssh/sshd_config \
+    && sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/' /etc/ssh/sshd_config \
+    && sed -i 's/#GatewayPorts no/GatewayPorts yes/' /etc/ssh/sshd_config
+
+CMD ["/usr/sbin/sshd", "-D"]
