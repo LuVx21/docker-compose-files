@@ -52,8 +52,8 @@ mvnd:
 	./build.sh mvnd latest,1 "MVND_VERSION=1.0.5"      linux/amd64
 	./build.sh mvnd 2        "MVND_VERSION=2.0.0-rc-3" linux/amd64
 sshd:
-	./build.sh sshd latest-alpine "" "" "--target=sshd ./luvx/alpine"
-	./build.sh sshd latest        "" "" "--target=sshd ./luvx"
+	./build.sh sshd latest-alpine "" linux/arm64 "--target=sshd ./luvx/alpine"
+	./build.sh sshd latest        "" linux/arm64 "--target=sshd ./luvx"
 iredis:
 	./build.sh iredis latest,1      ""                linux/amd64 "--target=iredis ./luvx"
 	./build.sh iredis latest-alpine "PACKAGES=iredis" ""          "--target=python-runner ./luvx/alpine"
