@@ -69,6 +69,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: immich
       POSTGRES_INITDB_ARGS: '--data-checksums'
+      IGNORE_DATABASE_FSTYPE: true
     volumes:
       - $HOME/docker/postgresql18:/var/lib/postgresql
     shm_size: 128mb

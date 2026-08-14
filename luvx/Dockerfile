@@ -200,6 +200,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends openssh-server 
     && sed -i 's/#AllowTcpForwarding yes/AllowTcpForwarding yes/' /etc/ssh/sshd_config \
     && sed -i 's/#GatewayPorts no/GatewayPorts yes/' /etc/ssh/sshd_config
 
-RUN touch README.md
-
 CMD ["/usr/sbin/sshd", "-D"]

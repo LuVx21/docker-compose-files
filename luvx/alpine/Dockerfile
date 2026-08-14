@@ -103,6 +103,4 @@ RUN apk add --no-cache openssh && ssh-keygen -A && echo 'root:1121' | chpasswd \
     && sed -i 's/AllowTcpForwarding no/AllowTcpForwarding yes/' /etc/ssh/sshd_config \
     && sed -i 's/GatewayPorts no/GatewayPorts yes/' /etc/ssh/sshd_config
 
-RUN touch README.md
-
 CMD ["/usr/sbin/sshd", "-D"]

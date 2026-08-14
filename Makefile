@@ -51,6 +51,7 @@ jdk:
 mvnd:
 	./build.sh mvnd latest,1 "MVND_VERSION=1.0.5"      linux/amd64
 	./build.sh mvnd 2        "MVND_VERSION=2.0.0-rc-3" linux/amd64
+.PHONY: sshd
 sshd:
 	./build.sh sshd latest-alpine "" linux/arm64 "--target=sshd ./luvx/alpine"
 	./build.sh sshd latest        "" linux/arm64 "--target=sshd ./luvx"
