@@ -22,7 +22,7 @@ test:
 # -----------------------------------------------------------------------------------------------------------------------
 base-alpine:
 	@for tag in 0 1 2 3; do \
-		for os in 21 22 23; do \
+		for os in 24 23; do \
 			./build.sh base $$tag-alpine-$$os "VERSION=$$os,T=$$tag"; \
 		done; \
 	done
@@ -119,8 +119,8 @@ workflow-sync:
 workflow-build:
 	gh workflow run build.yml \
 		-f image=alpine \
-		-f tag=latest,3.23 \
-		-f buildArg="VERSION=3.23" \
+		-f tag=latest,3.24 \
+		-f buildArg="VERSION=3.24" \
 		# -f platform="linux/arm64,linux/amd64" \
 		-f customArg="--target=alpine ./luvx/alpine"
 
