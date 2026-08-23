@@ -11,7 +11,7 @@ eclipse-temurin:{latest,{8,11,17,21,25,26}{,-jdk,-jre}}
 fedora:{latest,39,40,41,42}
 flink:latest
 gcc:{latest,12,13,14}
-golang:{latest,1{,.25,.26.27}{,-alpine,-bookworm,-trixie}}
+golang:{latest,1{,.25,.26,.27}{,-alpine,-bookworm,-trixie}}
 gradle:latest
 maven:{latest,3{,-eclipse-temurin-{8,11,17,21,25,26}}}
 mongo-express:latest
