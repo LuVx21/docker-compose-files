@@ -81,8 +81,8 @@ for _tag in ${tags[@]}; do
   image_info+="-t ${ALI_CR}/${image}:${_tag} "
 done
 
-echo "执行命令: docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
-docker buildx build --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} \
+echo "执行命令: docker buildx build --provenance=false --sbom=false --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
+docker buildx build --provenance=false --sbom=false --push --build-arg CR=${ALI_CR_NS} ${buildArg} ${target} \
   --platform ${platform} \
   ${image_info} \
   ${url} ${CUSTOM_ARG} # --output type=docker,dest=- | docker load # 推送的同时本地也有一份

@@ -174,8 +174,8 @@ jobs:
             image_info+="-t ${ALI_CR}/${image}:${_tag} "
           done
 
-          echo "执行命令: docker buildx build --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
-          docker buildx build --push ${buildArg} ${target} \
+          echo "执行命令: docker buildx build --provenance=false --sbom=false --push ${buildArg} ${target} --platform ${platform} ${image_info} ${url} ${CUSTOM_ARG}" | sed -E 's/ (--|-t)/\n\1/g'
+          docker buildx build --provenance=false --sbom=false --push ${buildArg} ${target} \
             --platform ${platform} \
             ${image_info} \
             ${url} ${CUSTOM_ARG}
