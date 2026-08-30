@@ -1,12 +1,12 @@
-# mongosh "mongodb://username:password@localhost:10260/?tls=true&tlsAllowInvalidCertificates=true&authMechanism=SCRAM-SHA-256"
+# mongosh "mongodb://postgres:postgres@localhost:10260/?tls=true&tlsAllowInvalidCertificates=true&authMechanism=SCRAM-SHA-256"
 
 services:
   documentdb:
     image: ${GH_CR_NJU}/documentdb/documentdb/documentdb-local:${IMAGE_VERSION}
     container_name: documentdb
     ports:
-      - 5432:9712  # pg端口
-      - 27018:10260 # 可用--documentdb-port参数修改
+      - 9712:9712   # pg端口
+      - 10260:10260 # 可用--documentdb-port参数修改
     networks:
       - net_common
     volumes:
@@ -14,9 +14,10 @@ services:
     environment:
       - PORT=10260
       - PG_PORT=9712
-      - USERNAME=username
-      - PASSWORD=password
+      - USERNAME=postgres
+      - PASSWORD=postgres
       - LOG_LEVEL=info
+    # command: ["--username", "postgres", "--password", "postgres"]
 
 networks:
   net_common:

@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   shard_config_1:
     image: mongo:${MONGO_VERSION}

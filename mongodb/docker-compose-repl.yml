@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   rs_mongo_1:
     image: mongo:${MONGO_VERSION}

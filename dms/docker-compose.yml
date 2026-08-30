@@ -8,10 +8,65 @@ services:
       - net_common
     volumes:
       - $HOME/docker/dbx/data:/app/data
+      - $HOME/docker/dbx/backups:/app/backups
+      - $HOME/data:/app/extend_db
     environment:
       - TZ=Asia/Shanghai
       - http_proxy=http://host.docker.internal:7890
       - https_proxy=http://host.docker.internal:7890
+
+
+  gonavi-web-server:
+    image: ${GH_CR_NJU}/syngnat/gonavi-web-server:latest
+    container_name: gonavi-web-server
+    ports:
+      - 34116:34116
+    networks:
+      - net_common
+    environment:
+      GONAVI_DATA_ROOT: /data
+      GONAVI_LOG_DIR: /var/lib/gonavi/logs
+      GONAVI_WEB_ADDR: 0.0.0.0:34116
+      GONAVI_WEB_PASSWORD: 123456
+    volumes:
+      - $HOME/docker/dms/gonavi/data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:34116/__gonavi/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    command: ["web-server"]
+
+  chat2db:
+    image: chat2db/chat2db:latest
+    container_name: chat2db
+    ports:
+      - 10825:10825
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/chat2db/data:/root/.chat2db-community
+      - $HOME/docker/chat2db/encryption.key:/root/.config/chat2db-community/encryption.key:ro
+    environment:
+      # openssl rand -base64 32 > encryption.key && chmod 600 encryption.key
+      CHAT2DB_COMMUNITY_ENCRYPTION_KEY_FILE: /root/.config/chat2db-community/encryption.key
+
+  chartdb:
+    image: luvx/chartdb:latest
+    container_name: chartdb
+    networks:
+      - net_common
+
+  backupx:
+    image: jeessy/backup-x:latest
+    container_name: backupx
+    ports:
+      - 9977:9977
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/db/backupx/data:/app/backup-x-files
 
 networks:
   net_common:

@@ -1,26 +1,53 @@
 
 services:
   postgresql-master:
-    image: postgres:16
+    image: ${IMAGE}:${VERSION:-18}
     container_name: postgresql-master
+    restart: unless-stopped
     ports:
       - 5432:5432
     networks:
       - net_common
     volumes:
-      - $HOME/docker/postgresql/data:/var/lib/postgresql/data
+      - $HOME/docker/postgresql18:/var/lib/postgresql
     environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-boot}
-      POSTGRES_USER: ${POSTGRES_USER:-username}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-      POSTGRES_INITDB_ARGS: '--data-checksums'
-    # healthcheck:
-    #   test:
-    #     ["CMD", "pg_isready", "-U", "username", "-d", "postgres"]
-    #   test: ["CMD-SHELL", "pg_isready -U postgres"]
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 5
+      POSTGRES_INITDB_ARGS: '--data-checksums --data-checksums --encoding=UTF8 --locale=C'
+      IGNORE_DATABASE_FSTYPE: true
+      TZ: Asia/Shanghai
+      PGTZ: Asia/Shanghai
+      # ===== 本地化配置 =====
+      LANG: zh_CN.UTF-8
+      LC_ALL: zh_CN.UTF-8
+
+      # ===== 性能调优(按需调整) =====
+      POSTGRES_SHARED_BUFFERS: 256MB
+      POSTGRES_MAX_CONNECTIONS: 200
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-username} -d ${POSTGRES_DB:-boot} -h 127.0.0.1 -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    # command:
+    #   - "postgres"
+    #   - "-c"
+    #   - "max_connections=200"
+    #   - "-c"
+    #   - "shared_buffers=256MB"
+    #   - "-c"
+    #   - "timezone=Asia/Shanghai"
+    #   - "-c"
+    #   - "log_timezone=Asia/Shanghai"
+    #   - "-c"
+    #   - "log_statement=ddl"
+    #   - "-c"
+    #   - "log_min_duration_statement=1000"
+    #   - "-c"
+    #   - "listen_addresses=*"
 
   opengauss:
     image: opengauss:2.0.0

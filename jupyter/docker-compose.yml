@@ -3,7 +3,6 @@ services:
     image: ${ALI_CR:+$ALI_CR/}luvx/jupyter:vscode
     container_name: jupyter
     ports:
-      - 10022:22
       - 8888:8888
       - 8000:8000
     networks:
@@ -29,6 +28,8 @@ services:
     working_dir: /workspace
     environment:
       - TZ=Asia/Shanghai
+      - http_proxy=http://host.docker.internal:7890
+      - https_proxy=http://host.docker.internal:7890
       # - PASSWORD=xxxx
     # command: jupyter lab --no-browser --allow-root --ip=0.0.0.0 --ServerApp.allow_origin='*' --IdentityProvider.token='' --ServerApp.password='' --ServerApp.disable_check_xsrf=True
 

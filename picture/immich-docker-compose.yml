@@ -11,11 +11,13 @@ name: immich
 
 services:
   immich-server:
-    image: $GH_CR_NJU/immich-app/immich-server:${IMMICH_VERSION:-release}
+    image: ${GH_CR_NJU}/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_server
     volumes:
       - $HOME/docker/immich/data:/data
       - /etc/localtime:/etc/localtime:ro
+      - $HOME/Pictures/immich:/mnt/photos:ro
+      - $HOME/webdav/jianguoyun/immich:/mnt/webdav:ro
     ports:
       - '2283:2283'
     networks:
@@ -26,17 +28,19 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=Asia/Shanghai
       - REDIS_HOSTNAME=redis-master
       # - REDIS_PORT=6379
       # - REDIS_USERNAME=default
       - REDIS_PASSWORD=1121
       # - REDIS_DBINDEX=0
+      - DB_HOSTNAME=postgresql-master
     restart: always
     healthcheck:
       disable: false
 
   # immich-machine-learning:
-  #   image: $GH_CR_NJU/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+  #   image: ${GH_CR_NJU}/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
   #   container_name: immich_machine_learning
   #   networks:
   #     - net_common
@@ -58,7 +62,7 @@ services:
   #   restart: always
 
   database:
-    image: $GH_CR_NJU/immich-app/postgres:${DB_VERSION}
+    image: ${GH_CR_NJU}/immich-app/postgres:${DB_VERSION}
     container_name: immich_postgres
     networks:
       - net_common

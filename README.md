@@ -12,6 +12,11 @@
 
 一些常用镜像环境, 快速启动
 
+创建网络
+```bash
+docker network create --subnet=192.168.97.0/24 --gateway=192.168.97.1 net_common
+```
+
 ## actions
 
 同步`hub.docker.com`镜像到国内(或自建`registry`); 构建自用镜像

@@ -19,6 +19,7 @@ services:
     networks:
       - net_common
     environment:
+      PHOTOPRISM_READONLY: true
       PHOTOPRISM_ADMIN_PASSWORD: xr0926
       PHOTOPRISM_DATABASE_DRIVER: "mysql"
       PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"
@@ -27,7 +28,7 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"
     volumes:
       - $HOME/docker/photoprism/storage:/photoprism/storage
-      - $HOME/docker/photoprism/pictures:/photoprism/originals
+      - $HOME/Pictures/immich:/photoprism/originals:ro
 
   lomo:
     image: lomorage/arm64-lomorage:latest

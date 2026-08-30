@@ -5,23 +5,22 @@ services:
     container_name: mysql${VERSION}-master
     networks:
       - net_common
-    privileged: true
     user: 501:20
     volumes:
       - $HOME/docker/mysql${VERSION}/mysql_0/data/:/var/lib/mysql
       - $HOME/docker/mysql${VERSION}/mysql_0/logs/:/var/log/mysql
-      # - $HOME/docker/mysql${VERSION}/mysql_0/conf/:/etc/mysql
+      - $HOME/docker/mysql${VERSION}/mysql_0/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+      - $HOME/docker/mysql${VERSION}/mysql_0/backup/:/backup
       # 数据库还原目录 可将需要还原的sql文件放在这里
-      # - $HOME/docker/mysql${VERSION}/mysql_0/init/:/docker-entrypoint-initdb.d
-      # - $HOME/docker/mysql${VERSION}/mysql_0/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_0/init/:/docker-entrypoint-initdb.d
     # command: [
     #     '--character-set-server=utf8mb4',
     #     '--collation-server=utf8mb4_general_ci',
-    #     'lower-case-table-names=1',
+    #     '--lower-case-table-names=1',
     #     '--max_connections=3000'
     # ]
     environment:
-      MYSQL_ROOT_PASSWORD: 1121
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
       # MYSQL_DATABASE: xxx
@@ -29,7 +28,7 @@ services:
     ports:
       - 53306:3306
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 30s
       timeout: 20s
       retries: 10
@@ -44,16 +43,14 @@ services:
         condition: service_healthy
     networks:
       - net_common
-    privileged: true
     user: 501:20
     volumes:
       - $HOME/docker/mysql${VERSION}/mysql_1/data/:/var/lib/mysql
       - $HOME/docker/mysql${VERSION}/mysql_1/logs/:/var/log/mysql
-      - $HOME/docker/mysql${VERSION}/mysql_1/conf/:/etc/mysql
       # - $HOME/docker/mysql${VERSION}/mysql_1/init/:/docker-entrypoint-initdb.d
-      - $HOME/docker/mysql${VERSION}/mysql_1/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_1/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     environment:
-      MYSQL_ROOT_PASSWORD: 1121
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
@@ -75,16 +72,14 @@ services:
         condition: service_healthy
     networks:
       - net_common
-    privileged: true
     user: 501:20
     volumes:
       - $HOME/docker/mysql${VERSION}/mysql_2/data/:/var/lib/mysql
       - $HOME/docker/mysql${VERSION}/mysql_2/logs/:/var/log/mysql
-      - $HOME/docker/mysql${VERSION}/mysql_2/conf/:/etc/mysql
       # - $HOME/docker/mysql${VERSION}/mysql_2/init/:/docker-entrypoint-initdb.d
-      - $HOME/docker/mysql${VERSION}/mysql_2/my.cnf:/etc/my.cnf
+      - $HOME/docker/mysql${VERSION}/mysql_2/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     environment:
-      MYSQL_ROOT_PASSWORD: 1121
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # MYSQL_USER: xxx
       # MYSQL_PASSWORD: xxx
       TZ: Asia/Shanghai
@@ -124,7 +119,7 @@ services:
 #    environment:
 #      - DATABASIR_DB_URL=mysql-master:3306
 #      - DATABASIR_DB_USERNAME=root
-#      - DATABASIR_DB_PASSWORD=1121
+#      - DATABASIR_DB_PASSWORD=${MYSQL_ROOT_PASSWORD}
 #    ports:
 #      - 8080:8080
 
@@ -137,33 +132,6 @@ services:
 #    #   - "8080:8080"
 #    volumes:
 #      - $HOME/data/sqlite/main.db:/db/main.db
-
-  chat2db:
-    image: chat2db/chat2db:latest
-    container_name: chat2db
-    ports:
-      - "10824:10824"
-    networks:
-      - net_common
-    volumes:
-      - $HOME/docker/chat2db:/root/.chat2db
-#      - $HOME/.chat2db:/root/.chat2db
-
-  chartdb:
-    image: luvx/chartdb:latest
-    container_name: chartdb
-    networks:
-      - net_common
-
-  backupx:
-    image: jeessy/backup-x:latest
-    container_name: backupx
-    ports:
-      - 9977:9977
-    networks:
-      - net_common
-    volumes:
-      - $HOME/docker/db/backupx/data:/app/backup-x-files
 
 networks:
   net_common:
