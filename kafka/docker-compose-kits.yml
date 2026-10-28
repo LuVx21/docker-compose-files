@@ -11,7 +11,7 @@ services:
       - /etc/localtime:/etc/localtime
     environment:
       - KAFKA_CLUSTERS_0_NAME=cluster_name_01 # 集群名称
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_0:9092,kafka_1:9092,kafka_2:9092 # 集群地址
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092 # 集群地址
 
   kafka-console-ui:
     platform: linux/amd64
@@ -35,7 +35,17 @@ services:
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: "kafka_0:9092,kafka_1:9092,kafka_2:9092"
+      KAFKA_BROKERCONNECT: "kafka-0:9092,kafka-1:9092,kafka-2:9092"
+
+  console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: redpanda-console
+    networks:
+      - net_common
+    ports:
+      - "8888:8080"
+    environment:
+      - KAFKA_BROKERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
 
 networks:
   net_common:

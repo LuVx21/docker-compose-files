@@ -1,5 +1,5 @@
 x-common: &common
-  image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+  image: apache/kafka${NATIVE}:${KAFKA_VERSION}
   networks:
     - net_common
 x-broker: &broker
@@ -12,7 +12,7 @@ x-broker: &broker
 services:
   controller-1:
     <<: *common
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: controller-1
     # networks:
     #   - net_common
@@ -27,7 +27,7 @@ services:
 
   controller-2:
     <<: *common
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: controller-2
     # networks:
     #   - net_common
@@ -42,7 +42,7 @@ services:
 
   controller-3:
     <<: *common
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: controller-3
     # networks:
     #   - net_common
@@ -57,7 +57,7 @@ services:
 
   broker-1:
     <<: *broker
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: broker-1
     # networks:
     #   - net_common
@@ -80,7 +80,7 @@ services:
 
   broker-2:
     <<: *broker
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: broker-2
     # networks:
     #   - net_common
@@ -103,7 +103,7 @@ services:
 
   broker-3:
     <<: *broker
-    # image: apache/kafka${NATIVE}:${APACHE_IMAGE_VERSION}
+    # image: apache/kafka${NATIVE}:${KAFKA_VERSION}
     container_name: broker-3
     # networks:
     #   - net_common
