@@ -1,0 +1,42 @@
+services:
+  edgeever:
+    image: "${EDGE_EVER_IMAGE:-ghcr.io/tianma-if/edgeever}:${EDGE_EVER_VERSION:-latest}"
+    container_name: edgeever
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${EDGE_EVER_PORT:-8787}:8787"
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/edgeever:/data
+    environment:
+      TZ: Asia/Shanghai
+      EDGE_EVER_AUTH_USERNAME: "${EDGE_EVER_AUTH_USERNAME:-admin}"
+      EDGE_EVER_AUTH_PASSWORD: "${EDGE_EVER_AUTH_PASSWORD:?Set EDGE_EVER_AUTH_PASSWORD before starting EdgeEver}"
+      EDGE_EVER_CONTAINER_IMAGE: "${EDGE_EVER_IMAGE:-ghcr.io/tianma-if/edgeever}"
+      EDGE_EVER_SESSION_TTL_DAYS: 500
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 30s
+
+  memos:
+    image: neosmemo/memos:stable
+    container_name: memos
+    restart: unless-stopped
+    ports:
+      - ${MEMOS_PORT:-5230}:5230
+    networks:
+      - net_common
+    volumes:
+      - $HOME/docker/memos:/var/opt/memos
+    environment:
+      MEMOS_PORT: 5230
+      MEMOS_DRIVER: postgres
+      MEMOS_DSN: postgres://postgres:postgres@postgresql-master:5432/memos?sslmode=disable
+
+networks:
+  net_common:
+    external: true
