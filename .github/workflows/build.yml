@@ -45,7 +45,7 @@ jobs:
           echo ${{ inputs.customArg }}
           echo "=============================================================================="
       - name: 代码检出
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
         with:

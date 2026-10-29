@@ -38,7 +38,7 @@ jobs:
           echo "${{ inputs.dockerhub_images }}"
           echo "=============================================================================="
       - name: 代码检出
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
       # 增加可用磁盘空间
       - name: 增加构建磁盘空间
         uses: easimon/maximize-build-space@master
@@ -163,11 +163,13 @@ jobs:
           fi
 
           echo "同步images.txt镜像"
-          content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/images.txt)
-          if echo "$content" | grep -q '#exit'; then
+          flag=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/kv.txt | grep "^docker_image_sync_remote=" | cut -d'=' -f2- 2>/dev/null || true)
+          content=""
+          if [[ "${flag}" == "true" ]]; then
+            content=$(curl -s https://gist.githubusercontent.com/LuVx21/dec395659156b528558b38ee89126113/raw/images.txt)
             echo "仅远程"
           else
-            content="$content $(cat images.txt)"
+            content="$(cat images.txt)"
           fi
 
           # 原读文件

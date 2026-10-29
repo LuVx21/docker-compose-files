@@ -63,7 +63,7 @@ services:
       - $HOME/docker/beszel:/beszel_data
 
   beszel-agent:
-    image: ccr.ccs.tencentyun.com/luvx21/henrygd_beszel-agent
+    image: $ALI_CR/luvx/henrygd_beszel-agent
     container_name: beszel-agent
     network_mode: host
     volumes:
