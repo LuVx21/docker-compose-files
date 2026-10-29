@@ -1,21 +1,19 @@
 services:
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    networks:
-      - net_common
-    # restart: always
+  kafbat-ui:
+    container_name: kafbat-ui
+    image: ${GH_CR_NJU}/kafbat/kafka-ui:latest
     ports:
       - 8080:8080
-    volumes:
-      - /etc/localtime:/etc/localtime
     environment:
-      - KAFKA_CLUSTERS_0_NAME=cluster_name_01 # 集群名称
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092 # 集群地址
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      SWAGGER_UI_ENABLED: 'true'
+    # volumes:
+    #   - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
 
   kafka-console-ui:
-    platform: linux/amd64
-    image: wdkang/kafka-console-ui
+    build:
+      dockerfile: Dockerfile-kafka-console-ui
+    image: luvx/kafka-console-ui:latest
     container_name: kafka-console-ui
     networks:
       - net_common
@@ -24,28 +22,50 @@ services:
     volumes:
       - $HOME/docker/kafka-console-ui/data:/app/data
       - $HOME/docker/kafka-console-ui/log:/app/log
+      # - ./ca.pem:/etc/certs/ca.pem:ro
     privileged: true
 
-  kafdrop:
-    platform: linux/amd64
-    image: obsidiandynamics/kafdrop
-    container_name: kafdrop
-    networks:
-      - net_common
-    ports:
-      - "9000:9000"
-    environment:
-      KAFKA_BROKERCONNECT: "kafka-0:9092,kafka-1:9092,kafka-2:9092"
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka-ui
+  #   networks:
+  #     - net_common
+  #   # restart: always
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /etc/localtime:/etc/localtime
+  #     - ./ca.pem:/etc/certs/ca.pem:ro
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=cluster_name_01 # 集群名称
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-0:9092,kafka-1:9092,kafka-2:9092 # 集群地址
+  #     - KAFKA_CLUSTERS_1_NAME=aiven-kafka
+  #     - KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS=hosthosthost:portportport
+  #     - KAFKA_CLUSTERS_1_PROPERTIES_SECURITY_PROTOCOL=SASL_SSL
+  #     - KAFKA_CLUSTERS_1_PROPERTIES_SASL_MECHANISM=SCRAM-SHA-256
+  #     - KAFKA_CLUSTERS_1_PROPERTIES_SASL_JAAS_CONFIG=org.apache.kafka.common.security.scram.ScramLoginModule required username="xxx" password="xxx";
+  #     - KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_LOCATION=/etc/certs/ca.pem
+  #     - KAFKA_CLUSTERS_1_PROPERTIES_SSL_TRUSTSTORE_TYPE=PEM
 
-  console:
-    image: docker.redpanda.com/redpandadata/console:latest
-    container_name: redpanda-console
-    networks:
-      - net_common
-    ports:
-      - "8888:8080"
-    environment:
-      - KAFKA_BROKERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
+  # kafdrop:
+  #   image: obsidiandynamics/kafdrop:latest
+  #   container_name: kafdrop
+  #   networks:
+  #     - net_common
+  #   ports:
+  #     - "9000:9000"
+  #   environment:
+  #     KAFKA_BROKERCONNECT: "kafka-0:9092,kafka-1:9092,kafka-2:9092"
+
+  # console:
+  #   image: docker.redpanda.com/redpandadata/console:latest
+  #   container_name: redpanda-console
+  #   networks:
+  #     - net_common
+  #   ports:
+  #     - "8888:8080"
+  #   environment:
+  #     - KAFKA_BROKERS=kafka-0:9092,kafka-1:9092,kafka-2:9092
 
 networks:
   net_common:

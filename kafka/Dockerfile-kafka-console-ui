@@ -1,0 +1,19 @@
+FROM buildpack-deps:curl AS downloader
+RUN apt update && apt -y install jq
+RUN curl -sL https://api.github.com/repos/xxd763795151/kafka-console-ui/releases/latest \
+  | jq -r '.assets[] | select(.name | contains(".tar.gz")) | .browser_download_url' \
+  | xargs -I {} curl -L -o unzip.tar.gz {} \
+  && mkdir app && tar -zxvf unzip.tar.gz -C app --strip-components=1 && rm unzip.tar.gz
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=downloader app .
+RUN mkdir -p log && mkdir -p data
+EXPOSE 7766
+# start server (jdk17+ 需要添加 --add-opens 参数)
+CMD ["java", "-jar", "-Xmx512m", "-Xms512m", "-Xmn256m", "-Xss256k", \
+     "--add-opens", "java.base/java.io=ALL-UNNAMED", \
+     "--add-opens", "java.base/java.lang=ALL-UNNAMED", \
+     "--add-opens", "java.base/java.util=ALL-UNNAMED", \
+     "--add-opens", "java.base/java.net=ALL-UNNAMED", \
+     "/app/lib/kafka-console-ui.jar", "--spring.config.location=/app/config/", "--logging.home=/app/log", "--data.dir=/app/data"]

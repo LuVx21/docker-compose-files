@@ -76,6 +76,8 @@ pichome:
 	./build.sh pichome latest,2
 mongosh:
 	./build.sh mongosh latest "" "" "--target=mongosh ./luvx"
+kafka-console-ui:
+	./build.sh kafka-console-ui 1.2.0,latest "" "" "-f Dockerfile-kafka-console-ui ./kafka"
 ldb:
 	./build.sh ldb latest,10 "" "" "--target=ldb ./luvx"
 rocketmq-dashboard:

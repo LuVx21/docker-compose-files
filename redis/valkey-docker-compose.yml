@@ -11,6 +11,29 @@ services:
     #   - $HOME/docker/valkey/data:/data
     #   - $HOME/docker/valkey/logs:/logs
 
+  valkey-admin:
+    image: valkey/valkey-admin:latest
+    container_name: valkey-admin
+    # ports:
+    #   - "8080:8080"
+    networks:
+      - net_common
+    environment:
+      DEPLOYMENT_MODE: Web
+    restart: unless-stopped
+
+  dragonfly:
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    container_name: dragonfly
+    # ports:
+    #   - "6379:6379"
+    networks:
+      - net_common
+    # volumes:
+    #   - dragonflydata:/data
+    ulimits:
+      memlock: -1
+
 networks:
   net_common:
     external: true
