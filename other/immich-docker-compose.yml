@@ -2,7 +2,7 @@ name: immich
 
 services:
   immich-server:
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    image: $GH_CR_NJU/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_server
     ports:
       - 2283:3001
@@ -27,7 +27,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    image: $GH_CR_NJU/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
     volumes:
       - model-cache:/cache
     healthcheck:

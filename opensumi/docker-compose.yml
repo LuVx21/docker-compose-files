@@ -1,7 +1,7 @@
 
 services:
   opensumi:
-    image: ghcr.io/opensumi/opensumi-web:latest
+    image: $GH_CR_NJU/opensumi/opensumi-web:latest
     container_name: opensumi
     ports:
       - 58000:8000

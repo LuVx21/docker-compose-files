@@ -1,6 +1,6 @@
 services:
   edgeever:
-    image: "${EDGE_EVER_IMAGE:-ghcr.io/tianma-if/edgeever}:${EDGE_EVER_VERSION:-latest}"
+    image: "${EDGE_EVER_IMAGE:-$GH_CR_NJU/tianma-if/edgeever}:${EDGE_EVER_VERSION:-latest}"
     container_name: edgeever
     restart: unless-stopped
     init: true
@@ -14,7 +14,7 @@ services:
       TZ: Asia/Shanghai
       EDGE_EVER_AUTH_USERNAME: "${EDGE_EVER_AUTH_USERNAME:-admin}"
       EDGE_EVER_AUTH_PASSWORD: "${EDGE_EVER_AUTH_PASSWORD:?Set EDGE_EVER_AUTH_PASSWORD before starting EdgeEver}"
-      EDGE_EVER_CONTAINER_IMAGE: "${EDGE_EVER_IMAGE:-ghcr.io/tianma-if/edgeever}"
+      EDGE_EVER_CONTAINER_IMAGE: "${EDGE_EVER_IMAGE:-$GH_CR_NJU/tianma-if/edgeever}"
       EDGE_EVER_SESSION_TTL_DAYS: 500
     security_opt:
       - no-new-privileges:true
