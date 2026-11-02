@@ -82,8 +82,8 @@ ldb:
 	./build.sh ldb latest,10 "" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
 	$(eval VERSION := 3.0.0)
-	./build.sh rocketmq-dashboard-server $(VERSION) "" "" "-f server/Dockerfile https://github.com/apache/rocketmq-dashboard.git#v$(VERSION)"
 	./build.sh rocketmq-dashboard-web $(VERSION) "" "" "-f Dockerfile https://github.com/apache/rocketmq-dashboard.git#v$(VERSION):web"
+	./build.sh rocketmq-dashboard-server $(VERSION) "" "" "-f server/Dockerfile https://github.com/apache/rocketmq-dashboard.git#v$(VERSION)"
 go-runner:
 	./build.sh gore    latest-alpine "GO_INSTALL_URL=github.com/x-motemen/gore/cmd/gore@latest;golang.org/x/tools/gopls@latest" "" "--target=go-installer ./luvx/alpine"
 	./build.sh hget    latest-alpine "GO_INSTALL_URL=github.com/huydx/hget@latest"                                              "" "--target=go-runner ./luvx/alpine"
@@ -108,7 +108,7 @@ python-runner:
 # 	./build.sh sqlit-tui latest        "PACKAGES=sqlit-tui" "" "--target=python-runner ./luvx"
 
 gemini:
-	$(eval VERSION := 0.33.1)
+	$(eval VERSION := 0.67.0)
 	./build.sh gemini-cli   latest "CLI_VERSION_ARG=$(VERSION)"   "" "https://github.com/google-gemini/gemini-cli.git#v$(VERSION)"
 
 # -----------------------------------------------------------------------------------------------------------------------
