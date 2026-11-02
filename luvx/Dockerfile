@@ -137,22 +137,6 @@ COPY --from=ldb_builder /rocksdb/ldb /usr/bin/
 COPY --from=ldb_builder /rocksdb/sst_dump /usr/bin/
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-FROM ${REGISTRY}maven:3-eclipse-temurin-17 AS rocketmq-dashboard-builder
-ARG RD_VERSION='2.1.0'
-
-RUN apt-get update && apt-get install -y git
-RUN git clone --depth=1 -b rocketmq-dashboard-${RD_VERSION} https://github.com/apache/rocketmq-dashboard && \
-    cd rocketmq-dashboard && mvn clean package -Dmaven.test.skip=true && \
-    mv target/rocketmq-dashboard-*.jar /rocketmq-dashboard.jar
-
-FROM ${REGISTRY}eclipse-temurin:17-jre AS rocketmq-dashboard
-
-WORKDIR /app
-COPY --from=rocketmq-dashboard-builder rocketmq-dashboard.jar .
-ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar ./rocketmq-dashboard.jar" ]
-
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 FROM ${REGISTRY}golang:1.27-${VERSION} AS go-installer
 
 ARG GO_INSTALL_URL

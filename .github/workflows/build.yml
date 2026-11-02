@@ -147,7 +147,7 @@ jobs:
                 sed -i "" "s/openjdk:8-jre-slim/eclipse-temurin:8-jre/g" Dockerfile
               url="."
               ;;
-            "base"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb"|"rocketmq-dashboard")
+            "base"|"oracle_jdk"|"graalvm_jdk"|"mvnd"|"vscode"|"upx"|"duckdb")
               url=https://github.com/LuVx21/docker-compose-files.git#master:luvx
               [[ $tag =~ 'alpine' ]] && url="./luvx/alpine" || url="./luvx"
               target="--target ${repository}"

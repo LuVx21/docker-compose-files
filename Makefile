@@ -81,7 +81,9 @@ kafka-console-ui:
 ldb:
 	./build.sh ldb latest,10 "" "" "--target=ldb ./luvx"
 rocketmq-dashboard:
-	./build.sh rocketmq-dashboard latest,2 "RD_VERSION=2.1.0"
+	$(eval VERSION := 3.0.0)
+	./build.sh rocketmq-dashboard-server $(VERSION) "" "" "-f server/Dockerfile https://github.com/apache/rocketmq-dashboard.git#v$(VERSION)"
+	./build.sh rocketmq-dashboard-web $(VERSION) "" "" "-f Dockerfile https://github.com/apache/rocketmq-dashboard.git#v$(VERSION):web"
 go-runner:
 	./build.sh gore    latest-alpine "GO_INSTALL_URL=github.com/x-motemen/gore/cmd/gore@latest;golang.org/x/tools/gopls@latest" "" "--target=go-installer ./luvx/alpine"
 	./build.sh hget    latest-alpine "GO_INSTALL_URL=github.com/huydx/hget@latest"                                              "" "--target=go-runner ./luvx/alpine"

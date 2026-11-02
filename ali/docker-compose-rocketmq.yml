@@ -5,7 +5,6 @@
 
 services:
   namesrv:
-    platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: rmqnamesrv
     networks:
@@ -17,7 +16,6 @@ services:
     command: sh mqnamesrv
 
   broker_0:
-    platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: broker_0
     networks:
@@ -37,7 +35,6 @@ services:
     command: sh mqbroker -c /opt/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
 
   broker_1:
-    platform: linux/amd64
     image: apache/rocketmq:${ROCKETMQ_VERSION}
     container_name: broker_1
     networks:
@@ -55,18 +52,6 @@ services:
       - $HOME/docker/rocketmq/broker_1/store:/home/rocketmq/store
       - $HOME/docker/rocketmq/broker_1/conf/broker.conf:/opt/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
     command: sh mqbroker -c /opt/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
-
-  rocketmq-dashboard:
-    image: luvx/rocketmq-dashboard:latest
-    container_name: rocketmq-dashboard
-    networks:
-      - net_common
-    links:
-      - namesrv
-    ports:
-      - 8080:8080
-    environment:
-      - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
 
 networks:
   net_common:
