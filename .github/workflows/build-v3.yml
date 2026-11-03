@@ -1,0 +1,317 @@
+name: 构建并推送多架构镜像-v3
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: '镜像名称'
+        required: true
+        type: string
+      tagStr:
+        description: '镜像版本/代码分支(多个时逗号分割), v1,v2,单个版本会根据.分成major,minor;第一个非latest为构建分支/release'
+        required: true
+        type: string
+      buildArg:
+        description: 'Dockerfile的构建参数, arg1=foo,arg2=bar'
+        required: false
+        default: ''
+        type: string
+      platform:
+        description: '架构'
+        required: false
+        default: 'linux/arm64,linux/amd64'
+        type: choice
+        options:
+          - linux/arm64,linux/amd64
+          - linux/arm64
+          - linux/amd64
+      target:
+        description: '--target, 一般不需要,除非Dockerfile写有多个构建产物'
+        required: false
+        default: ''
+        type: string
+      dockerfile:
+        description: 'Dockerfile 路径, 通常在context下, 默认不需要指定'
+        required: false
+        default: ''
+        type: string
+      context:
+        description: 'Docker build context, 可以是git仓库或其目录'
+        required: false
+        default: '.'
+        type: string
+      customArg:
+        description: '自定义参数'
+        required: false
+        default: ''
+
+env:
+  REGISTRY_USER: "${{ secrets.REGISTRY_USER }}"
+  REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
+
+jobs:
+  pre:
+    name: 解析Tag
+    runs-on: ubuntu-latest
+    outputs:
+      actor_lower:   ${{ steps.github_name.outputs.actor_lower }}
+      registry_list: ${{ steps.get_registry.outputs.registry_list }}
+      tag_list:      ${{ steps.get_tags.outputs.tag_list }}
+      code_version:  ${{ steps.get_tags.outputs.code_version }}
+      image_tags:    ${{ steps.get_image_tags.outputs.image_tags }}
+      build_args:    ${{ steps.get_build_args.outputs.build_args }}
+      context:       ${{ steps.get_context.outputs.context }}
+      target:        ${{ steps.get_context.outputs.target }}
+    steps:
+      - name: 参数信息
+        run: |
+          echo "=============================================================================="
+          echo "image:      ${{ inputs.image }}"
+          echo "tagStr:     ${{ inputs.tagStr }}"
+          echo "buildArg:   ${{ inputs.buildArg }}"
+          echo "platform:   ${{ inputs.platform }}"
+          echo "target:     ${{ inputs.target }}"
+          echo "dockerfile: ${{ inputs.dockerfile }}"
+          echo "context:    ${{ inputs.context }}"
+          echo "customArg:  ${{ inputs.customArg }}"
+          echo "=============================================================================="
+
+      - name: 小写GitHub用户名(namespace)
+        id: github_name
+        run: |
+          echo "actor_lower=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: 获取所有registry
+        id: get_registry
+        env:
+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          ALI_CR:    ${{ vars.ALI_CR }}
+          ALI_CR_NS: ${{ vars.ALI_CR_NS }}
+          TX_CR:     ${{ vars.TX_CR }}
+          TX_CR_NS:  ${{ vars.TX_CR_NS }}
+          GH_CR:     "ghcr.io"
+          GH_CR_NS:  ${{ steps.github_name.outputs.actor_lower }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          registry = [
+              f"{reg.strip()}/{ns.strip()}" if reg.strip() else ns.strip()
+              for line in os.environ.get("DOCKER_REGISTRY", "").splitlines()
+              if line.strip()
+              for reg, _, ns in [line.partition(",")]
+          ]
+
+          if not registry:
+              registry += [
+                  "luvx",
+                  os.environ.get("ALI_CR", "") + "/" + os.environ.get("ALI_CR_NS","luvx"),
+                  os.environ.get("TX_CR","") + "/" + os.environ.get("TX_CR_NS","luvx"),
+                  os.environ.get("GH_CR","") + "/" + os.environ.get("GH_CR_NS","luvx21")
+              ]
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write("registry_list=" + json.dumps(registry) + "\n")
+          PY
+
+      - name: 获取所有tag
+        id: get_tags
+        env:
+          INPUT_TAGS: ${{ inputs.tagStr }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+
+          expanded = []
+          code_version = ""
+          for item in os.environ.get("INPUT_TAGS", "").split(","):
+              tag = item.strip()
+              if not tag:
+                  continue
+              if code_version == "" and tag != "latest":
+                  code_version = tag
+              if not re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}", tag):
+                  raise SystemExit(f"非法 Docker tag: {tag!r}")
+              expanded.append(tag)
+              if "-" in tag:
+                  version, suffix = tag.split("-", 1)
+                  parts = version.split(".")
+                  for length in range(1, len(parts)):
+                      expanded.append(f"{'.'.join(parts[:length])}-{suffix}")
+              else:
+                  parts = tag.split(".")
+                  for length in range(1, len(parts)):
+                      expanded.append(".".join(parts[:length]))
+
+          # 保持输入顺序，同时去重；避免空标签列表。
+          tag_list = list(dict.fromkeys(expanded))
+          if not tag_list:
+              raise SystemExit("请至少提供一个有效 tag")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write("tag_list=" + json.dumps(tag_list) + "\n")
+              output.write("code_version=" + code_version + "\n")
+          print("生成的标签:" + ", ".join(tag_list))
+          print("代码版本" + ", "+ code_version)
+          PY
+
+      - name: 拼接registry+image+tag
+        id: get_image_tags
+        env:
+          REGISTRY_JSON: ${{ steps.get_registry.outputs.registry_list }}
+          TAGS_JSON:     ${{ steps.get_tags.outputs.tag_list }}
+          IMAGE_NAME:    ${{ inputs.image }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import uuid
+
+          imageName = os.environ["IMAGE_NAME"].strip().lower()
+          if not imageName:
+              raise SystemExit("image 不能为空")
+
+          registry_list = json.loads(os.environ["REGISTRY_JSON"])
+          tag_list = json.loads(os.environ["TAGS_JSON"])
+          value = "\n".join(
+              f"{ns}/{imageName}:{tag}"
+              for ns in registry_list
+              for tag in tag_list
+          )
+          delimiter = "EOF_" + uuid.uuid4().hex
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
+
+      - name: 转换 build args
+        id: get_build_args
+        env:
+          BUILD_ARGS: ${{ inputs.buildArg }}
+        run: |
+          python3 - <<'PY'
+          import os
+          import uuid
+
+          args = [
+              item.strip()
+              for item in os.environ.get("BUILD_ARGS", "").split(",")
+              if item.strip()
+          ]
+          value = "\n".join(args)
+          delimiter = "EOF_" + uuid.uuid4().hex
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"build_args<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
+
+      - name: 构建上下文
+        id: get_context
+        env:
+          BUILD_CONTEXT: ${{ inputs.context }}
+          IMAGE_NAME:    ${{ inputs.image }}
+          INPUT_TAGS:    ${{ inputs.tagStr }}
+          TARGET:        ${{ inputs.target }}
+          CODE_VERSION:  ${{ steps.get_tags.outputs.code_version }}
+        run: |
+          python3 - <<'PY'
+          import os
+
+          context = os.environ["BUILD_CONTEXT"]
+          imageName = os.environ["IMAGE_NAME"].strip().lower()
+          inputTags = os.environ["INPUT_TAGS"]
+          target = os.environ["TARGET"]
+          codeVersion = os.environ["CODE_VERSION"]
+          if not imageName:
+              raise SystemExit("image 不能为空")
+
+          match imageName:
+              case "chartdb":
+                  context = f"https://github.com/chartdb/chartdb.git#v{codeVersion}"
+              case "json4u":
+                  context = f"https://github.com/loggerhead/json4u.git#v{codeVersion}"
+              case "pichome":
+                  context = "https://github.com/zyx0814/Pichome-docker.git"
+              case "sentinel-dashboard":
+                  context = f"https://github.com/alibaba/Sentinel.git#{codeVersion}:sentinel-dashboard"
+              case "jupyter":
+                  context = f"https://github.com/LuVx21/docker-compose-files.git#master:jupyter"
+              case "base" | "oracle_jdk" | "graalvm_jdk" | "mvnd" | "vscode" | "upx" | "duckdb":
+                  context = "https://github.com/LuVx21/docker-compose-files.git#master:luvx"
+                  context = "./luvx/alpine" if "alpine" in inputTags else "./luvx"
+                  target = imageName
+              case _:
+                  print("构建上下文", " context: ", context, " target:", target)
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write("context=" + context + "\n")
+              output.write("target=" + target + "\n")
+          PY
+
+  build:
+    name: Buildx 构建并推送 arm64/amd64
+    runs-on: ubuntu-latest
+    needs: pre
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7
+
+      - name: 设置 QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
+
+      - name: 设置 Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          platforms: linux/arm64,linux/amd64
+          buildkitd-config-inline: |
+            [worker.oci]
+              max-parallelism = 1
+
+      - name: 登录 Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+
+      - name: 登录GitHub容器
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_CR_PASSWORD }}
+
+      - name: 登录阿里云容器
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.ALI_CR }}
+          username: ${{ secrets.ALI_CR_USER }}
+          password: ${{ secrets.ALI_CR_PASSWORD }}
+
+      # - name: 登录腾讯云容器
+      #   uses: docker/login-action@v4
+      #   with:
+      #     registry: ${{ vars.TX_CR }}
+      #     username: ${{ secrets.TX_CR_USER }}
+      #     password: ${{ secrets.TX_CR_PASSWORD }}
+
+      - name: 构建并Push
+        uses: docker/build-push-action@v7
+        env:
+          CONTEXT: ${{ format('{0} {1}', inputs.customArg, needs.pre.outputs.context) }}
+        with:
+          context: ${{ env.CONTEXT }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ inputs.platform }}
+          push: true
+          tags: ${{ needs.pre.outputs.image_tags }}
+          build-args: ${{ needs.pre.outputs.build_args }}
+          target: ${{ needs.pre.outputs.target }}
+
+      - name: 清理磁盘
+        run: |
+          docker system prune -f
