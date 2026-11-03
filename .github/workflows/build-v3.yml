@@ -78,8 +78,10 @@ jobs:
 
       - name: 小写GitHub用户名(namespace)
         id: github_name
+        env:
+          ACTOR: ${{ github.actor }}
         run: |
-          echo "actor_lower=$(echo '${{ github.actor }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "actor_lower=$(echo '${ACTOR}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
       - name: 获取所有registry
         id: get_registry
