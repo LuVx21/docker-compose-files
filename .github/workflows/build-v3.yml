@@ -290,12 +290,12 @@ jobs:
           username: ${{ secrets.ALI_CR_USER }}
           password: ${{ secrets.ALI_CR_PASSWORD }}
 
-      # - name: 登录腾讯云容器
-      #   uses: docker/login-action@v4
-      #   with:
-      #     registry: ${{ vars.TX_CR }}
-      #     username: ${{ secrets.TX_CR_USER }}
-      #     password: ${{ secrets.TX_CR_PASSWORD }}
+      - name: 登录腾讯云容器
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.TX_CR }}
+          username: ${{ secrets.TX_CR_USER }}
+          password: ${{ secrets.TX_CR_PASSWORD }}
 
       - name: 构建并Push
         uses: docker/build-push-action@v7

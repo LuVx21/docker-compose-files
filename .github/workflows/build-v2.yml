@@ -38,7 +38,7 @@ on:
       context:
         description: 'Docker build context, 可以是git仓库或其目录'
         required: false
-        default: '.'
+        default: ''
         type: string
       customArg:
         description: '自定义参数'
@@ -145,7 +145,7 @@ jobs:
           python3 - <<'PY'
           import os
 
-          context = os.environ["BUILD_CONTEXT"]
+          context = os.environ.get("BUILD_CONTEXT") or "."
           imageName = os.environ["IMAGE_NAME"].strip().lower()
           inputTags = os.environ["INPUT_TAGS"]
           target = os.environ["TARGET"]
@@ -331,6 +331,13 @@ jobs:
           registry: ${{ vars.ALI_CR }}
           username: ${{ secrets.ALI_CR_USER }}
           password: ${{ secrets.ALI_CR_PASSWORD }}
+
+      - name: 登录腾讯云容器
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ vars.TX_CR }}
+          username: ${{ secrets.TX_CR_USER }}
+          password: ${{ secrets.TX_CR_PASSWORD }}
 
       - name: 创建并推送多架构 manifest
         env:
