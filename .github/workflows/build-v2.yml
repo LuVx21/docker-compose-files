@@ -273,6 +273,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_CR_PASSWORD }}
 
+      - name: 检查 namespace
+        env:
+          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
+        run: echo "actor_lower=<$ACTOR_LOWER>"
+
       - name: 构建并推送 arm64 镜像
         uses: docker/build-push-action@v7
         env:
@@ -284,7 +289,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ env.ACTOR_LOWER }}/${{ env.IMAGE_NAME }}:arm64
+          tags: ghcr.io/${{ needs.pre.outputs.actor_lower }}/${{ env.IMAGE_NAME }}:arm64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -306,6 +311,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_CR_PASSWORD }}
 
+      - name: 检查 namespace
+        env:
+          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
+        run: echo "actor_lower=<$ACTOR_LOWER>"
+
       - name: 构建并推送 amd64 镜像
         uses: docker/build-push-action@v7
         env:
@@ -317,7 +327,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ env.ACTOR_LOWER }}/${{ env.IMAGE_NAME }}:amd64
+          tags: ghcr.io/${{ needs.pre.outputs.actor_lower }}/${{ env.IMAGE_NAME }}:amd64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
