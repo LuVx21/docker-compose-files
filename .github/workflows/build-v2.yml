@@ -207,6 +207,8 @@ jobs:
           tags: ${{ vars.GH_CR }}/${{ vars.GH_CR_NS }}/${{ env.IMAGE_NAME }}:arm64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
+          provenance: false
+          sbom: false
 
   amd64:
     name: 构建 amd64
@@ -239,6 +241,8 @@ jobs:
           tags: ${{ vars.GH_CR }}/${{ vars.GH_CR_NS }}/${{ env.IMAGE_NAME }}:amd64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
+          provenance: false
+          sbom: false
 
   c:
     name: 合并并推送多架构标签
