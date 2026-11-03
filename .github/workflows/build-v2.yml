@@ -54,7 +54,6 @@ jobs:
     name: 解析Tag
     runs-on: ubuntu-latest
     outputs:
-      actor_lower:   ${{ steps.github_name.outputs.actor_lower }}
       registry_list: ${{ steps.get_registry.outputs.registry_list }}
       tag_list:      ${{ steps.get_tags.outputs.tag_list }}
       code_version:  ${{ steps.get_tags.outputs.code_version }}
@@ -76,15 +75,6 @@ jobs:
           echo "customArg:  ${{ inputs.customArg }}"
           echo "=============================================================================="
 
-      - name: 小写GitHub用户名(namespace)
-        id: github_name
-        env:
-          ACTOR: ${{ github.actor }}
-        run: |
-          echo "actor_lower=$(echo "${ACTOR}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
-          echo "===== GITHUB_OUTPUT ====="
-          cat "$GITHUB_OUTPUT" 2>/dev/null || true
-
       - name: 获取所有registry
         id: get_registry
         env:
@@ -93,8 +83,8 @@ jobs:
           ALI_CR_NS: ${{ vars.ALI_CR_NS }}
           TX_CR:     ${{ vars.TX_CR }}
           TX_CR_NS:  ${{ vars.TX_CR_NS }}
-          GH_CR:     "ghcr.io"
-          GH_CR_NS:  ${{ steps.github_name.outputs.actor_lower }}
+          GH_CR:     ${{ vars.GH_CR }}
+          GH_CR_NS:  ${{ vars.GH_CR_NS }}
         run: |
           python3 - <<'PY'
           import json
@@ -273,15 +263,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_CR_PASSWORD }}
 
-      - name: 检查 namespace
-        env:
-          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
-        run: echo "actor_lower=<$ACTOR_LOWER>"
-
       - name: 构建并推送 arm64 镜像
         uses: docker/build-push-action@v7
         env:
-          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
           IMAGE_NAME:  ${{ inputs.image }}
           CONTEXT:     ${{ format('{0} {1}', inputs.customArg, needs.pre.outputs.context) }}
         with:
@@ -289,7 +273,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${{ needs.pre.outputs.actor_lower }}/${{ env.IMAGE_NAME }}:arm64
+          tags: ${{ var.GH_CR }}/${{ var.GH_CR_NS }}/${{ env.IMAGE_NAME }}:arm64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -311,15 +295,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_CR_PASSWORD }}
 
-      - name: 检查 namespace
-        env:
-          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
-        run: echo "actor_lower=<$ACTOR_LOWER>"
-
       - name: 构建并推送 amd64 镜像
         uses: docker/build-push-action@v7
         env:
-          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
           IMAGE_NAME:  ${{ inputs.image }}
           CONTEXT:     ${{ format('{0} {1}', inputs.customArg, needs.pre.outputs.context) }}
         with:
@@ -327,7 +305,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ needs.pre.outputs.actor_lower }}/${{ env.IMAGE_NAME }}:amd64
+          tags: ${{ var.GH_CR }}/${{ var.GH_CR_NS }}/${{ env.IMAGE_NAME }}:amd64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -358,9 +336,10 @@ jobs:
 
       - name: 创建并推送多架构 manifest
         env:
-          ACTOR_LOWER: ${{ needs.pre.outputs.actor_lower }}
-          IMAGE_NAME:  ${{ inputs.image }}
-          IMAGE_TAGS:  ${{ needs.pre.outputs.image_tags }}
+          GH_CR:      ${{ var.GH_CR }}
+          GH_CR_NS:   ${{ var.GH_CR_NS }}
+          IMAGE_NAME: ${{ inputs.image }}
+          IMAGE_TAGS: ${{ needs.pre.outputs.image_tags }}
         run: |
           python3 - <<'PY' > /tmp/tags.txt
           import os
@@ -374,6 +353,6 @@ jobs:
             echo "合并并推送 ${image_tag}"
             docker buildx imagetools create \
               --tag "${image_tag}" \
-              "ghcr.io/${ACTOR_LOWER}/${IMAGE_NAME}:arm64" \
-              "ghcr.io/${ACTOR_LOWER}/${IMAGE_NAME}:amd64"
+              "${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:arm64" \
+              "${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:amd64"
           done < /tmp/tags.txt
