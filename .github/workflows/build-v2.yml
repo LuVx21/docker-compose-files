@@ -255,9 +255,6 @@ jobs:
               output.write("target=" + target + "\n")
           PY
 
-      - name: 数据
-        uses: ./.github/actions
-
   arm64:
     name: 构建 arm64
     runs-on: ubuntu-26.04-arm
