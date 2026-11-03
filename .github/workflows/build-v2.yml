@@ -81,7 +81,7 @@ jobs:
         env:
           ACTOR: ${{ github.actor }}
         run: |
-          echo "actor_lower=$(echo '${ACTOR}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "actor_lower=$(echo "${ACTOR}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
           echo "===== GITHUB_OUTPUT ====="
           cat "$GITHUB_OUTPUT" 2>/dev/null || true
 
