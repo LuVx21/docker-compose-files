@@ -45,10 +45,6 @@ on:
         required: false
         default: ''
 
-env:
-  REGISTRY_USER: "${{ secrets.REGISTRY_USER }}"
-  REGISTRY_PASSWORD: "${{ secrets.REGISTRY_PASSWORD }}"
-
 jobs:
   pre:
     name: 解析Tag
@@ -277,8 +273,8 @@ jobs:
       - name: 登录 Docker Hub
         uses: docker/login-action@v4
         with:
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: 登录GitHub容器
         uses: docker/login-action@v4
