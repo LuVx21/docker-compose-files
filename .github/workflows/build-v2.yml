@@ -54,10 +54,8 @@ jobs:
     name: 解析Tag
     runs-on: ubuntu-latest
     outputs:
-      registry_list: ${{ steps.get_registry.outputs.registry_list }}
       tag_list:      ${{ steps.get_tags.outputs.tag_list }}
       code_version:  ${{ steps.get_tags.outputs.code_version }}
-      image_tags:    ${{ steps.get_image_tags.outputs.image_tags }}
       build_args:    ${{ steps.get_build_args.outputs.build_args }}
       context:       ${{ steps.get_context.outputs.context }}
       target:        ${{ steps.get_context.outputs.target }}
@@ -74,40 +72,6 @@ jobs:
           echo "context:    ${{ inputs.context }}"
           echo "customArg:  ${{ inputs.customArg }}"
           echo "=============================================================================="
-
-      - name: 获取所有registry
-        id: get_registry
-        env:
-          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-          ALI_CR:    ${{ vars.ALI_CR }}
-          ALI_CR_NS: ${{ vars.ALI_CR_NS }}
-          TX_CR:     ${{ vars.TX_CR }}
-          TX_CR_NS:  ${{ vars.TX_CR_NS }}
-          GH_CR:     ${{ vars.GH_CR }}
-          GH_CR_NS:  ${{ vars.GH_CR_NS }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-
-          registry = [
-              f"{reg.strip()}/{ns.strip()}" if reg.strip() else ns.strip()
-              for line in os.environ.get("DOCKER_REGISTRY", "").splitlines()
-              if line.strip()
-              for reg, _, ns in [line.partition(",")]
-          ]
-
-          if not registry:
-              registry += [
-                  "luvx",
-                  os.environ.get("ALI_CR", "") + "/" + os.environ.get("ALI_CR_NS","luvx"),
-                  os.environ.get("TX_CR","") + "/" + os.environ.get("TX_CR_NS","luvx"),
-                  os.environ.get("GH_CR","") + "/" + os.environ.get("GH_CR_NS","luvx21")
-              ]
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write("registry_list=" + json.dumps(registry) + "\n")
-          PY
 
       - name: 获取所有tag
         id: get_tags
@@ -150,35 +114,6 @@ jobs:
               output.write("code_version=" + code_version + "\n")
           print("生成的标签:" + ", ".join(tag_list))
           print("代码版本" + ", "+ code_version)
-          PY
-
-      - name: 拼接registry+image+tag
-        id: get_image_tags
-        env:
-          REGISTRY_JSON: ${{ steps.get_registry.outputs.registry_list }}
-          TAGS_JSON:     ${{ steps.get_tags.outputs.tag_list }}
-          IMAGE_NAME:    ${{ inputs.image }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-          import uuid
-
-          imageName = os.environ["IMAGE_NAME"].strip().lower()
-          if not imageName:
-              raise SystemExit("image 不能为空")
-
-          registry_list = json.loads(os.environ["REGISTRY_JSON"])
-          tag_list = json.loads(os.environ["TAGS_JSON"])
-          value = "\n".join(
-              f"{ns}/{imageName}:{tag}"
-              for ns in registry_list
-              for tag in tag_list
-          )
-          delimiter = "EOF_" + uuid.uuid4().hex
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
           PY
 
       - name: 转换 build args
@@ -314,6 +249,69 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pre, arm64, amd64]
     steps:
+      - name: 获取所有registry
+        id: get_registry
+        env:
+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          ALI_CR:    ${{ vars.ALI_CR }}
+          ALI_CR_NS: ${{ vars.ALI_CR_NS }}
+          TX_CR:     ${{ vars.TX_CR }}
+          TX_CR_NS:  ${{ vars.TX_CR_NS }}
+          GH_CR:     ${{ vars.GH_CR }}
+          GH_CR_NS:  ${{ vars.GH_CR_NS }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          registry = [
+              f"{reg.strip()}/{ns.strip()}" if reg.strip() else ns.strip()
+              for line in os.environ.get("DOCKER_REGISTRY", "").splitlines()
+              if line.strip()
+              for reg, _, ns in [line.partition(",")]
+          ]
+
+          if not registry:
+              registry += [
+                  "luvx",
+                  os.environ.get("ALI_CR", "") + "/" + os.environ.get("ALI_CR_NS","luvx"),
+                  os.environ.get("TX_CR","") + "/" + os.environ.get("TX_CR_NS","luvx"),
+                  os.environ.get("GH_CR","") + "/" + os.environ.get("GH_CR_NS","luvx21")
+              ]
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write("registry_list=" + json.dumps(registry) + "\n")
+          PY
+
+      - name: 拼接registry+image+tag
+        id: get_image_tags
+        env:
+          REGISTRY_JSON: ${{ steps.get_registry.outputs.registry_list }}
+          TAGS_JSON:     ${{ needs.pre.outputs.tag_list }}
+          IMAGE_NAME:    ${{ inputs.image }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import uuid
+
+          imageName = os.environ["IMAGE_NAME"].strip().lower()
+          if not imageName:
+              raise SystemExit("image 不能为空")
+
+          registry_list = json.loads(os.environ["REGISTRY_JSON"])
+          tag_list = json.loads(os.environ["TAGS_JSON"])
+          value = "\n".join(
+              f"{ns}/{imageName}:{tag}"
+              for ns in registry_list
+              for tag in tag_list
+          )
+          delimiter = "EOF_" + uuid.uuid4().hex
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
+
       - name: 登录 Docker Hub
         uses: docker/login-action@v4
         with:
