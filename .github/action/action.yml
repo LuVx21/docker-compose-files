@@ -1,0 +1,11 @@
+name: dump
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        echo "===== GITHUB_ENV ====="
+        cat "$GITHUB_ENV" 2>/dev/null || true
+        echo "===== GITHUB_OUTPUT ====="
+        cat "$GITHUB_OUTPUT" 2>/dev/null || true

@@ -82,6 +82,8 @@ jobs:
           ACTOR: ${{ github.actor }}
         run: |
           echo "actor_lower=$(echo '${ACTOR}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          echo "===== GITHUB_OUTPUT ====="
+          cat "$GITHUB_OUTPUT" 2>/dev/null || true
 
       - name: 获取所有registry
         id: get_registry
@@ -252,6 +254,9 @@ jobs:
               output.write("context=" + context + "\n")
               output.write("target=" + target + "\n")
           PY
+
+      - name: 数据
+        uses: ./.github/actions
 
   arm64:
     name: 构建 arm64
