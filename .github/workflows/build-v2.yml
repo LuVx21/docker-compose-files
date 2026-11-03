@@ -273,7 +273,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/arm64
           push: true
-          tags: ${{ var.GH_CR }}/${{ var.GH_CR_NS }}/${{ env.IMAGE_NAME }}:arm64
+          tags: ${{ vars.GH_CR }}/${{ vars.GH_CR_NS }}/${{ env.IMAGE_NAME }}:arm64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -305,7 +305,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64
           push: true
-          tags: ${{ var.GH_CR }}/${{ var.GH_CR_NS }}/${{ env.IMAGE_NAME }}:amd64
+          tags: ${{ vars.GH_CR }}/${{ vars.GH_CR_NS }}/${{ env.IMAGE_NAME }}:amd64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -336,8 +336,8 @@ jobs:
 
       - name: 创建并推送多架构 manifest
         env:
-          GH_CR:      ${{ var.GH_CR }}
-          GH_CR_NS:   ${{ var.GH_CR_NS }}
+          GH_CR:      ${{ vars.GH_CR }}
+          GH_CR_NS:   ${{ vars.GH_CR_NS }}
           IMAGE_NAME: ${{ inputs.image }}
           IMAGE_TAGS: ${{ needs.pre.outputs.image_tags }}
         run: |
