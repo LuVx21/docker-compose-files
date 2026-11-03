@@ -333,7 +333,7 @@ jobs:
           GH_CR:      ${{ vars.GH_CR }}
           GH_CR_NS:   ${{ vars.GH_CR_NS }}
           IMAGE_NAME: ${{ inputs.image }}
-          IMAGE_TAGS: ${{ step.get_image_tags.outputs.image_tags }}
+          IMAGE_TAGS: ${{ steps.get_image_tags.outputs.image_tags }}
         run: |
           python3 - <<'PY' > /tmp/tags.txt
           import os
