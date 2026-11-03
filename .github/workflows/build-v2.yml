@@ -284,7 +284,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/arm64
           push: true
-          tags: ghcr.io/${ACTOR_LOWER}/${{ env.IMAGE_NAME }}:arm64
+          tags: ghcr.io/"${ACTOR_LOWER}"/${{ env.IMAGE_NAME }}:arm64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
@@ -317,7 +317,7 @@ jobs:
           file: ${{ inputs.dockerfile }}
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${ACTOR_LOWER}/${{ env.IMAGE_NAME }}:amd64
+          tags: ghcr.io/"${ACTOR_LOWER}"/${{ env.IMAGE_NAME }}:amd64
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
 
