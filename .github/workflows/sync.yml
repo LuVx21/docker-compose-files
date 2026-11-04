@@ -188,3 +188,32 @@ jobs:
                 cur_platform=$platform
             fi
           done
+
+      - name: Install skopeo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo
+
+      - name: Copy image to target registry
+        run: |
+          skopeo copy \
+            --all \
+            --preserve-manifest-lists \
+            --retry-times 3 \
+            --src-creds "${{ secrets.SRC_USER }}:${{ secrets.SRC_PASS }}" \
+            --dest-creds "${{ secrets.DEST_USER }}:${{ secrets.DEST_PASS }}" \
+            docker://docker.io/library/nginx:${{ inputs.tag }} \
+            docker://ghcr.io/${{ github.repository }}/nginx:${{ inputs.tag }}
+
+      - name: Setup Skopeo
+        uses: warjiang/setup-skopeo@main
+        with:
+          version: latest   # 默认即为 latest，可锁定具体版本如 v1.14.0
+
+      - name: Sync multi-arch image to Aliyun
+        run: |
+          skopeo --version
+          skopeo copy --all \
+            --dest-creds "${{ secrets.DEST_REGISTRY_USER }}:${{ secrets.DEST_REGISTRY_PASSWORD }}" \
+            docker://docker.io/a/b:latest \
+            docker://${{ secrets.DEST_REGISTRY }}/a/b:latest
