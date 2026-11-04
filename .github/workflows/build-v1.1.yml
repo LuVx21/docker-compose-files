@@ -1,18 +1,18 @@
-name: 构建并推送多架构镜像-v3
+name: 构建docker镜像-v3
 
 on:
   workflow_dispatch:
     inputs:
       image:
-        description: '镜像名称'
+        description: '镜像名'
         required: true
         type: string
       tagStr:
-        description: '镜像版本/代码分支(多个时逗号分割), v1,v2,单个版本会根据.分成major,minor;第一个非latest为构建分支/release'
+        description: '镜像Tag;首个非latest为构建(分支/Tag);多个逗号分割:v1.2.3,前缀展开'
         required: true
         type: string
       buildArg:
-        description: 'Dockerfile的构建参数, arg1=foo,arg2=bar'
+        description: '构建参数, arg1=foo,arg2=bar'
         required: false
         default: ''
         type: string
@@ -26,19 +26,19 @@ on:
           - linux/arm64
           - linux/amd64
       target:
-        description: '--target, 一般不需要,除非Dockerfile写有多个构建产物'
+        description: '构建阶段'
         required: false
         default: ''
         type: string
       dockerfile:
-        description: 'Dockerfile 路径, 通常在context下, 默认不需要指定'
+        description: '默认{context}/Docker'
         required: false
         default: ''
         type: string
       context:
-        description: 'Docker build context, 可以是git仓库或其目录'
+        description: 'build context, git仓库或目录'
         required: false
-        default: '.'
+        default: ''
         type: string
       customArg:
         description: '自定义参数'
@@ -50,11 +50,8 @@ jobs:
     name: 解析Tag
     runs-on: ubuntu-latest
     outputs:
-      actor_lower:   ${{ steps.github_name.outputs.actor_lower }}
-      registry_list: ${{ steps.get_registry.outputs.registry_list }}
       tag_list:      ${{ steps.get_tags.outputs.tag_list }}
       code_version:  ${{ steps.get_tags.outputs.code_version }}
-      image_tags:    ${{ steps.get_image_tags.outputs.image_tags }}
       build_args:    ${{ steps.get_build_args.outputs.build_args }}
       context:       ${{ steps.get_context.outputs.context }}
       target:        ${{ steps.get_context.outputs.target }}
@@ -72,47 +69,6 @@ jobs:
           echo "customArg:  ${{ inputs.customArg }}"
           echo "=============================================================================="
 
-      - name: 小写GitHub用户名(namespace)
-        id: github_name
-        env:
-          ACTOR: ${{ github.actor }}
-        run: |
-          echo "actor_lower=$(echo "${ACTOR}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
-
-      - name: 获取所有registry
-        id: get_registry
-        env:
-          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-          ALI_CR:    ${{ vars.ALI_CR }}
-          ALI_CR_NS: ${{ vars.ALI_CR_NS }}
-          TX_CR:     ${{ vars.TX_CR }}
-          TX_CR_NS:  ${{ vars.TX_CR_NS }}
-          GH_CR:     "ghcr.io"
-          GH_CR_NS:  ${{ steps.github_name.outputs.actor_lower }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-
-          registry = [
-              f"{reg.strip()}/{ns.strip()}" if reg.strip() else ns.strip()
-              for line in os.environ.get("DOCKER_REGISTRY", "").splitlines()
-              if line.strip()
-              for reg, _, ns in [line.partition(",")]
-          ]
-
-          if not registry:
-              registry += [
-                  "luvx",
-                  os.environ.get("ALI_CR", "") + "/" + os.environ.get("ALI_CR_NS","luvx"),
-                  os.environ.get("TX_CR","") + "/" + os.environ.get("TX_CR_NS","luvx"),
-                  os.environ.get("GH_CR","") + "/" + os.environ.get("GH_CR_NS","luvx21")
-              ]
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write("registry_list=" + json.dumps(registry) + "\n")
-          PY
-
       - name: 获取所有tag
         id: get_tags
         env:
@@ -129,7 +85,7 @@ jobs:
               tag = item.strip()
               if not tag:
                   continue
-              if code_version == "" and tag != "latest":
+              if code_version == "" and "latest" not in tag:
                   code_version = tag
               if not re.fullmatch(r"[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}", tag):
                   raise SystemExit(f"非法 Docker tag: {tag!r}")
@@ -154,35 +110,6 @@ jobs:
               output.write("code_version=" + code_version + "\n")
           print("生成的标签:" + ", ".join(tag_list))
           print("代码版本" + ", "+ code_version)
-          PY
-
-      - name: 拼接registry+image+tag
-        id: get_image_tags
-        env:
-          REGISTRY_JSON: ${{ steps.get_registry.outputs.registry_list }}
-          TAGS_JSON:     ${{ steps.get_tags.outputs.tag_list }}
-          IMAGE_NAME:    ${{ inputs.image }}
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-          import uuid
-
-          imageName = os.environ["IMAGE_NAME"].strip().lower()
-          if not imageName:
-              raise SystemExit("image 不能为空")
-
-          registry_list = json.loads(os.environ["REGISTRY_JSON"])
-          tag_list = json.loads(os.environ["TAGS_JSON"])
-          value = "\n".join(
-              f"{ns}/{imageName}:{tag}"
-              for ns in registry_list
-              for tag in tag_list
-          )
-          delimiter = "EOF_" + uuid.uuid4().hex
-
-          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
-              output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
           PY
 
       - name: 转换 build args
@@ -218,7 +145,7 @@ jobs:
           python3 - <<'PY'
           import os
 
-          context = os.environ["BUILD_CONTEXT"]
+          context = os.environ.get("BUILD_CONTEXT") or "."
           imageName = os.environ["IMAGE_NAME"].strip().lower()
           inputTags = os.environ["INPUT_TAGS"]
           target = os.environ["TARGET"]
@@ -254,21 +181,68 @@ jobs:
     runs-on: ubuntu-latest
     needs: pre
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v7
+      - name: 获取所有registry
+        id: get_registry
+        env:
+          DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+          ALI_CR:    ${{ vars.ALI_CR }}
+          ALI_CR_NS: ${{ vars.ALI_CR_NS }}
+          TX_CR:     ${{ vars.TX_CR }}
+          TX_CR_NS:  ${{ vars.TX_CR_NS }}
+          GH_CR:     ${{ vars.GH_CR }}
+          GH_CR_NS:  ${{ vars.GH_CR_NS }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
 
-      - name: 设置 QEMU
-        uses: docker/setup-qemu-action@v4
-        with:
-          platforms: arm64
+          registry = [
+              f"{reg.strip()}/{ns.strip()}" if reg.strip() else ns.strip()
+              for line in os.environ.get("DOCKER_REGISTRY", "").splitlines()
+              if line.strip()
+              for reg, _, ns in [line.partition(",")]
+          ]
 
-      - name: 设置 Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          platforms: linux/arm64,linux/amd64
-          buildkitd-config-inline: |
-            [worker.oci]
-              max-parallelism = 1
+          if not registry:
+              registry += [
+                  "luvx",
+                  os.environ.get("GH_CR","") + "/" + os.environ.get("GH_CR_NS","luvx21"),
+                  os.environ.get("ALI_CR", "") + "/" + os.environ.get("ALI_CR_NS","luvx"),
+                  os.environ.get("TX_CR","") + "/" + os.environ.get("TX_CR_NS","luvx")
+              ]
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write("registry_list=" + json.dumps(registry) + "\n")
+          PY
+
+      - name: 拼接registry+image+tag
+        id: get_image_tags
+        env:
+          REGISTRY_JSON: ${{ steps.get_registry.outputs.registry_list }}
+          TAGS_JSON:     ${{ needs.pre.outputs.tag_list }}
+          IMAGE_NAME:    ${{ inputs.image }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import uuid
+
+          imageName = os.environ["IMAGE_NAME"].strip().lower()
+          if not imageName:
+              raise SystemExit("image 不能为空")
+
+          registry_list = json.loads(os.environ["REGISTRY_JSON"])
+          tag_list = json.loads(os.environ["TAGS_JSON"])
+          value = "\n".join(
+              f"{ns}/{imageName}:{tag}"
+              for ns in registry_list
+              for tag in tag_list
+          )
+          delimiter = "EOF_" + uuid.uuid4().hex
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
+          PY
 
       - name: 登录 Docker Hub
         uses: docker/login-action@v4
@@ -297,7 +271,24 @@ jobs:
           username: ${{ secrets.TX_CR_USER }}
           password: ${{ secrets.TX_CR_PASSWORD }}
 
-      - name: 构建并Push
+      - name: 代码检出
+        uses: actions/checkout@v7
+
+      - name: 设置 QEMU
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
+
+      - name: 设置 Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          platforms: linux/arm64,linux/amd64
+          buildkitd-config-inline: |
+            [worker.oci]
+              max-parallelism = 1
+
+      - if: ${{ inputs.image != "custom" }}
+        name: 构建并Push
         uses: docker/build-push-action@v7
         env:
           CONTEXT: ${{ format('{0} {1}', inputs.customArg, needs.pre.outputs.context) }}
@@ -309,6 +300,14 @@ jobs:
           tags: ${{ needs.pre.outputs.image_tags }}
           build-args: ${{ needs.pre.outputs.build_args }}
           target: ${{ needs.pre.outputs.target }}
+
+      - if: ${{ inputs.image == "custom" }}
+        name: 自定义命令
+        env:
+          CUSTOM_ARG: ${{ inputs.customArg }}
+        run: |
+          chmod +x *.sh
+          eval ${CUSTOM_ARG}
 
       - name: 清理磁盘
         run: |

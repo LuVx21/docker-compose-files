@@ -1,18 +1,21 @@
-name: 构建docker镜像
+name: 构建docker镜像-v1
 
 on:
   workflow_dispatch:
     inputs:
       image:
-        description: '镜像名称'
+        description: '镜像名'
         required: true
-      tag:
-        description: '镜像版本/代码分支(多个时逗号分割), v1,v2'
+        type: string
+      tagStr:
+        description: '镜像Tag;首个非latest为构建(分支/Tag);多个逗号分割:v1.2.3,前缀展开'
         required: true
+        type: string
       buildArg:
-        description: 'Dockerfile的构建参数, arg1=foo,arg2=bar'
+        description: '构建参数, arg1=foo,arg2=bar'
         required: false
         default: ''
+        type: string
       platform:
         description: '架构'
         required: true
@@ -36,7 +39,7 @@ jobs:
         run: |
           echo "=============================================================================="
           echo "${{ inputs.image }}"
-          echo "${{ inputs.tag }}"
+          echo "${{ inputs.tagStr }}"
           echo "${{ inputs.buildArg }}"
           echo "${{ inputs.customArg }}"
           echo "=============================================================================="
@@ -92,7 +95,7 @@ jobs:
           # TX_CR: ${{ vars.TX_CR }}
         run: |
           repository=${{ inputs.image }}
-          tag=${{ inputs.tag }}
+          tag=${{ inputs.tagStr }}
           buildArg=${{ inputs.buildArg }}
           platform=${{ inputs.platform }}
 

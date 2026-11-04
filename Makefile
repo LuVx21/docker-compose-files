@@ -68,8 +68,8 @@ jupyter:
 	./build.sh jupyter vscode "" "" "--target=jupyter-vscode"
 	./build.sh rust_base latest "" "" "--target=rust_base ./jupyter"
 upx:
-	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.2.1"
-	./build.sh upx latest,5               "UPX_VERSION=5.2.1"
+	./build.sh upx latest-alpine,5-alpine "UPX_VERSION=5.3.0"
+	./build.sh upx latest,5               "UPX_VERSION=5.3.0"
 duckdb:
 	./build.sh duckdb latest
 pichome:
@@ -121,15 +121,15 @@ workflow-sync:
 	gh workflow run sync.yml -f platform="linux/arm64,linux/amd64" -f dockerhub_images="alpine:{latest,3{,.20,.21,.22,.23,.24}}#debian:{latest,{12,13,bookworm,trixie}{,-slim}}#golang:{latest,1{,.25,.26}{,-alpine,-bookworm,-trixie}}#python:{latest,3-alpine,3{,-slim}{-bookworm,-trixie}}#rust:{latest,1-alpine,1{,-slim}{-bookworm,-trixie}}"
 
 workflow-build:
-	gh workflow run build.yml \
+	gh workflow run build-v1.yml \
 		-f image=alpine \
-		-f tag=latest,3.24 \
+		-f tagStr=latest,3.24 \
 		-f buildArg="VERSION=3.24" \
 		# -f platform="linux/arm64,linux/amd64" \
 		-f customArg="--target=alpine ./luvx/alpine"
 
 workflow-custom:
-	gh workflow run build.yml \
+	gh workflow run build-v1.yml \
 		-f image=custom \
-		-f tag=xxx \
+		-f tagStr=xxx \
 		-f customArg='make base base-alpine'
