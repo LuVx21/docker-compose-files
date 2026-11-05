@@ -1,0 +1,36 @@
+name: Maximize-Disk
+
+description: 清理出更多空间
+
+inputs:
+  rootReserveMb:
+    required: false
+  swapSizeMb:
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: 磁盘信息-清理前
+      run: |
+        echo "磁盘信息"
+        echo "=============================================================================="
+        df -hT
+        echo "=============================================================================="
+    - name: 增加构建磁盘空间
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: ${{ inputs.rootReserveMb || 1536 }}
+        swap-size-mb: ${{ inputs.swapSizeMb || 2048 }}
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
+        # remove-docker-images: 'true'
+        # build-mount-path: '/var/lib/docker/'
+    - name: 磁盘信息--清理后
+      run: |
+        echo "磁盘信息"
+        echo "=============================================================================="
+        df -hT
+        echo "=============================================================================="
