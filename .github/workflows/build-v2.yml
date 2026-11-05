@@ -345,7 +345,7 @@ jobs:
           password: ${{ secrets.TX_CR_PASSWORD }}
 
       # - name: 创建并推送多架构 manifest
-      #   uses: nick-invision/retry@v3
+      #   uses: nick-fields/retry@v3
       #   with:
       #     retry_wait_seconds: 5
       #     timeout_minutes: 180
@@ -353,7 +353,7 @@ jobs:
       #     command: ./deploy.sh
 
       - name: 创建并推送多架构 manifest
-        uses: step-security/retry@v3
+        uses: step-security/retry@v4
         if: ${{ inputs.image != 'custom' }}
         env:
           GH_CR:      ${{ vars.GH_CR }}

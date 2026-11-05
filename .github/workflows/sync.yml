@@ -120,7 +120,7 @@ jobs:
           version: latest
 
       - name: 迁移镜像
-        uses: step-security/retry@v3
+        uses: step-security/retry@v4
         env:
           SKOPEO_ENABLE: ${{ inputs.skopeo }}
           DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
@@ -165,13 +165,15 @@ jobs:
                   [ -n "$registry_image_tag" ] || continue
                   # 方式1：skopeo（启用前先安装 skopeo）
                   if [[ ${SKOPEO_ENABLE} == true ]]; then
-                    echo 'skopeo copy --all --preserve-manifest-lists --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"'
+                    echo skopeo copy --all --preserve-manifest-lists --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"
                   fi
                   targets+=("-t" "${registry_image_tag}")
                 done <<< "$nn"
 
                 # 方式2：docker buildx imagetools create
-                echo "docker buildx imagetools create ${targets[@]} ${image}"
+                if [[ ${SKOPEO_ENABLE} == true ]]; then
+                  echo "docker buildx imagetools create ${targets[@]} ${image}"
+                fi
               done
               docker system prune -f
             done <<< "$images"
