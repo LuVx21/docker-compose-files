@@ -123,6 +123,7 @@ jobs:
           command: |
             images="$SYNC_IMAGES"
             docker_registry=$(echo "${DOCKER_REGISTRY}" | grep -v '^,')
+            docker_registry=$(echo "${docker_registry}" | grep -v '^ghcr')
 
             replace_image() {
               local image="$1"
