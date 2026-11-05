@@ -4,14 +4,19 @@ description: 清理出更多空间
 
 inputs:
   rootReserveMb:
+    description: 根分区保留空间（MB）
     required: false
+    default: '1536'
   swapSizeMb:
+    description: Swap 大小（MB）
     required: false
+    default: '2048'
 
 runs:
   using: composite
   steps:
     - name: 磁盘信息-清理前
+      shell: bash
       run: |
         echo "磁盘信息"
         echo "=============================================================================="
@@ -20,8 +25,8 @@ runs:
     - name: 增加构建磁盘空间
       uses: easimon/maximize-build-space@master
       with:
-        root-reserve-mb: ${{ inputs.rootReserveMb || 1536 }}
-        swap-size-mb: ${{ inputs.swapSizeMb || 2048 }}
+        root-reserve-mb: ${{ inputs.rootReserveMb }}
+        swap-size-mb: ${{ inputs.swapSizeMb }}
         remove-dotnet: 'true'
         remove-android: 'true'
         remove-haskell: 'true'
@@ -29,6 +34,7 @@ runs:
         # remove-docker-images: 'true'
         # build-mount-path: '/var/lib/docker/'
     - name: 磁盘信息--清理后
+      shell: bash
       run: |
         echo "磁盘信息"
         echo "=============================================================================="

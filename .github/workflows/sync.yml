@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v7
       # 增加可用磁盘空间
       - name: 增加构建磁盘空间
-        uses: .github/actions/maximize
+        uses: ./.github/actions/maximize
       - name: 重启Docker服务
         run: sudo service docker restart
       - name: 登录GitHub容器

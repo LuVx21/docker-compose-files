@@ -477,7 +477,7 @@ jobs:
               output.write(f"image_tags<<{delimiter}\n{value}\n{delimiter}\n")
           PY
       - name: 增加构建磁盘空间
-        uses: .github/actions/maximize
+        uses: ./.github/actions/maximize
       - name: 重启Docker服务
         run: sudo service docker restart
       - name: 登录 Docker Hub
