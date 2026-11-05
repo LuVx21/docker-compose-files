@@ -344,7 +344,16 @@ jobs:
           username: ${{ secrets.TX_CR_USER }}
           password: ${{ secrets.TX_CR_PASSWORD }}
 
+      # - name: 创建并推送多架构 manifest
+      #   uses: nick-invision/retry@v3
+      #   with:
+      #     retry_wait_seconds: 5
+      #     timeout_minutes: 180
+      #     max_attempts: 3
+      #     command: ./deploy.sh
+
       - name: 创建并推送多架构 manifest
+        uses: step-security/retry@v3
         if: ${{ inputs.image != 'custom' }}
         env:
           GH_CR:      ${{ vars.GH_CR }}
@@ -353,32 +362,35 @@ jobs:
           IMAGE_TAGS: ${{ steps.get_image_tags.outputs.image_tags }}
           ARM_RESULT: ${{ needs.arm64.result }}
           AMD_RESULT: ${{ needs.amd64.result }}
-        run: |
-          python3 - <<'PY' > /tmp/tags.txt
-          import os
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            python3 - <<'PY' > /tmp/tags.txt
+            import os
 
-          for line in os.environ.get("IMAGE_TAGS", "").splitlines():
-              print(line)
-          PY
+            for line in os.environ.get("IMAGE_TAGS", "").splitlines():
+                print(line)
+            PY
 
-          tags=()
-          while IFS= read -r image_tag; do
-            [ -n "$image_tag" ] || continue
-            tags+=("--tag" "${image_tag}")
-          done < /tmp/tags.txt
+            tags=()
+            while IFS= read -r image_tag; do
+              [ -n "$image_tag" ] || continue
+              tags+=("--tag" "${image_tag}")
+            done < /tmp/tags.txt
 
-          sources=()
-          if [[ "$ARM_RESULT" == "success" ]]; then
-            sources+=("${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:arm64")
-          fi
-          if [[ "$AMD_RESULT" == "success" ]]; then
-            sources+=("${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:amd64")
-          fi
+            sources=()
+            if [[ "$ARM_RESULT" == "success" ]]; then
+              sources+=("${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:arm64")
+            fi
+            if [[ "$AMD_RESULT" == "success" ]]; then
+              sources+=("${GH_CR}/${GH_CR_NS}/${IMAGE_NAME}:amd64")
+            fi
 
-          if [[ ${#tags[@]} -gt 0 && ${#sources[@]} -gt 0 ]]; then
-            echo "合并并推送 ${tags[*]}"
-            docker buildx imagetools create "${tags[@]}" "${sources[@]}"
-          fi
+            if [[ ${#tags[@]} -gt 0 && ${#sources[@]} -gt 0 ]]; then
+              echo "合并并推送:\n ${tags[*]}" | sed -E 's/ (--|-t)/\n\1/g'
+              docker buildx imagetools create "${tags[@]}" "${sources[@]}"
+            fi
 
       - name: 代码检出
         if: ${{ inputs.image == 'custom' }}
