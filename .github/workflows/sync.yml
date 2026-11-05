@@ -106,12 +106,12 @@ jobs:
             echo "EOF_IMAGES"
           } >> "$GITHUB_ENV"
 
-      - name: Install Skopeo-M1
-        if: ${{ inputs.skopeo }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y skopeo
-          skopeo --version
+      # - name: Install Skopeo-M1
+      #   if: ${{ inputs.skopeo }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y skopeo
+      #     skopeo --version
 
       - name: Install Skopeo-M2
         if: ${{ inputs.skopeo }}
@@ -120,54 +120,58 @@ jobs:
           version: latest
 
       - name: 迁移镜像
+        uses: step-security/retry@v3
         env:
           SKOPEO_ENABLE: ${{ inputs.skopeo }}
           DOCKER_REGISTRY: ${{ vars.DOCKER_REGISTRY }}
-        run: |
-          images="$SYNC_IMAGES"
-          docker_registry=$(echo "${DOCKER_REGISTRY}" | grep -v '~,')
+        with:
+          timeout_minutes: 180
+          max_attempts: 3
+          command: |
+            images="$SYNC_IMAGES"
+            docker_registry=$(echo "${DOCKER_REGISTRY}" | grep -v '~,')
 
-          replace_image() {
-            local image="$1"
-            echo "${image//\//_}"
-          }
+            replace_image() {
+              local image="$1"
+              echo "${image//\//_}"
+            }
 
-          combine_providers() {
-            local mul_line="$1"
-            local image="$2"
+            combine_providers() {
+              local mul_line="$1"
+              local image="$2"
 
-            local line domain ns
-            while IFS= read -r line; do
-              [[ -z "${line//[[:space:]]/}" ]] && continue   # 跳过空行
-              domain="${line%%,*}"                            # 第一个逗号前
-              ns="${line#*,}"                                 # 第一个逗号后
-              # 去掉两侧空白
-              domain="${domain#"${domain%%[![:space:]]*}"}"
-              domain="${domain%"${domain##*[![:space:]]}"}"
-              ns="${ns#"${ns%%[![:space:]]*}"}"
-              ns="${ns%"${ns##*[![:space:]]}"}"
-              echo "${domain:+$domain/}${ns}/${image}"
-            done <<< "$mul_line"
-          }
+              local line domain ns
+              while IFS= read -r line; do
+                [[ -z "${line//[[:space:]]/}" ]] && continue   # 跳过空行
+                domain="${line%%,*}"                            # 第一个逗号前
+                ns="${line#*,}"                                 # 第一个逗号后
+                # 去掉两侧空白
+                domain="${domain#"${domain%%[![:space:]]*}"}"
+                domain="${domain%"${domain##*[![:space:]]}"}"
+                ns="${ns#"${ns%%[![:space:]]*}"}"
+                ns="${ns%"${ns##*[![:space:]]}"}"
+                echo "${domain:+$domain/}${ns}/${image}"
+              done <<< "$mul_line"
+            }
 
-          while IFS= read -r image_line; do
-            [[ -z "$image_line" || "$image_line" =~ ^[[:space:]]*# ]] && continue
-            echo "------------------------------------------${image_line}----------------------------------------------"
-            for image in $(eval "echo $image_line"); do
-              targets=()
-              replaced=$(replace_image "${image}")
-              nn=$(combine_providers "${docker_registry}" "${replaced}")
-              while IFS= read -r registry_image_tag; do
-                [ -n "$registry_image_tag" ] || continue
-                # 方式1：skopeo（启用前先安装 skopeo）
-                if [[ ${SKOPEO_ENABLE} == true ]]; then
-                  echo 'skopeo copy --all --preserve-manifest-lists --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"'
-                fi
-                targets+=("-t" "${registry_image_tag}")
-              done <<< "$nn"
+            while IFS= read -r image_line; do
+              [[ -z "$image_line" || "$image_line" =~ ^[[:space:]]*# ]] && continue
+              echo "------------------------------------------${image_line}----------------------------------------------"
+              for image in $(eval "echo $image_line"); do
+                targets=()
+                replaced=$(replace_image "${image}")
+                nn=$(combine_providers "${docker_registry}" "${replaced}")
+                while IFS= read -r registry_image_tag; do
+                  [ -n "$registry_image_tag" ] || continue
+                  # 方式1：skopeo（启用前先安装 skopeo）
+                  if [[ ${SKOPEO_ENABLE} == true ]]; then
+                    echo 'skopeo copy --all --preserve-manifest-lists --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"'
+                  fi
+                  targets+=("-t" "${registry_image_tag}")
+                done <<< "$nn"
 
-              # 方式2：docker buildx imagetools create
-              echo "docker buildx imagetools create ${targets[@]} ${image}"
-            done
-            docker system prune -f
-          done <<< "$images"
+                # 方式2：docker buildx imagetools create
+                echo "docker buildx imagetools create ${targets[@]} ${image}"
+              done
+              docker system prune -f
+            done <<< "$images"
