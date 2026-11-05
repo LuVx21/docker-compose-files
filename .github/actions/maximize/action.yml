@@ -15,6 +15,13 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: 参数信息
+      shell: bash
+      run: |
+        echo "=============================================================================="
+        echo "rootReserveMb: ${{ inputs.rootReserveMb }}"
+        echo "swapSizeMb:    ${{ inputs.swapSizeMb }}"
+        echo "=============================================================================="
     - name: 磁盘信息-清理前
       shell: bash
       run: |

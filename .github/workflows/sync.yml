@@ -162,7 +162,7 @@ jobs:
                 done <<< "$nn"
 
                 # 方式2：docker buildx imagetools create
-                if [[ ${SKOPEO_ENABLE} == true ]]; then
+                if [[ ${SKOPEO_ENABLE} == false ]]; then
                   echo "docker buildx imagetools create ${targets[@]} ${image}"
                 fi
               done
