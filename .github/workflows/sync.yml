@@ -21,7 +21,7 @@ on:
       skopeo:
         description: '使用Skopeo'
         required: false
-        default: false
+        default: true
         type: boolean
 
 jobs:
@@ -35,7 +35,9 @@ jobs:
       - name: 参数信息
         run: |
           echo "=============================================================================="
-          echo "${{ inputs.dockerhub_images }}"
+          echo "输入镜像名:        ${{ inputs.dockerhub_images }}"
+          echo "使用gist images:   ${{ inputs.remote }}"
+          echo "使用Skopeo:        ${{ inputs.skopeo }}"
           echo "=============================================================================="
       - name: 代码检出
         uses: actions/checkout@v7
@@ -156,7 +158,8 @@ jobs:
                   [ -n "$registry_image_tag" ] || continue
                   # 方式1：skopeo（启用前先安装 skopeo）
                   if [[ ${SKOPEO_ENABLE} == true ]]; then
-                    skopeo copy --all --preserve-manifest-lists --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"
+                    echo "skopeo复制: ${image} => ${registry_image_tag}"
+                    skopeo copy --all --preserve-digests --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"
                   fi
                   targets+=("-t" "${registry_image_tag}")
                 done <<< "$nn"
