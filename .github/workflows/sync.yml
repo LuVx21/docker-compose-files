@@ -99,18 +99,26 @@ jobs:
             echo "EOF_IMAGES"
           } >> "$GITHUB_ENV"
 
-      # - name: Install Skopeo-M1
-      #   if: ${{ inputs.skopeo }}
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y skopeo
-      #     skopeo --version
-
-      - name: Install Skopeo-M2
+      - name: Install Skopeo-M1
         if: ${{ inputs.skopeo }}
-        uses: warjiang/setup-skopeo@main
-        with:
-          version: latest
+        run: |
+          # sudo apt-get update
+          # sudo apt-get install -y skopeo
+
+          ARCH=$(dpkg --print-architecture)
+          if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
+              exit 1
+          fi
+
+          sudo wget -O /use/bin/skopeo \
+            https://github.com/lework/skopeo-binary/latest/download/skopeo-linux-${ARCH} \
+            && chmod +x /usr/bin/skopeo
+
+      # - name: Install Skopeo-M2
+      #   if: ${{ inputs.skopeo }}
+      #   uses: gonmmarques/setup-skopeo@v0.4.0
+      #   with:
+      #     version: latest
       - name: 检查Skopeo
         run: |
           skopeo -v
@@ -164,10 +172,10 @@ jobs:
                   # 方式1：skopeo（启用前先安装 skopeo）
                   if [[ ${SKOPEO_ENABLE} == true ]]; then
                     echo "skopeo复制: ${image} => ${registry_image_tag}"
-                    # 复制全平台的使用 --preserve-digests
+                    # 复制全平台的使用 --all --preserve-digests
                     # 指定平台的使用 --multi-arch=linux/amd64,linux/arm64 --strip-removed-platforms --remove-list-signatures
-                    skopeo copy
-                      --all --preserve-digests \
+                    skopeo copy \
+                      --multi-arch=linux/amd64,linux/arm64 --strip-removed-platforms --remove-list-signatures \
                       --retry-times 3 \
                       --authfile "$HOME/.docker/config.json" \
                       "docker://${image}" \
