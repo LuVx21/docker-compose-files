@@ -110,7 +110,7 @@ jobs:
               exit 1
           fi
 
-          sudo wget -O /use/bin/skopeo \
+          sudo wget -O /usr/bin/skopeo \
             https://github.com/lework/skopeo-binary/latest/download/skopeo-linux-${ARCH} \
             && chmod +x /usr/bin/skopeo
 
