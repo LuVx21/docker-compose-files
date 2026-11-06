@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v7
       # 增加可用磁盘空间
       - name: 增加构建磁盘空间
-        uses: ./.github/actions/maximize
+        uses: LuVx21/coding-action/.github/actions/maximize@main
       - name: 重启Docker服务
         run: sudo service docker restart
       - name: 登录GitHub容器
@@ -99,21 +99,34 @@ jobs:
             echo "EOF_IMAGES"
           } >> "$GITHUB_ENV"
 
-      - name: Install Skopeo-M1
+      - name: Install Skopeo-M0
+        id: downloader
+        if: ${{ inputs.skopeo }}
+        uses: LuVx21/coding-action/.github/actions/download@main
+        with:
+          repo: lework/skopeo-binary
+          tag: latest
+          fileName: skopeo-linux-amd64
+      - name: Install Skopeo-M0-Post
         if: ${{ inputs.skopeo }}
         run: |
-          # sudo apt-get update
-          # sudo apt-get install -y skopeo
+          mv "${{ steps.downloader.outputs.file-path }}" /usr/local/bin/skopeo
 
-          ARCH=$(dpkg --print-architecture)
-          if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
-              exit 1
-          fi
+      # - name: Install Skopeo-M1
+      #   if: ${{ inputs.skopeo }}
+      #   run: |
+      #     # sudo apt-get update
+      #     # sudo apt-get install -y skopeo
 
-          sudo curl -fsSL \
-            "https://github.com/lework/skopeo-binary/releases/latest/download/skopeo-linux-${ARCH}" \
-            -o /usr/local/bin/skopeo
-          sudo chmod +x /usr/local/bin/skopeo
+      #     ARCH=$(dpkg --print-architecture)
+      #     if [ "$ARCH" != "amd64" ] && [ "$ARCH" != "arm64" ]; then
+      #         exit 1
+      #     fi
+
+      #     sudo curl -fsSL \
+      #       "https://github.com/lework/skopeo-binary/releases/latest/download/skopeo-linux-${ARCH}" \
+      #       -o /usr/local/bin/skopeo
+      #     sudo chmod +x /usr/local/bin/skopeo
 
       # - name: Install Skopeo-M2
       #   if: ${{ inputs.skopeo }}
