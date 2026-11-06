@@ -111,7 +111,7 @@ jobs:
           fi
 
           sudo wget -O /usr/bin/skopeo \
-            https://github.com/lework/skopeo-binary/latest/download/skopeo-linux-${ARCH} \
+            https://github.com/lework/skopeo-binary/releases/latest/download/skopeo-linux-${ARCH} \
             && chmod +x /usr/bin/skopeo
 
       # - name: Install Skopeo-M2
