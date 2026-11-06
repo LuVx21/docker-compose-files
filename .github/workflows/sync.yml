@@ -160,7 +160,13 @@ jobs:
                   # 方式1：skopeo（启用前先安装 skopeo）
                   if [[ ${SKOPEO_ENABLE} == true ]]; then
                     echo "skopeo复制: ${image} => ${registry_image_tag}"
-                    skopeo copy --all --preserve-digests --retry-times 3 --authfile "$HOME/.docker/config.json" "docker://${image}" "docker://${registry_image_tag}"
+                    skopeo copy --multi-arch=linux/amd64,linux/arm64 \
+                      --strip-removed-platforms --remove-list-signatures \ # 要一起用
+                      # --preserve-digests \ # 和上面的冲突
+                      --retry-times 3 \
+                      --authfile "$HOME/.docker/config.json" \
+                      "docker://${image}" \
+                      "docker://${registry_image_tag}"
                   fi
                   targets+=("-t" "${registry_image_tag}")
                 done <<< "$nn"
