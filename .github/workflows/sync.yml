@@ -110,10 +110,11 @@ jobs:
               exit 1
           fi
 
-          install -d "$HOME/bin"
-          sudo wget -O "$HOME/bin/skopeo" \
+          install -d "$RUNNER_TEMP/bin"
+          sudo wget -O "$RUNNER_TEMP/bin/skopeo" \
             https://github.com/lework/skopeo-binary/releases/latest/download/skopeo-linux-${ARCH} \
-            && chmod +x "$HOME/bin/skopeo"
+            && chmod +x "$RUNNER_TEMP/bin/skopeo"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
       # - name: Install Skopeo-M2
       #   if: ${{ inputs.skopeo }}
