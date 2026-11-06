@@ -1,0 +1,108 @@
+name: 通用下载
+description: 从指定仓库的 Release 下载文件并供后续 step 使用
+
+inputs:
+  repo:
+    description: 仓库名，格式为 owner/repo
+    required: true
+  tag:
+    description: Tag，latest 表示最新 Release
+    required: false
+    default: 'latest'
+  fileName:
+    description: Release 中的文件名，必须精确匹配
+    required: true
+
+outputs:
+  file-path:
+    description: 下载并解压后，可执行文件或目录的绝对路径
+    value: ${{ steps.publish.outputs.file-path }}
+
+runs:
+  using: composite
+  steps:
+    - name: 参数信息
+      shell: bash
+      run: |
+        echo "=============================================================================="
+        echo "repo:     ${{ inputs.repo }}"
+        echo "tag:      ${{ inputs.tag }}"
+        echo "fileName: ${{ inputs.fileName }}"
+        echo "=============================================================================="
+    - name: 下载文件
+      id: download
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+
+        # 构造下载 URL
+        if [ "${{ inputs.tag }}" = "latest" ]; then
+          API_URL="https://api.github.com/repos/${{ inputs.repo }}/releases/latest"
+        else
+          API_URL="https://api.github.com/repos/${{ inputs.repo }}/releases/tags/${{ inputs.tag }}"
+        fi
+
+        # 通过 API 解析 browser_download_url，避免手动拼接出错
+        DOWNLOAD_URL=$(curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" "$API_URL" \
+          | jq -r --arg name "${{ inputs.fileName }}" \
+            '.assets[] | select(.name == $name) | .browser_download_url')
+
+        if [ -z "$DOWNLOAD_URL" ] || [ "$DOWNLOAD_URL" = "null" ]; then
+          echo "未在 Release 中找到文件: ${{ inputs.fileName }}"
+          exit 1
+        fi
+
+        # 下载到工作区下的独立目录，避免污染根目录
+        DOWNLOAD_DIR="${{ github.workspace }}/.downloaded/${{ inputs.fileName }}"
+        mkdir -p "$(dirname "$DOWNLOAD_DIR")"
+        curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" \
+          -o "$DOWNLOAD_DIR" "$DOWNLOAD_URL"
+
+        echo "download-path=$DOWNLOAD_DIR" >> "$GITHUB_OUTPUT"
+
+    - name: 解压（如需要）
+      id: extract
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        SRC="${{ steps.download.outputs.download-path }}"
+        DEST="${SRC}.extracted"
+
+        case "$SRC" in
+          *.tar.gz|*.tgz)       mkdir -p "$DEST" && tar -xzf "$SRC" -C "$DEST" ;;
+          *.tar.bz2|*.tbz2)     mkdir -p "$DEST" && tar -xjf "$SRC" -C "$DEST" ;;
+          *.tar.xz|*.txz)       mkdir -p "$DEST" && tar -xJf "$SRC" -C "$DEST" ;;
+          *.zip)                mkdir -p "$DEST" && unzip -q "$SRC" -d "$DEST" ;;
+          *)                    DEST="$SRC" ;;   # 非压缩包，原样使用
+        esac
+
+        echo "extracted-path=$DEST" >> "$GITHUB_OUTPUT"
+
+    - name: 发布路径
+      id: publish
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        CANDIDATE="${{ steps.extract.outputs.extracted-path }}"
+
+        # 如果解压后只有一个顶层文件/目录，取它，方便调用方直接使用
+        if [ -d "$CANDIDATE" ]; then
+          COUNT=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 | wc -l)
+          if [ "$COUNT" -eq 1 ]; then
+            SINGLE=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 -print -quit)
+            if [ -f "$SINGLE" ]; then
+              CANDIDATE="$SINGLE"
+            fi
+          fi
+        fi
+
+        # 如果是普通文件，赋予可执行权限（非 Windows）
+        if [ -f "$CANDIDATE" ] && [ "${RUNNER_OS}" != "Windows" ]; then
+          chmod +x "$CANDIDATE" 2>/dev/null || true
+        fi
+
+        echo "file-path=$CANDIDATE" >> "$GITHUB_OUTPUT"
