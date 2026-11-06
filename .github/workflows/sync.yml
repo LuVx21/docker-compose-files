@@ -111,6 +111,10 @@ jobs:
         uses: warjiang/setup-skopeo@main
         with:
           version: latest
+      - name: 检查Skopeo
+        run: |
+          skopeo -v
+          skopeo copy --help
 
       - name: 迁移镜像
         uses: step-security/retry@v4
@@ -160,9 +164,10 @@ jobs:
                   # 方式1：skopeo（启用前先安装 skopeo）
                   if [[ ${SKOPEO_ENABLE} == true ]]; then
                     echo "skopeo复制: ${image} => ${registry_image_tag}"
-                    # 复制全平台的使用--preserve-digests 替换下面的参数
-                    skopeo copy --multi-arch=linux/amd64,linux/arm64 \
-                      --strip-removed-platforms --remove-list-signatures \
+                    # 复制全平台的使用 --preserve-digests
+                    # 指定平台的使用 --multi-arch=linux/amd64,linux/arm64 --strip-removed-platforms --remove-list-signatures
+                    skopeo copy
+                      --all --preserve-digests \
                       --retry-times 3 \
                       --authfile "$HOME/.docker/config.json" \
                       "docker://${image}" \

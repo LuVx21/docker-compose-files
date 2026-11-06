@@ -30,6 +30,7 @@ photoprism/photoprism:latest
 postgres:{latest,{14,15,16,17,18}{,-alpine,-trixie}}
 provectuslabs/kafka-ui:latest
 python:{latest,3-alpine,3{,-slim}{,-trixie}}
+quay.io/skopeo/stable:latest
 redis/{redisinsight,redis-stack-server,redis-stack}:latest
 redis:{latest,{7,8}{,-alpine}}
 rust:{latest,1-alpine,1{,-slim}{,-trixie}}
